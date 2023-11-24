@@ -1,0 +1,6 @@
+[submodule "Sharp"]
+	path = Sharp
+	url = https://github.com/yonis-savary/sharp-php
+[submodule "SharpExtensions"]
+	path = SharpExtensions
+	url = https://github.com/yonis-savary/sharp-extensions

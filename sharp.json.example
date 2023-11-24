@@ -1,0 +1,27 @@
+{
+    "database": {
+        "driver": "mysql",
+        "database": "resound",
+        "host": "localhost",
+        "port": 3306,
+        "user": "root",
+        "password": "password"
+    },
+    "authentication": {
+        "model": "Resound\\Models\\User",
+        "login-field": "login",
+        "password-field": "password",
+        "session-duration": 3600
+    },
+    "applications": [
+        "SharpExtensions/AssetsKit",
+        "Resound"
+    ],
+    "library": {
+        "url": "localhost",
+        "username": "someuser",
+        "password": "somepassword",
+        "path": "/home/someuser/Music",
+        "port": 21
+    }
+}

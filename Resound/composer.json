@@ -1,0 +1,6 @@
+{
+    "require": {
+        "james-heinrich/getid3": "^1.9",
+        "league/color-extractor": "^0.4.0"
+    }
+}
