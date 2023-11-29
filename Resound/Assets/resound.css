@@ -2,6 +2,7 @@ body
 {
     --fg: white;
     --bg: black;
+    --discreet: rgba(255, 255, 255, 50%);
     --highlight: rgba(255, 255, 255, 10%);
     --contrast: rgba(255, 255, 255, 10%);
     --stealth: rgba(255, 255, 255, 15%);
