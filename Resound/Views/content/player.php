@@ -68,7 +68,7 @@
     let playlistSize = -1;
     let audioPlayer = new Audio();
 
-    document.addEventListener("DOMContentLoaded", ()=> {
+    document.addEventListener("DOMContentLoaded", async ()=> {
         let volume = localStorage.getItem("player.volume");
         if (volume)
         {
@@ -76,20 +76,26 @@
             audioPlayer.volume = volume/100;
         }
 
-        let songs = localStorage.getItem("player.songs");
-        if (songs)
+        let playerData = await apiFetch("/library/play-list-get")
+        if (!playerData)
+            return;
+        let {songs, playlistUUID} = playerData;
+
+        let index = 0;
+        let time = 0;
+        let state = await apiFetch("/library/player-get-state")
+        if (state)
         {
-            songs = JSON.parse(songs)
-            let playlist = localStorage.getItem("player.playlist");
-            let index = localStorage.getItem("player.index");
+            index = state.index;
+            time = state.time;
+        }
 
-            setPlaylist(songs, index, playlist, false);
-            audioPlayer.pause();
+        setPlaylist(songs, index, playlistUUID, false);
+        audioPlayer.pause();
 
-            audioPlayer.oncanplay = _ => {
-                audioPlayer.oncanplay = null;
-                audioPlayer.currentTime = localStorage.getItem("player.currentTime") ?? 0;
-            }
+        audioPlayer.oncanplay = _ => {
+            audioPlayer.oncanplay = null;
+            audioPlayer.currentTime = time;
         }
     })
 
@@ -129,12 +135,8 @@
         playlistIndex = startIndex;
         playlistSize = songs.length;
 
-        localStorage.setItem("player.songs", JSON.stringify(songs));
-        localStorage.setItem("player.playlist", playlistUUID);
-        localStorage.setItem("player.index", startIndex);
-
+        await apiFetchJSON(`/library/play-list-register`, {songs, playlistUUID}, "POST");
         playSong(playlistUUIDList[playlistIndex], autoplay);
-
     }
 
     async function playSong(uuid, autoplay=true)
@@ -174,7 +176,6 @@
             return false;
 
         playlistIndex++;
-        localStorage.setItem("player.index", playlistIndex);
         playSong(playlistUUIDList[playlistIndex])
         return true;
     }
@@ -382,12 +383,16 @@
     playerPlayButton.addEventListener("click", _ => audioPlayer.play());
     playerNextButton.addEventListener("click", _ => gotoNextSong());
 
-    setInterval(()=>{
+    setInterval(async _ => {
         if (audioPlayer.paused)
             return;
 
-        localStorage.setItem("player.currentTime", audioPlayer.currentTime);
-    }, 3000);
+        await apiFetchJSON("/library/player-register-state", {
+            index: playlistIndex,
+            time: audioPlayer.currentTime
+        }, "POST");
+
+    }, 10000);
 
 
     async function refreshPlayerState()

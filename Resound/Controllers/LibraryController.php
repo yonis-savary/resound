@@ -32,7 +32,13 @@ class LibraryController
         $router->addGroup(
             ["path" => "api/library"],
 
-            Route::get("/album-cover/{uuid:albumUUID}", [self::class, "getAlbumCover"])
+            Route::get("/album-cover/{uuid:albumUUID}", [self::class, "getAlbumCover"]),
+
+            Route::post("/play-list-register", [self::class, "registerPlayList"]),
+            Route::get("/play-list-get", [self::class, "getPlayList"]),
+
+            Route::post("/player-register-state", [self::class, "registerPlayerState"]),
+            Route::get("/player-get-state", [self::class, "getPlayerState"]),
         );
 
         $router->addGroup(
@@ -169,5 +175,57 @@ class LibraryController
             </section>";
         })
         ->join("");
+    }
+
+
+    protected static function getUserPlaylistCache(): Cache
+    {
+        return new Cache(Storage::getInstance()->getSubStorage("Resound/user-playlists"));
+    }
+
+    public static function registerPlayList(Request $request)
+    {
+        $playlist = $request->body();
+
+        if (strlen(json_encode($playlist)) > 1024*1024*512)
+            return Response::json("Too much data", 500);
+
+        $storage = self::getUserPlaylistCache();
+        $storage->set(UserUUID::get(), $playlist, Cache::PERMANENT);
+
+        return "OK";
+    }
+
+    public static function getPlayList()
+    {
+        $storage = self::getUserPlaylistCache();
+        return $storage->get(UserUUID::get()) ?? null;
+    }
+
+
+
+
+    protected static function getUserPlayerCache(): Cache
+    {
+        return new Cache(Storage::getInstance()->getSubStorage("Resound/user-player-state"));
+    }
+
+    public static function registerPlayerState(Request $request)
+    {
+        $player = $request->body();
+
+        if (strlen(json_encode($player)) > 1024*1024*512)
+            return Response::json("Too much data", 500);
+
+        $storage = self::getUserPlayerCache();
+        $storage->set(UserUUID::get(), $player, Cache::PERMANENT);
+
+        return "OK";
+    }
+
+    public static function getPlayerState()
+    {
+        $storage = self::getUserPlayerCache();
+        return $storage->get(UserUUID::get()) ?? null;
     }
 }
