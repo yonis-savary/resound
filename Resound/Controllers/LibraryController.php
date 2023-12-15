@@ -47,7 +47,8 @@ class LibraryController
             Route::get("/last-additions", [self::class, "getLastAdditions"]),
             Route::get("/most-listened", [self::class, "getMostListened"]),
             Route::get("/random-all", [self::class, "getRandomTrackList"]),
-            Route::get("/genres-list", [self::class, "getGenreHTML"])
+            Route::get("/genres-list", [self::class, "getGenreHTML"]),
+            Route::get("/years-list", [self::class, "getYearsHTML"]),
         );
 
         $router->groupCallback(
@@ -177,6 +178,36 @@ class LibraryController
         ->join("");
     }
 
+
+    public static function getYearsHTML()
+    {
+        return ObjectArray::fromArray(query("SELECT DISTINCT release_year FROM album ORDER BY release_year"))
+        ->map(fn($x) => $x["release_year"])
+        ->map(function($year) {
+            return [
+                $year,
+                ObjectArray::fromArray(query("SELECT uuid FROM album WHERE release_year = {}", [$year]))
+                ->map(fn($x) => $x["uuid"])
+                ->map(fn($uuid) => "<img src='/api/library/album-cover/$uuid' class='album-cover small'>")
+                ->collect()
+            ];
+        })
+        ->filter(fn($data) => $data[0] !== null)
+        ->map(function($data){
+            list($year, $albums) = $data;
+            return "
+            <section year='$year' class='card'>
+                <section class='flex-column gap-1'>
+                    <section class='flex-row align-center'>
+                        <h2 class='h4'>$year</h2>
+                        <small>(".count($albums)." releases)</small>
+                    </section>
+                    <section class='flex-row align-center gap-1'>".join("", $albums)."</section>
+                </section>
+            </section>";
+        })
+        ->join("");
+    }
 
     protected static function getUserPlaylistCache(): Cache
     {

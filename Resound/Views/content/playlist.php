@@ -17,29 +17,36 @@
     {
         await changePageContentTo(`
 
-            <section class="flex-row align-center justify-between">
-                <h2>My Playlists</h2>
-                <button left class="button white secondary" menu="newPlaylistMenu">${svg("plus")} New</button>
-            </section>
+            <section class="flex-column gap-10">
 
-            <section class="menu" id="newPlaylistMenu">
-                <section class="form-section">
-                    <span>Playlist name</span>
-                    <input type="text" id="newPlaylistName">
+                <section class="flex-column">
+                    <section class="flex-row align-center justify-between">
+                        <h2 class="svg-text">${svg("collection")} My Playlists</h2>
+                        <button left class="button white secondary" menu="newPlaylistMenu">${svg("plus")} New</button>
+                    </section>
+                    <section id="userPlaylistList" class="flex-row flex-wrap"></section>
                 </section>
-                <label class="svg-text">
-                    <input type="checkbox" id="newPlaylistIsPrivate">
-                    Private playlist
-                </label>
-                <button class="button green" id="saveNewPlaylistButton">Create</button>
+
+                <section class="menu" id="newPlaylistMenu">
+                    <section class="form-section">
+                        <span>Playlist name</span>
+                        <input type="text" id="newPlaylistName">
+                    </section>
+                    <label class="svg-text">
+                        <input type="checkbox" id="newPlaylistIsPrivate">
+                        Private playlist
+                    </label>
+                    <button class="button green" id="saveNewPlaylistButton">Create</button>
+                </section>
+
+
+                <section class="flex-column">
+                    <h2 class="svg-text">${svg("star")} Popular playlists</h2>
+                    <section id="popularPlaylistList" class="flex-row flex-wrap scrollable horizontal"></section>
+                </section>
+
+
             </section>
-
-            <section id="userPlaylistList" class="flex-row flex-wrap"></section>
-
-            <h2>Popular playlists</h2>
-            <section id="popularPlaylistList" class="flex-row flex-wrap scrollable horizontal"></section>
-
-
         `);
         addMenuListeners();
 
@@ -67,13 +74,13 @@
         `
 
         apiRead("playlist").then(playlists => {
-            userPlaylistList.innerHTML = playlists.map(renderPlaylist).join("")
+            userPlaylistList.innerHTML = playlists.length ? playlists.map(renderPlaylist).join(""): "No playlist created"
             refreshPlaylistCovers();
             refreshPlaylistsDropBoxes(playlists)
         });
 
         apiFetch("/playlists/popular").then(playlists => {
-            popularPlaylistList.innerHTML = playlists.map(renderPlaylist).join("")
+            popularPlaylistList.innerHTML = playlists.length ? playlists.map(renderPlaylist).join(""): "No playlist listened";
             refreshPlaylistCovers();
         })
 

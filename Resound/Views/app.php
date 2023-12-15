@@ -25,7 +25,7 @@ use Resound\Classes\Straws\UserUUID;
         const userUUID = _ => userUUIDInput.value;
 
         function albumCoverImg(album, className="") {
-            return `<img
+            return html`<img
                 style="width: 100%"
                 album="${album.data.uuid}"
                 src="${albumCover(album.data.uuid)}"
@@ -102,15 +102,15 @@ use Resound\Classes\Straws\UserUUID;
 
         function renderAlbumPreview(album)
         {
-            return `
+            return html`
             <section
                 album="${album.data.uuid}"
                 class="flex-column gap-0 album-container"
                 title="${album.data.name} by ${album.artist.data.name}"
             >
                 ${albumCoverImg(album)}
-                <b class="clickable" onclick="openAlbum('${album.data.uuid}')">${album.data.name}</b>
-                <small class="clickable" onclick="openArtist('${album.data.artist}')">${album.artist.data.name}</small>
+                <b class="clickable one-liner" title="${album.data.name}" onclick="openAlbum('${album.data.uuid}')">${album.data.name}</b>
+                <small class="clickable one-liner" onclick="openArtist('${album.data.artist}')">${album.artist.data.name}</small>
             </section>
             `
         }
@@ -132,7 +132,7 @@ use Resound\Classes\Straws\UserUUID;
 
     <?= render("playlist") ?>
 
-    <?= render("radios") ?>
+    <?= render("embedded") ?>
     <?= render("settings") ?>
 </body>
 </html>

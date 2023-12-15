@@ -4,31 +4,44 @@
     async function displayLibrary()
     {
         await changePageContentTo(`
-        <section class="margin-bottom-5 flex-row gap-7">
-            <span
-                class="svg-link"
-                onclick="displayFullGallery()"
-            > Gallery ${svg("collection")} </span>
+        <section class="flex-column gap-7">
+            <section class="flex-row gap-7">
+                <span
+                    class="svg-link"
+                    onclick="displayFullGallery()"
+                > Gallery ${svg("collection")} </span>
 
-            <span
-                class="svg-link"
-                onclick="shuffleAllLibrary()"
-            > Shuffle ${svg("shuffle")} </span>
+                <span
+                    class="svg-link"
+                    onclick="shuffleAllLibrary()"
+                > Shuffle ${svg("shuffle")} </span>
 
-            <span
-                class="svg-link"
-                onclick="displayGenreGallery()"
-            > Genres ${svg("palette")} </span>
-        </section>
+                <span
+                    class="svg-link"
+                    onclick="displayGenreGallery()"
+                > Genres ${svg("palette")} </span>
 
-        <h2>Last Additions</h2>
-        <section class="flex-row scrollable horizontal" id="lastAdditions">
-            <section class="album-folder"></section>
-        </section>
+                <span
+                    class="svg-link"
+                    onclick="displayYearsGallery()"
+                > Years ${svg("clock-history")} </span>
 
-        <h2>Most listened this month</h2>
-        <section class="flex-row scrollable horizontal" id="mostListened">
-            <section class="album-folder"></section>
+
+            </section>
+
+            <section class="flex-column">
+                <h2 class="svg-text">${svg("star")} Last Additions</h2>
+                <section class="flex-row scrollable horizontal" id="lastAdditions">
+                    <section class="album-folder"></section>
+                </section>
+            </section>
+
+            <section class="flex-column">
+                <h2 class="svg-text">${svg("star")} Most listened this month</h2>
+                <section class="flex-row scrollable horizontal" id="mostListened">
+                    <section class="album-folder"></section>
+                </section>
+            </section>
         </section>
 
         `)
@@ -116,15 +129,18 @@
         else
             processAlbumVibrantColor(pageContent.querySelector("img"), uuid, pageContent);
 
-        apiRead("track", {album: uuid, _ignores: ["track&album"]}).then(tracks => {
+        apiRead("track", {album: uuid, _ignores: ["track&album&artist"]}).then(tracks => {
             tracks = tracks.sortByKey(x => x.data.position);
             albumContent.innerHTML = tracks.map(x => `
             <tr track="${x.data.uuid}">
                 <td><span>${x.data.position ?? "-"}</span></td>
                 <td>
-                    <section class="flex-column gap-0">
-                        <b>${x.data.name}</b>
-                        <small>${x.data.artist}</small>
+                    <section class="flex-row align-center">
+                        ${albumCoverImg(x.album, "small")}
+                        <section class="flex-column gap-0">
+                            <b>${x.data.name}</b>
+                            <small>${x.album.data.name}</small>
+                        </section>
                     </section>
                 </td>
                 <td><span></span></td>
@@ -302,6 +318,55 @@
 
             x.addEventListener("click", _ => {
                 openGenre(genre);
+            })
+        })
+    }
+
+
+
+
+
+
+
+
+
+    /*
+        $$\     $$\ $$$$$$$$\  $$$$$$\  $$$$$$$\
+        \$$\   $$  |$$  _____|$$  __$$\ $$  __$$\
+         \$$\ $$  / $$ |      $$ /  $$ |$$ |  $$ |
+          \$$$$  /  $$$$$\    $$$$$$$$ |$$$$$$$  |
+           \$$  /   $$  __|   $$  __$$ |$$  __$$<
+            $$ |    $$ |      $$ |  $$ |$$ |  $$ |
+            $$ |    $$$$$$$$\ $$ |  $$ |$$ |  $$ |
+            \__|    \________|\__|  \__|\__|  \__|
+
+    */
+
+    async function openYear(year)
+    {
+        await changePageContentTo(`
+            <h1>'${year}' releases</h1>
+
+            <section class="flex-row flex-wrap" id="albumList">
+            </section>
+        `);
+
+        let albums = await apiRead("album", {release_year: year})
+
+        albumList.innerHTML = albums.map(x => renderAlbumPreview(x)).join("")
+    }
+
+    async function displayYearsGallery()
+    {
+        let years = await apiFetch("/library/years-list");
+
+        await changePageContentTo(years);
+
+        pageContent.querySelectorAll("[year]").forEach(x => {
+            let year = x.getAttribute("year");
+
+            x.addEventListener("click", _ => {
+                openYear(year);
             })
         })
     }

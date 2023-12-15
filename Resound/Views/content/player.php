@@ -90,6 +90,8 @@
             time = state.time;
         }
 
+        playerPauseButton.hide();
+
         setPlaylist(songs, index, playlistUUID, false);
         audioPlayer.pause();
 
@@ -233,6 +235,7 @@
     });
 
     audioPlayer.addEventListener("ended", _ => {
+        console.log("SONG ENDED");
         if (!gotoNextSong())
             audioPlayer.pause();
     });

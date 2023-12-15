@@ -19,12 +19,14 @@ body
 
 .menu
 {
+
     --fg: #282828;
     --contrast: #ffffff;
     --discreet: #686868;
-    --stealth: #cecece;
-    --bg: hsl(0, 0%, 97%);
-    --highlight: hsl(0, 0%, 92%);
+    --stealth: #dbdbdb;
+    --bg: #f0f1f3;
+    --highlight: #c6c9d1;
+    --input-background: #fefefe;
 }
 
 
@@ -254,6 +256,7 @@ body
 .player button:hover
 {
     box-shadow: 0px 0px 12px rgba(0,0,0, 8%);
+    background-color: rgba(255, 255, 255, 9%);
 }
 
 #playerVolumeInput
@@ -273,6 +276,12 @@ body
     border-radius: 4px;
     height: .4em;
     accent-color: var(--track-color, var(--blue));
+    transition: all 100ms ease;
+}
+
+#playerProgress:hover
+{
+    filter: brightness(120%);
 }
 
 #playerProgress::-moz-progress-bar,

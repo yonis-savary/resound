@@ -5,13 +5,13 @@ namespace Resound\Models;
 use Sharp\Classes\Data\DatabaseField;
 
 
-class WebRadio
+class EmbeddedMedia
 {
     use \Sharp\Classes\Data\Model;
 
     public static function getTable(): string
     {
-        return "web_radio";
+        return "embedded_media";
     }
 
     public static function getPrimaryKey(): string

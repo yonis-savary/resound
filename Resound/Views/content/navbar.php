@@ -6,12 +6,15 @@
 
     <section class="svg-text" onclick="displaySearchPage()"><?= svg("search") ?></section>
 
-    <a onclick="displayLibrary()">Library</a>
-    <a onclick="displayPlaylistMenu()">Playlists</a>
-    <a onclick="displayRadios()">Radios</a>
+    <a class="svg-link" onclick="displayLibrary()">Library</a>
+    <a class="svg-link" onclick="displayPlaylistMenu()">Playlists</a>
+
+    <a class="svg-link" onclick="displayEmbeddedMedias()">Web</a>
 
     <section class="fill-left fill-right"></section>
 
-    <a onclick="displaySettings()">Settings</a>
-    <a href="/logout">Logout</a>
+
+
+    <a class="svg-link" onclick="displaySettings()">Settings</a>
+    <a class="svg-link" href="/logout">Logout</a>
 </nav>

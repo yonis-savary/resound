@@ -76,10 +76,10 @@ CREATE TABLE user_listening (
 
 
 
-CREATE TABLE web_radio (
+CREATE TABLE embedded_media (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL UNIQUE,
-    url VARCHAR(255) NOT NULL UNIQUE
+    url VARCHAR(255) NOT NULL
 );
 
 

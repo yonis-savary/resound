@@ -129,6 +129,10 @@ class TagController
 
         $getID3 = new getID3();
 
+        $filesize = filesize($file) / (1024*1024);
+        if ($filesize > 4.5)
+            TagAnomaly::insertArray(["filename" => $distPath, "description" => "Heavy file ! ($filesize Mo)"]);
+
         $metadata = $getID3->analyze($file);
         self::$lastMetadata  = $metadata;
 

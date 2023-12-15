@@ -30,7 +30,8 @@ class Track
 			'artist' => (new DatabaseField('artist'))->setType(DatabaseField::STRING)->setNullable(true),
 			'producer' => (new DatabaseField('producer'))->setType(DatabaseField::STRING)->setNullable(true),
 			'duration_seconds' => (new DatabaseField('duration_seconds'))->setType(DatabaseField::INTEGER)->setNullable(true),
-			'path' => (new DatabaseField('path'))->setType(DatabaseField::STRING)->setNullable(false)
+			'path' => (new DatabaseField('path'))->setType(DatabaseField::STRING)->setNullable(false),
+			'size_kb' => (new DatabaseField('size_kb'))->setType(DatabaseField::INTEGER)->setNullable(true)
         ];
     }
 }
