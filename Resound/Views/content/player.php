@@ -1,16 +1,19 @@
 <section class="player align-center gap-10 flex-row" id="player">
     <section class="flex-row align-center gap-2" id="playerControls">
-        <button id="playerPreviousButton">
+        <button id="playerPreviousButton" title="Go to previous track">
             <?= svg("chevron-left") ?>
         </button>
-        <button id="playerPauseButton">
+        <button id="playerPauseButton" title="Pause">
             <?= svg("pause-fill") ?>
         </button>
-        <button id="playerPlayButton">
+        <button id="playerPlayButton" title="Play / Resume">
             <?= svg("caret-right-fill") ?>
         </button>
-        <button id="playerNextButton">
+        <button id="playerNextButton" title="Go to next track">
             <?= svg("chevron-right") ?>
+        </button>
+        <button id="moodModeButton" title="Listen to similar tracks !">
+            <?= svg("vinyl-fill") ?>
         </button>
     </section>
 
@@ -141,8 +144,13 @@
         playSong(playlistUUIDList[playlistIndex], autoplay);
     }
 
+    let playedSongUUID = null;
     async function playSong(uuid, autoplay=true)
     {
+        if (playedSongUUID === uuid)
+            return;
+        playedSongUUID = uuid;
+
         let track = (await apiRead("track", {uuid}))[0];
         apiFetch("/song/listen", {track: uuid, playlist: playerPlaylistUUID});
 
@@ -523,6 +531,48 @@
         \__|     \__|\________|   \__|   \__|  \__|\_______/ \__|  \__|  \__|   \__|  \__|
     */
 
+    let handleMoodLauncherTimeout
+    let lastHandleMoodLauncher = null
+    async function handleMoodLauncher()
+    {
+        if (handleMoodLauncherTimeout)
+        {
+            clearTimeout(handleMoodLauncherTimeout);
+            handleMoodLauncherTimeout = null;
+            console.log("MOOD LAUNCHED")
+            moodModeButton.click();
+            return;
+        }
+
+        console.log("MOOD TIMEOUT")
+        handleMoodLauncherTimeout = setTimeout(_ => {
+            clearTimeout(handleMoodLauncherTimeout);
+            handleMoodLauncherTimeout = null;
+            gotoNextSong();
+        }, 800);
+    }
+
+
+    let handleShuffleLauncherTimeout
+    let lastHandleShuffleLauncher = null
+    async function handleShuffleLauncher()
+    {
+        if (handleShuffleLauncherTimeout)
+        {
+            clearTimeout(handleShuffleLauncherTimeout);
+            handleShuffleLauncherTimeout = null;
+            shuffleAllLibrary()
+            return;
+        }
+
+        handleShuffleLauncherTimeout = setTimeout(_ => {
+            clearTimeout(handleShuffleLauncherTimeout);
+            handleShuffleLauncherTimeout = null;
+            gotoPreviousSong();
+        }, 800);
+    }
+
+
     async function setMediaSession(track)
     {
         if (!('mediaSession' in navigator))
@@ -538,8 +588,9 @@
 
         navigator.mediaSession.setActionHandler('play', _ => audioPlayer.play());
         navigator.mediaSession.setActionHandler('pause', _ => audioPlayer.pause());
-        navigator.mediaSession.setActionHandler('previoustrack', _ => gotoPreviousSong());
-        navigator.mediaSession.setActionHandler('nexttrack', _ => gotoNextSong());
+        navigator.mediaSession.setActionHandler('previoustrack', _ => handleShuffleLauncher());
+        navigator.mediaSession.setActionHandler('nexttrack', _ => handleMoodLauncher());
+
         //navigator.mediaSession.setActionHandler('seekbackward', function() );
         //navigator.mediaSession.setActionHandler('seekforward', function() {});
     }
@@ -560,6 +611,54 @@
 
     document.addEventListener("songStartPlaying", refreshTrackPlayingClassTracker)
     document.addEventListener("pageContentEdited", refreshTrackPlayingClassTracker)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
+        $$\      $$\  $$$$$$\   $$$$$$\  $$$$$$$\
+        $$$\    $$$ |$$  __$$\ $$  __$$\ $$  __$$\
+        $$$$\  $$$$ |$$ /  $$ |$$ /  $$ |$$ |  $$ |
+        $$\$$\$$ $$ |$$ |  $$ |$$ |  $$ |$$ |  $$ |
+        $$ \$$$  $$ |$$ |  $$ |$$ |  $$ |$$ |  $$ |
+        $$ |\$  /$$ |$$ |  $$ |$$ |  $$ |$$ |  $$ |
+        $$ | \_/ $$ | $$$$$$  | $$$$$$  |$$$$$$$  |
+        \__|     \__| \______/  \______/ \_______/
+    */
+
+
+    moodModeButton.addEventListener("click", async _ => {
+        let playlist = await apiFetch("/mood/generate/" + playedSongUUID);
+        playlist = playlist.map(x => x.uuid);
+        playlist.unshift(playedSongUUID);
+        setPlaylist(playlist);
+
+        let vinyl = moodModeButton.querySelector("svg")
+        vinyl.style.transition = "all 300ms";
+        vinyl.style.color = "#F99";
+        await sleep(300);
+        await vinyl.animateAsync([
+            {filter: "hue-rotate(0deg)"},
+            {filter: "hue-rotate(360deg)"},
+        ], {duration: 500});
+        vinyl.style.color = "white";
+    });
 
 
 </script>

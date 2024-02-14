@@ -17,6 +17,10 @@
             <span>Password</span>
             <input type="password" name="password">
         </label>
+        <label class="flex-row align-center">
+            <input type="checkbox" name="remember-me">
+            Remember me
+        </label>
         <button class="button blue">Enter</button>
     </form>
 </body>

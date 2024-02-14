@@ -1,7 +1,9 @@
 <section id="screenSaver">
     <img id="screenSaverBackground">
     <section id="screenSaverContent" class="flex-column align-center">
-        <img id="screenSaverCover" style="box-shadow: var(--track-color) 0px 0px 6px">
+        <section id="vinylSection">
+            <img id="screenSaverCover" style="box-shadow: var(--track-color) 0px 0px 6px">
+        </section>
         <section class="flex-column align-center gap-0" id="screenSaverInfo"></section>
 
     </section>
@@ -93,6 +95,24 @@
             <small>${track.album.data.name}</small>
             <small>${track.data.artist}</small>
         `
-    })
+    });
+
+    document.addEventListener("DOMContentLoaded", _ => {
+        audioPlayer.addEventListener("play", ()=>{
+            screenSaverCover.classList.add("playing")
+        })
+        audioPlayer.addEventListener("playing", ()=>{
+            screenSaverCover.classList.add("playing")
+        })
+        audioPlayer.addEventListener("pause", ()=>{
+            screenSaverCover.classList.remove("playing")
+        })
+        audioPlayer.addEventListener("ended", () => {
+            screenSaverCover.classList.remove("playing")
+        })
+    });
+
+
+
 
 </script>

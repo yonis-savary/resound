@@ -5,7 +5,7 @@
     {
         await changePageContentTo(`
         <section class="flex-column gap-7">
-            <section class="flex-row gap-7">
+            <section class="flex-row flex-wrap gap-7">
                 <span
                     class="svg-link"
                     onclick="displayFullGallery()"
@@ -81,7 +81,7 @@
     {
         let album = (await apiRead("album", {uuid}))[0];
         await changePageContentTo(`
-            <section class="flex-row align-start">
+            <section class="flex-row flex-wrap align-start">
                 <img src="${albumCover(uuid)}" album="${uuid}" class="album-cover big">
 
                 <section class="flex-column gap-5 padding-left-5 fill-top fill-bottom">

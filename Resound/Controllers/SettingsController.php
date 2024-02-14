@@ -42,6 +42,7 @@ class SettingsController
 
     public static function discover()
     {
+        set_time_limit(600);
         TagController::extractLibraryTags();
 
         $original = getcwd();

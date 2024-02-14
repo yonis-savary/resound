@@ -6,6 +6,7 @@ use Sharp\Classes\Web\Controller;
 use Sharp\Classes\Web\Route;
 use Sharp\Classes\Web\Router;
 use Resound\Middlewares\IsLogged;
+use SharpExtensions\RemindMe\Middlewares\RememberUser;
 
 class SiteController
 {
@@ -14,7 +15,7 @@ class SiteController
     public static function declareRoutes(Router $router)
     {
         $router->addGroup(
-            ["middlewares" => IsLogged::class],
+            ["middlewares" => [RememberUser::class, IsLogged::class]],
 
             Route::view("/", "app")
         );

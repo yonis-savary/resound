@@ -9,6 +9,7 @@ use Sharp\Classes\Web\Controller;
 use Sharp\Classes\Web\Route;
 use Sharp\Classes\Web\Router;
 use Resound\Classes\Straws\UserUUID;
+use SharpExtensions\RemindMe\Components\RemindMe;
 
 class AuthenticationController
 {
@@ -30,6 +31,9 @@ class AuthenticationController
             $request->params("password")
         )) return Response::redirect("/login");
 
+        if ($request->params("remember-me") === "on")
+            RemindMe::getInstance()->remindLoggedUser();
+
         $user = Authentication::getInstance()->getUser();
         UserUUID::set($user["data"]["uuid"]);
 
@@ -39,6 +43,7 @@ class AuthenticationController
     public static function logout()
     {
         UserUUID::unset();
+        RemindMe::getInstance()->forgetLoggedUser();
         Authentication::getInstance()->logout();
         return Response::redirect("/");
     }

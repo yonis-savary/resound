@@ -328,12 +328,44 @@ body
     color: white
 }
 
+@keyframes spinning {
+    from { rotate: 0deg; }
+    to { rotate: 360deg; }
+}
+
 #screenSaverCover
 {
     min-width: 128px;
     width: 30vw;
     max-width: 512px;
-    border-radius: 12px;
+    aspect-ratio: 1/1;
+    border-radius: 100%;
+    animation: spinning infinite 12s linear;
+}
+
+#screenSaverCover:not(.playing)
+{
+    animation-play-state: paused;
+}
+
+#vinylSection
+{
+    position: relative;
+}
+
+#vinylSection::after
+{
+    position: absolute;
+    content: '';
+    width: 8%;
+    height: 8%;
+    border-radius: 100%;
+
+    background: black;
+    border: solid 1px #777;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 
