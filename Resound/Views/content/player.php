@@ -539,17 +539,15 @@
         {
             clearTimeout(handleMoodLauncherTimeout);
             handleMoodLauncherTimeout = null;
-            console.log("MOOD LAUNCHED")
             moodModeButton.click();
             return;
         }
 
-        console.log("MOOD TIMEOUT")
         handleMoodLauncherTimeout = setTimeout(_ => {
             clearTimeout(handleMoodLauncherTimeout);
             handleMoodLauncherTimeout = null;
             gotoNextSong();
-        }, 800);
+        }, 1000);
     }
 
 
@@ -569,7 +567,7 @@
             clearTimeout(handleShuffleLauncherTimeout);
             handleShuffleLauncherTimeout = null;
             gotoPreviousSong();
-        }, 800);
+        }, 1000);
     }
 
 
