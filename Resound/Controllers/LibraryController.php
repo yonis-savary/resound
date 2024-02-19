@@ -20,7 +20,6 @@ use Resound\Models\Album;
 use Resound\Models\Artist;
 use Resound\Models\TagAnomaly;
 use Resound\Models\Track;
-use ZipArchive;
 
 class LibraryController
 {
@@ -31,24 +30,23 @@ class LibraryController
         # Making getAlbumCover public makes it accessible to mediaSession softwares/extensions
         $router->addGroup(
             ["path" => "api/library"],
-
             Route::get("/album-cover/{uuid:albumUUID}", [self::class, "getAlbumCover"]),
-
-            Route::post("/play-list-register", [self::class, "registerPlayList"]),
-            Route::get("/play-list-get", [self::class, "getPlayList"]),
-
-            Route::post("/player-register-state", [self::class, "registerPlayerState"]),
-            Route::get("/player-get-state", [self::class, "getPlayerState"]),
         );
 
         $router->addGroup(
             ["path" => "api/library", "middlewares" => IsLogged::class],
 
             Route::get("/last-additions", [self::class, "getLastAdditions"]),
-            Route::get("/most-listened", [self::class, "getMostListened"]),
-            Route::get("/random-all", [self::class, "getRandomTrackList"]),
-            Route::get("/genres-list", [self::class, "getGenreHTML"]),
-            Route::get("/years-list", [self::class, "getYearsHTML"]),
+            Route::get("/most-listened",  [self::class, "getMostListened"]),
+            Route::get("/random-all",     [self::class, "getRandomTrackList"]),
+            Route::get("/genres-list",    [self::class, "getGenreHTML"]),
+            Route::get("/years-list",     [self::class, "getYearsHTML"]),
+
+            Route::post("/play-list-register", [self::class, "registerPlayList"]),
+            Route::get ("/play-list-get",       [self::class, "getPlayList"]),
+
+            Route::post("/player-register-state", [self::class, "registerPlayerState"]),
+            Route::get ("/player-get-state",       [self::class, "getPlayerState"]),
         );
 
         $router->groupCallback(
@@ -84,35 +82,31 @@ class LibraryController
 
     public static function getLastAdditions()
     {
-        $lastAlbums = Database::getInstance()->query(
+        $lastAlbums = ObjectArray::fromQuery(
             "SELECT DISTINCT album
             FROM track
             ORDER BY edition_date DESC
             LIMIT 10
-        ");
+        ")->collect();
 
         if (!count($lastAlbums))
             return [];
 
-        $lastAlbums = array_map(fn($x) => $x["album"], $lastAlbums);
-
         return Album::select()->whereSQL("album.uuid IN {}", [$lastAlbums])->fetch();
-
     }
 
     public static function getMostListened()
     {
-        return ObjectArray::fromArray(query(
-            "SELECT DISTINCT album, COUNT(user_listening.id)
+        return ObjectArray::fromQuery(
+            "SELECT DISTINCT album, COUNT(user_listening.id) as listening_count
             FROM track
             JOIN user_listening ON track = track.uuid AND user = {}
             WHERE user_listening.timestamp > DATE_SUB(NOW(), INTERVAL 1 MONTH)
             GROUP BY track.album
-            ORDER BY COUNT(user_listening.id) DESC
+            ORDER BY listening_count DESC
             LIMIT 10
         ", [UserUUID::get()])
-        )
-        ->map(fn($x) => Album::findId($x["album"]))
+        ->map(fn($x) => Album::findId($x))
         ->collect()
         ;
     }
@@ -140,28 +134,26 @@ class LibraryController
 
     public static function getRandomTrackList()
     {
-        return ObjectArray::fromArray(Database::getInstance()->query(
+        return ObjectArray::fromQuery(
             "SELECT uuid
             FROM track
             ORDER BY RAND()
             LIMIT 100
-        "))->map(fn($x) => $x["uuid"])->collect();
+        ")->collect();
     }
 
     public static function getGenreHTML()
     {
-        return ObjectArray::fromArray(query("SELECT DISTINCT genre FROM album ORDER BY genre"))
-        ->map(fn($x) => $x["genre"])
+        return ObjectArray::fromQuery("SELECT DISTINCT genre FROM album ORDER BY genre")
+        ->filter()
         ->map(function($genre) {
             return [
                 $genre,
-                ObjectArray::fromArray(query("SELECT uuid FROM album WHERE genre = {}", [$genre]))
-                ->map(fn($x) => $x["uuid"])
+                ObjectArray::fromQuery("SELECT uuid FROM album WHERE genre = {}", [$genre])
                 ->map(fn($uuid) => "<img src='/api/library/album-cover/$uuid' class='album-cover small'>")
                 ->collect()
             ];
         })
-        ->filter(fn($data) => $data[0] !== null)
         ->map(function($data){
             list($genre, $albums) = $data;
             return "
@@ -181,18 +173,16 @@ class LibraryController
 
     public static function getYearsHTML()
     {
-        return ObjectArray::fromArray(query("SELECT DISTINCT release_year FROM album ORDER BY release_year"))
-        ->map(fn($x) => $x["release_year"])
+        return ObjectArray::fromQuery("SELECT DISTINCT release_year FROM album ORDER BY release_year")
+        ->filter()
         ->map(function($year) {
             return [
                 $year,
-                ObjectArray::fromArray(query("SELECT uuid FROM album WHERE release_year = {}", [$year]))
-                ->map(fn($x) => $x["uuid"])
+                ObjectArray::fromQuery("SELECT uuid FROM album WHERE release_year = {}", [$year])
                 ->map(fn($uuid) => "<img src='/api/library/album-cover/$uuid' class='album-cover small'>")
                 ->collect()
             ];
         })
-        ->filter(fn($data) => $data[0] !== null)
         ->map(function($data){
             list($year, $albums) = $data;
             return "

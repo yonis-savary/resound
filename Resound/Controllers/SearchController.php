@@ -28,9 +28,7 @@ class SearchController
 
     public static function search(Request $request)
     {
-        $object = $request->params("object");
-
-        if (!$object)
+        if (!$object = $request->params("object"))
             return Response::json("'object' parameter needed", 500);
 
         $words = ObjectArray::fromExplode(" ", $object);

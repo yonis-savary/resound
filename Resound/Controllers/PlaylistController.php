@@ -26,26 +26,28 @@ class PlaylistController
             ["path" => "api", "middlewares" => IsLogged::class],
 
             function(){
+
+                // Allow users to edit only their playlists
                 Autobahn::getInstance()->all(Playlist::class,
                     [fn(array &$params) => $params["user"] = UserUUID::get()],
                     [fn(array $object) => $object["user"] === UserUUID::get()],
-                    [fn(DatabaseQuery &$query) => $query->where("user", UserUUID::get()) ],
+                    [],
                     [fn(DatabaseQuery &$query) => $query->where("user", UserUUID::get()) ],
                     [fn(DatabaseQuery &$query) => $query->where("user", UserUUID::get()) ]
                 );
             }
         );
 
-
         $router->addGroup(
             ["path" => "api/playlists", "middlewares" => IsLogged::class],
 
-            Route::post("/{uuid:playlist}/add-album/{album}", [self::class, "addAlbum"]),
-            Route::post("/{uuid:playlist}/add-track/{track}", [self::class, "addTrack"]),
+            Route::post("/{uuid:playlist}/add-album/{album}",     [self::class, "addAlbum"]),
+            Route::post("/{uuid:playlist}/add-track/{track}",     [self::class, "addTrack"]),
             Route::post("/{uuid:playlist}/remove-track/{bindId}", [self::class, "removeTrack"]),
-            Route::post("/{uuid:playlist}/reorder", [self::class, "reOrderTracks"]),
-            Route::get ("/{uuid:playlist}/covers", [self::class, "getCovers"]),
-            Route::get ("/{uuid:playlist}/content", [self::class, "getContent"]),
+            Route::post("/{uuid:playlist}/reorder",               [self::class, "reOrderTracks"]),
+            Route::get ("/{uuid:playlist}/covers",                [self::class, "getCovers"]),
+            Route::get ("/{uuid:playlist}/content",               [self::class, "getContent"]),
+
             Route::get ("/popular", [self::class, "getPopularPlaylists"]),
         );
     }
@@ -74,7 +76,10 @@ class PlaylistController
 
     public static function removeTrack(Request $request, string $playlist, int $bindId)
     {
-        $exists = Playlist::select()->where("uuid", $playlist)->where("user", UserUUID::get())->first();
+        $exists = Playlist::select()
+        ->where("uuid", $playlist)
+        ->where("user", UserUUID::get())
+        ->first();
 
         if (!$exists)
             return Response::json("Playlist not found", 404);
@@ -129,7 +134,7 @@ class PlaylistController
      */
     public static function getCovers(Request $request, string $playlist)
     {
-        return ObjectArray::fromArray(Database::getInstance()->query(
+        return ObjectArray::fromQuery(
             "SELECT album, COUNT(track.uuid)
             FROM playlist_track
             JOIN track ON track = track.uuid
@@ -137,8 +142,7 @@ class PlaylistController
             GROUP BY track.album
             ORDER BY COUNT(track.uuid) DESC
             LIMIT 4
-        ", [$playlist]))
-        ->map(fn($x) => $x["album"])
+        ", [$playlist])
         ->map(fn($album) => "<img src='/api/library/album-cover/$album'>")
         ->join("");
     }
@@ -156,13 +160,13 @@ class PlaylistController
 
         $order = join("\n", $order);
 
-            Database::getInstance()->query(
-                "UPDATE playlist_track
-                SET position = CASE
-                    $order
-                END
-                WHERE playlist = {}
-            ", [$playlist]);
+        Database::getInstance()->query(
+            "UPDATE playlist_track
+            SET position = CASE
+                $order
+            END
+            WHERE playlist = {}
+        ", [$playlist]);
 
         return "OK";
     }

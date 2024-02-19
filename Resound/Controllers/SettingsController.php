@@ -24,12 +24,12 @@ class SettingsController
         $router->addGroup(
             ["path" => "api", "middlewares" => IsLogged::class],
 
-            Route::get("/settings/ftp-test", [self::class, "testFtpConnection"]),
-            Route::get("/settings/ftp-get-configuration", [self::class, "getFtpConfig"]),
+            Route::get ("/settings/ftp-test",                   [self::class, "testFtpConnection"]),
+            Route::get ("/settings/ftp-get-configuration",      [self::class, "getPublicFTPConfig"]),
             Route::post("/settings/ftp-register-configuration", [self::class, "replaceFtpConfig"]),
 
-            Route::get("/settings/to-discover", [self::class, "toDiscover"]),
-            Route::get("/settings/discover", [self::class, "discover"]),
+            Route::get("/settings/to-discover",   [self::class, "toDiscover"]),
+            Route::get("/settings/discover",      [self::class, "discover"]),
             Route::get("/settings/reset-library", [self::class, "resetLibrary"])
         );
     }
@@ -48,7 +48,15 @@ class SettingsController
         $original = getcwd();
 
         chdir(Autoloader::projectRoot());
-        shell_exec("php do extract-all-tags >/dev/null 2>/dev/null &");
+
+        ob_start();
+
+        if (str_starts_with(PHP_OS, "WIN"))
+            shell_exec("START /B php do extract-all-tags");
+        else
+            shell_exec("php do extract-all-tags &");
+
+        ob_clean();
 
         chdir($original);
 
@@ -63,7 +71,7 @@ class SettingsController
         return "OK";
     }
 
-    public static function getFtpConfig()
+    public static function getPublicFTPConfig()
     {
         $config = Configuration::getInstance()->get("library", []);
         $config["password"] = null;

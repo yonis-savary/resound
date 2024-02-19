@@ -29,7 +29,6 @@ class TagController
         return self::$logger;
     }
 
-
     public static function getQueueProcessCapacity(): int
     {
         return 30;
@@ -91,7 +90,7 @@ class TagController
         $library = LibraryController::getLibraryStorage();
         $libraryPath = $library->getRoot();
 
-        /** Serve as a fallback if the position tag is not set ! */
+        // Serve as a fallback if the position tag is not set !
         $position = 0;
 
         foreach ($files as $missingFile)

@@ -7,8 +7,6 @@ use Sharp\Classes\Web\Controller;
 use Sharp\Classes\Web\Router;
 use Resound\Middlewares\IsLogged;
 use Resound\Models\EmbeddedMedia;
-use Resound\Models\EmbeddedPlaylist;
-use Resound\Models\WebRadio;
 
 class EmbeddedController
 {
