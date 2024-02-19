@@ -335,12 +335,29 @@ body
 
 #screenSaverCover
 {
-    min-width: 128px;
+    min-width: 256px;
     width: 30vw;
     max-width: 512px;
     aspect-ratio: 1/1;
     border-radius: 100%;
     animation: spinning infinite 12s linear;
+    object-fit: cover;
+}
+
+@media only screen and (max-width: 1000px) {
+
+    #screenSaverCover
+    {
+        min-width: 0px !important;
+        width: 50% !important;
+        max-width: 100% !important;
+    }
+
+    #vinylSection::after
+    {
+        width: 24px !important;
+        height: 24px !important;
+    }
 }
 
 #screenSaverCover:not(.playing)
@@ -351,6 +368,9 @@ body
 #vinylSection
 {
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #vinylSection::after
