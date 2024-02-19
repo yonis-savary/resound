@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./Resound/Assets/resound.png" alt="Resound logo" width="128" height="128">
+    <img src="./Resound/Assets/img/resound.png" alt="Resound logo" width="128" height="128">
 </p>
 
 # Re-Sound - Remote music library \[WIP]
@@ -24,7 +24,7 @@ The purpose of Re-Sound is to store all of your files on one device, and use thi
 - MediaSession & Media signal support (Play/Pause, Next, Previous...)
 
 <p align="center">
-    <img src="./Resound/Assets/resound-preview.jpg" alt="Resound User Interface Preview" width="512">
+    <img src="./Resound/Assets/img/resound-preview.jpg" alt="Resound User Interface Preview" width="512">
 </p>
 
 
