@@ -78,6 +78,22 @@ When connected to Re-Sound:
 
 ## More
 
+### Mood mode
+
+Click on the 'mood-mode' button (vinyl icon) next to the 'skip' button to create a new tracklist from currently played song,
+next songs are now of the same artist/genre !
+
+
+### Advanced Bluetooth/Hands-Free control
+
+If your audio device has controls with the 'skip' and 'previous' buttons :
+- Press 'previous' two times quickly to shuffle through your entire library
+- Press 'skip' two times quickly to enable mood-mode !
+
+This way, you can quickly choose what you want to listen without looking at your library
+
+### CRON
+
 You can add a [CRON](https://en.wikipedia.org/wiki/Cron) job to discover new files instead of clicking `'Discover new tracks'` button every time music is added to your library
 
 ```cron

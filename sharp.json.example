@@ -1,4 +1,18 @@
 {
+    "asset-server": {
+        "max-age": 86400
+    },
+    "applications": [
+        "SharpExtensions/AssetsKit",
+        "SharpExtensions\/RemindMe",
+        "Resound"
+    ],
+    "authentication": {
+        "model": "Resound\\Models\\User",
+        "login-field": "login",
+        "password-field": "password",
+        "session-duration": 3600
+    },
     "database": {
         "driver": "mysql",
         "database": "resound",
@@ -7,16 +21,6 @@
         "user": "root",
         "password": "password"
     },
-    "authentication": {
-        "model": "Resound\\Models\\User",
-        "login-field": "login",
-        "password-field": "password",
-        "session-duration": 3600
-    },
-    "applications": [
-        "SharpExtensions/AssetsKit",
-        "Resound"
-    ],
     "library": {
         "url": "localhost",
         "username": "someuser",
