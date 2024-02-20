@@ -30,6 +30,7 @@ class SettingsController
 
             Route::get("/settings/to-discover",   [self::class, "toDiscover"]),
             Route::get("/settings/discover",      [self::class, "discover"]),
+            Route::get("/settings/parse-tags",      [self::class, "parseTags"]),
             Route::get("/settings/reset-library", [self::class, "resetLibrary"])
         );
     }
@@ -45,6 +46,12 @@ class SettingsController
         set_time_limit(600);
         TagController::extractLibraryTags();
 
+        return "OK";
+    }
+
+    public static function parseTags()
+    {
+        set_time_limit(600);
         $original = getcwd();
 
         chdir(Autoloader::projectRoot());

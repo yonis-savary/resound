@@ -69,15 +69,24 @@ class LibraryController
     {
         $libraryConfig = Configuration::getInstance()->get("library", []);
 
-        return new Storage(
-            $libraryConfig["path"],
-            new FTPDriver(
-                $libraryConfig["url"],
-                $libraryConfig["username"],
-                $libraryConfig["password"],
-                $libraryConfig["post"] ?? 21,
-            )
-        );
+        $driver = $libraryConfig["driver"] ?? "ftp";
+
+        switch ($driver)
+        {
+            case "ftp":
+                return new Storage(
+                    $libraryConfig["path"],
+                    new FTPDriver(
+                        $libraryConfig["url"],
+                        $libraryConfig["username"],
+                        $libraryConfig["password"],
+                        $libraryConfig["post"] ?? 21,
+                    )
+                );
+            case "local":
+                return new Storage($libraryConfig["path"]);
+        }
+
     }
 
     public static function getLastAdditions()
@@ -150,7 +159,7 @@ class LibraryController
             return [
                 $genre,
                 ObjectArray::fromQuery("SELECT uuid FROM album WHERE genre = {}", [$genre])
-                ->map(fn($uuid) => "<img src='/api/library/album-cover/$uuid' class='album-cover small'>")
+                ->map(fn($uuid) => "<img loading='lazy' src='/api/library/album-cover/$uuid' class='album-cover small'>")
                 ->collect()
             ];
         })
@@ -179,7 +188,7 @@ class LibraryController
             return [
                 $year,
                 ObjectArray::fromQuery("SELECT uuid FROM album WHERE release_year = {}", [$year])
-                ->map(fn($uuid) => "<img src='/api/library/album-cover/$uuid' class='album-cover small'>")
+                ->map(fn($uuid) => "<img loading='lazy' src='/api/library/album-cover/$uuid' class='album-cover small'>")
                 ->collect()
             ];
         })

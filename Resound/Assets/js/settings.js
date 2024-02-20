@@ -122,9 +122,15 @@ async function refreshToDiscoverCount()
 async function discover()
 {
     await apiFetch("/settings/discover");
+
+
+
     notifySuccess("Discovery launched", "Your new tracks should appear in a few seconds");
     discoverInterval = setInterval(refreshToDiscoverCount, 2000);
     discoverButton.fadeOut();
+
+    await apiFetch("/settings/parse-tags");
+
 }
 
 async function resetLibrary()

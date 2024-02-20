@@ -93,7 +93,7 @@ async function openAlbum(uuid)
                 <section class="flex-column gap-0">
                     <span>${prettyDuration(album.data.cached_total_duration_seconds)}</span>
                     <span>${album.data.cached_track_number} tracks</span>
-                    <span>${album.data.release_year}</span>
+                    <a class="clickable underline" onclick="openYear(${album.data.release_year})">${album.data.release_year}</a>
                 </section>
             </section>
 
@@ -137,7 +137,7 @@ async function openAlbum(uuid)
                     ${albumCoverImg(x.album, "small")}
                     <section class="flex-column gap-0">
                         <b>${x.data.name}</b>
-                        <small>${x.album.data.name}</small>
+                        <small>${x.data.artist}</small>
                     </section>
                 </section>
             </td>

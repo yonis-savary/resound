@@ -43,7 +43,7 @@ async function displaySearchPage()
                         <td>
                             <section track="${x.data.uuid}" class="flex-column gap-0">
                                 <b class="clickable" onclick="setPlaylist('${x.data.uuid}')">${x.data.name}</b>
-                                <small class="clickable" onclick="openArtist('${x.album.data.artist}')">${x.album.artist.data.name}</small>
+                                <small class="clickable" onclick="openArtist('${x.album.data.artist}')">${x.data.artist}</small>
                             </section>
                         </td>
                     </tr>

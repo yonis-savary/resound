@@ -414,6 +414,16 @@ body
     background: linear-gradient(to bottom, #000A, #0000);
 }
 
+.navbar a
+{
+    padding: .5em;
+}
+
+.navbar a:hover
+{
+    color: var(--track-color, --blue) !important;
+}
+
 #player,
 #pageContent
 {
