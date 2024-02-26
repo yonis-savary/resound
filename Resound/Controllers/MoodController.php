@@ -17,27 +17,27 @@ class MoodController
         $router->addGroup(
             ["path" => "api/mood", "middlewares" => IsLogged::class],
 
-            Route::get("/generate/{uuid:songUUID}", [self::class, "generateMoodPlaylist"])
+            Route::get("/generate/{int:songID}", [self::class, "generateMoodPlaylist"])
         );
     }
 
-    public static function generateMoodPlaylist($_, string $baseSongUUID)
+    public static function generateMoodPlaylist($_, string $baseSongID)
     {
-        $song = Track::findId($baseSongUUID);
+        $song = Track::findId($baseSongID);
         $artistName = $song["album"]["artist"]["data"]["name"];
         $genre = $song["album"]["data"]["genre"];
 
         return query (
             "SELECT
-                track.uuid,
+                track.id,
                 (track.artist LIKE '%{}%') artist_likeness,
                 (genre LIKE '%{}%') as genre_likeness
             FROM track
-            JOIN album ON album = album.uuid
-            JOIN artist ON album.artist = artist.uuid
-            WHERE track.uuid <> {}
-            ORDER BY artist_likeness DESC, genre_likeness DESC, RAND()
+            JOIN album ON album = album.id
+            JOIN artist ON album.artist = artist.id
+            WHERE track.id <> {}
+            ORDER BY artist_likeness DESC, genre_likeness DESC, RANDOM()
             LIMIT 100
-        ", [$artistName, $genre, $baseSongUUID]);
+        ", [$artistName, $genre, $baseSongID]);
     }
 }

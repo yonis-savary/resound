@@ -1,21 +1,22 @@
 CREATE TABLE user (
-    uuid VARCHAR(36) DEFAULT UUID() PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     login VARCHAR(200) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL
 );
-
+-- DELIMITER
 
 
 CREATE TABLE artist (
-    uuid VARCHAR(36) DEFAULT UUID() PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(100) NOT NULL UNIQUE
 );
+-- DELIMITER
 
 
 
 CREATE TABLE album (
-    uuid VARCHAR(36) DEFAULT UUID() PRIMARY KEY,
-    artist VARCHAR(36) NOT NULL REFERENCES artist(uuid) ON DELETE CASCADE,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    artist INTEGER NOT NULL REFERENCES artist(id) ON DELETE CASCADE,
     name VARCHAR(100) NOT NULL,
     genre VARCHAR(100) NULL,
     release_year INT NULL,
@@ -27,13 +28,14 @@ CREATE TABLE album (
 
     UNIQUE(artist, name)
 );
+-- DELIMITER
 
 
 
 CREATE TABLE track (
-    uuid VARCHAR(36) DEFAULT UUID() PRIMARY KEY,
-    edition_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
-    album VARCHAR(36) NOT NULL REFERENCES album(uuid) ON DELETE CASCADE,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    edition_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    album INTEGER NOT NULL REFERENCES album(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     position INT NULL,
     artist VARCHAR(100) NULL,
@@ -44,54 +46,58 @@ CREATE TABLE track (
 
     UNIQUE(album, name)
 );
+-- DELIMITER
 
 
 
 CREATE TABLE playlist (
-    uuid VARCHAR(36) DEFAULT UUID() PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user VARCHAR(36) NOT NULL REFERENCES user(uuid) ON DELETE CASCADE,
+    user INTEGER NOT NULL REFERENCES user(id) ON DELETE CASCADE,
     name VARCHAR(100) NOT NULL,
     private BOOLEAN DEFAULT FALSE
 );
+-- DELIMITER
 
 
 
 CREATE TABLE playlist_track (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     position INT NULL,
-    playlist VARCHAR(36) REFERENCES playlist(uuid) ON DELETE CASCADE,
-    track VARCHAR(36) REFERENCES track(uuid) ON DELETE CASCADE
+    playlist INTEGER REFERENCES playlist(id) ON DELETE CASCADE,
+    track INTEGER REFERENCES track(id) ON DELETE CASCADE
 );
+-- DELIMITER
 
 
 
 CREATE TABLE user_listening (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
-    user VARCHAR(36) NOT NULL REFERENCES user(uuid) ON DELETE CASCADE,
-    track VARCHAR(36) NOT NULL REFERENCES track(uuid) ON DELETE CASCADE,
-    playlist VARCHAR(36) NULL REFERENCES playlist(uuid) ON DELETE SET NULL
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user INTEGER NOT NULL REFERENCES user(id) ON DELETE CASCADE,
+    track INTEGER NOT NULL REFERENCES track(id) ON DELETE CASCADE,
+    playlist INTEGER NULL REFERENCES playlist(id) ON DELETE SET NULL
 );
+-- DELIMITER
 
 
 
 CREATE TABLE embedded_media (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(100) NOT NULL UNIQUE,
     url VARCHAR(255) NOT NULL
 );
+-- DELIMITER
 
 
 
 CREATE TABLE tag_anomaly (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     filename VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL
 );
+-- DELIMITER
 
-
-DELIMITER //
 
 CREATE TRIGGER album_cached_data_update_on_insert
 AFTER insert ON track
@@ -100,9 +106,10 @@ BEGIN
         UPDATE album
         SET
             cached_total_duration_seconds = (SELECT SUM(duration_seconds) FROM track WHERE album = new.album),
-            cached_track_number = (SELECT COUNT(uuid) FROM track WHERE album = new.album)
-        WHERE uuid = new.album;
-END //
+            cached_track_number = (SELECT COUNT(id) FROM track WHERE album = new.album)
+        WHERE id = new.album;
+END;
+-- DELIMITER
 
 CREATE TRIGGER album_cached_data_update_on_update
 AFTER update ON track
@@ -110,10 +117,11 @@ FOR EACH ROW
 BEGIN
         UPDATE album
         SET
-            cached_total_duration_seconds = (SELECT SUM(duration_seconds) FROM track WHERE album = album.uuid),
-            cached_track_number = (SELECT COUNT(uuid) FROM track WHERE album = album.uuid)
-        WHERE uuid IN (old.album, new.album);
-END //
+            cached_total_duration_seconds = (SELECT SUM(duration_seconds) FROM track WHERE album = album.id),
+            cached_track_number = (SELECT COUNT(id) FROM track WHERE album = album.id)
+        WHERE id IN (old.album, new.album);
+END;
+-- DELIMITER
 
 CREATE TRIGGER album_cached_data_update_on_delete
 AFTER delete ON track
@@ -122,8 +130,7 @@ BEGIN
         UPDATE album
         SET
             cached_total_duration_seconds = (SELECT SUM(duration_seconds) FROM track WHERE album = old.album),
-            cached_track_number = (SELECT COUNT(uuid) FROM track WHERE album = old.album)
-        WHERE uuid = old.album;
-END //
-
-DELIMITER ;
+            cached_track_number = (SELECT COUNT(id) FROM track WHERE album = old.album)
+        WHERE id = old.album;
+END;
+-- DELIMITER

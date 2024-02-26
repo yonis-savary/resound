@@ -2,7 +2,7 @@
 
 namespace Resound\Classes\Straws;
 
-class UserUUID
+class UserID
 {
     use \Sharp\Classes\Extras\SessionStraw;
 }

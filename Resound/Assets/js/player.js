@@ -18,10 +18,10 @@ if (isMobile())
 }
 
 
-let playerPlaylistUUID = null;
+let playerPlaylistID = null;
 
 let playlistIndex = 0;
-let playlistUUIDList = [];
+let playlistIDList = [];
 let playlistSize = -1;
 let audioPlayer = new Audio();
 
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let playerData = await apiFetch("/library/play-list-get")
     if (!playerData)
         return;
-    let { songs, playlistUUID } = playerData;
+    let { songs, playlistID } = playerData;
 
     let index = 0;
     let time = 0;
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     playerPauseButton.hide();
 
-    setPlaylist(songs, index, playlistUUID, false);
+    setPlaylist(songs, index, playlistID, false);
     audioPlayer.pause();
 
     audioPlayer.oncanplay = _ => {
@@ -82,29 +82,29 @@ $$ |      $$$$$$$$\ $$ |  $$ |   $$ |    $$$$$$$$\ $$$$$$\ \$$$$$$  |  $$ |
 
 */
 
-async function setPlaylist(songs, startIndex = 0, playlistUUID = null, autoplay = true)
+async function setPlaylist(songs, startIndex = 0, playlistID = null, autoplay = true)
 {
     if (!Array.isArray(songs))
         songs = [songs];
 
-    playerPlaylistUUID = playlistUUID;
-    playlistUUIDList = songs;
+    playerPlaylistID = playlistID;
+    playlistIDList = songs;
     playlistIndex = startIndex;
     playlistSize = songs.length;
 
-    await apiFetchJSON(`/library/play-list-register`, { songs, playlistUUID }, "POST");
-    playSong(playlistUUIDList[playlistIndex], autoplay);
+    await apiFetchJSON(`/library/play-list-register`, { songs, playlistID }, "POST");
+    playSong(playlistIDList[playlistIndex], autoplay);
 }
 
-let playedSongUUID = null;
-async function playSong(uuid, autoplay = true)
+let playedSongID = null;
+async function playSong(id, autoplay = true)
 {
-    if (playedSongUUID === uuid)
+    if (playedSongID === id)
         return;
-    playedSongUUID = uuid;
+    playedSongID = id;
 
-    let track = (await apiRead("track", { uuid }))[0];
-    apiFetch("/song/listen", { track: uuid, playlist: playerPlaylistUUID });
+    let track = (await apiRead("track", { id }))[0];
+    apiFetch("/song/listen", { track: id, playlist: playerPlaylistID });
 
     playerTrackCover.innerHTML = albumCoverImg(track.album, "small");
     playerTrackInfo.innerHTML = `
@@ -120,7 +120,7 @@ async function playSong(uuid, autoplay = true)
 
     document.dispatchEvent(new CustomEvent("songStartPlaying", { detail: { track } }));
     audioPlayer.currentTime = 0;
-    audioPlayer.src = `/api/song/read/` + uuid;
+    audioPlayer.src = `/api/song/read/` + id;
 
     if (autoplay)
         await audioPlayer.play();
@@ -138,7 +138,7 @@ async function gotoNextSong()
         return false;
 
     playlistIndex++;
-    playSong(playlistUUIDList[playlistIndex])
+    playSong(playlistIDList[playlistIndex])
     return true;
 }
 
@@ -148,7 +148,7 @@ async function gotoPreviousSong()
         return false;
 
     playlistIndex--;
-    playSong(playlistUUIDList[playlistIndex])
+    playSong(playlistIDList[playlistIndex])
     return true;
 }
 
@@ -220,7 +220,7 @@ audioPlayer.addEventListener("ended", _ => {
     \______/  \______/     \_/    \________|\__|  \__|
 */
 
-async function processAlbumVibrantColor(img, albumUUID, target = document.body)
+async function processAlbumVibrantColor(img, albumID, target = document.body)
 {
     function hslToHex(h, s, l) {
         l /= 100;
@@ -246,12 +246,12 @@ async function processAlbumVibrantColor(img, albumUUID, target = document.body)
         .reverse()
 
     if (!colors.length)
-        return console.warn("No color found for album " + albumUUID);
+        return console.warn("No color found for album " + albumID);
 
     let accentColorHSL = `hsl(${colors[0][0] * 360}, 80%, 60%)`
     let accentColorHex = hslToHex(colors[0][0] * 360, 80, 60);
 
-    apiUpdate("album", { uuid: albumUUID, accent_color_hex: accentColorHex });
+    apiUpdate("album", { id: albumID, accent_color_hex: accentColorHex });
 
     if (colors.length)
         target.style.setProperty(`--track-color`, accentColorHex);
@@ -259,7 +259,7 @@ async function processAlbumVibrantColor(img, albumUUID, target = document.body)
         target.style.removeProperty(`--track-color`);
 }
 
-async function setPageBackground(albumUUID)
+async function setPageBackground(albumID)
 {
     // Front fades into back image (new image)
 
@@ -269,7 +269,7 @@ async function setPageBackground(albumUUID)
     let loadPromise = new Promise(
         (resolve) => back.onload = _ => resolve()
     )
-    back.src = albumCover(albumUUID)
+    back.src = albumCover(albumID)
     await loadPromise;
 
     await front.animateAsync([
@@ -549,13 +549,13 @@ async function setMediaSession(track)
 
 function refreshTrackPlayingClassTracker()
 {
-    let uuid = playlistUUIDList[playlistIndex]
+    let id = playlistIDList[playlistIndex]
 
     pageContent.querySelectorAll(".playing").forEach(x => {
         x.classList.remove("playing");
     })
 
-    pageContent.querySelectorAll(`[track='${uuid}']`).forEach(x => {
+    pageContent.querySelectorAll(`[track='${id}']`).forEach(x => {
         x.classList.add("playing");
     })
 }
@@ -595,9 +595,9 @@ $$ | \_/ $$ | $$$$$$  | $$$$$$  |$$$$$$$  |
 
 
 moodModeButton.addEventListener("click", async _ => {
-    let playlist = await apiFetch("/mood/generate/" + playedSongUUID);
-    playlist = playlist.map(x => x.uuid);
-    playlist.unshift(playedSongUUID);
+    let playlist = await apiFetch("/mood/generate/" + playedSongID);
+    playlist = playlist.map(x => x.id);
+    playlist.unshift(playedSongID);
     setPlaylist(playlist);
 
     let vinyl = moodModeButton.querySelector("svg")

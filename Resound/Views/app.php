@@ -1,6 +1,6 @@
 <?php
 
-use Resound\Classes\Straws\UserUUID;
+use Resound\Classes\Straws\UserID;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +15,7 @@ use Resound\Classes\Straws\UserUUID;
 <body>
     <?= assetsKitJSBundle() ?>
 
-    <input type="hidden" id="userUUIDInput" value="<?= UserUUID::get() ?>">
+    <input type="hidden" id="userIDInput" value="<?= UserID::get() ?>">
 
     <?= script("utils.js") ?>
     <?= render("navbar") ?>

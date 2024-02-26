@@ -60,9 +60,9 @@ async function displayPlaylistMenu()
 
     const renderPlaylist = playlist => `
     <section
-        playlist="${playlist.data.uuid}"
+        playlist="${playlist.data.id}"
         class="flex-column gap-1"
-        onclick="openPlaylist('${playlist.data.uuid}')"
+        onclick="openPlaylist('${playlist.data.id}')"
     >
         <section class="album-folder"></section>
         <b>${playlist.data.name}</b>
@@ -111,18 +111,18 @@ async function displayPlaylistMenu()
     \_______/ \________|   \__|   \__|  \__|\______|\________|
     */
 
-let selectedPlaylistUUID = null;
+let selectedPlaylistID = null;
 let openedPlaylistTracks = []
 
-async function openPlaylist(uuid)
+async function openPlaylist(id)
 {
-    selectedPlaylistUUID = uuid;
+    selectedPlaylistID = id;
 
-    let { tracks, playlist } = await apiFetch(`/playlists/${uuid}/content`);
+    let { tracks, playlist } = await apiFetch(`/playlists/${id}/content`);
 
     openedPlaylistTracks = tracks;
 
-    let isAuthor = playlist.data.user === userUUID();
+    let isAuthor = playlist.data.user === userID();
 
     await changePageContentTo(`
         <section class="flex-row align-center justify-between">
@@ -149,7 +149,7 @@ async function openPlaylist(uuid)
 
     tracks = tracks.sortByKey(x => x.data.position);
     playlistContent.innerHTML = tracks.map(x => `
-    <tr track="${x.track.data.uuid}" bind="${x.data.id}">
+    <tr track="${x.track.data.id}" bind="${x.data.id}">
         <td><span>${x.data.position ?? "-"}</span></td>
         <td>${albumCoverImg(x.track.album, "thumbnail")}</td>
         <td>
@@ -170,11 +170,11 @@ async function openPlaylist(uuid)
     </tr>
     `).join("")
 
-    let uuids = tracks.map(x => x.track.data.uuid);
+    let ids = tracks.map(x => x.track.data.id);
 
     playlistContent.querySelectorAll("[track]").forEach((element, id) => {
         element.addEventListener("click", () => {
-            setPlaylist(uuids, id, selectedPlaylistUUID);
+            setPlaylist(ids, id, selectedPlaylistID);
         })
     })
 
@@ -182,7 +182,7 @@ async function openPlaylist(uuid)
         setPlaylist(
             shuffleArray(openedPlaylistTracks).map(x => x.data.track),
             0,
-            selectedPlaylistUUID
+            selectedPlaylistID
         )
     });
 
@@ -221,7 +221,7 @@ async function openPlaylist(uuid)
             let binds = Array.from(playlistContent.querySelectorAll("[bind]")).map(x => x.getAttribute("bind"));
             binds = JSON.stringify(binds);
 
-            await apiFetch(`/playlists/${selectedPlaylistUUID}/reorder`, {
+            await apiFetch(`/playlists/${selectedPlaylistID}/reorder`, {
                 order: binds
             }, "POST")
         });
@@ -231,8 +231,8 @@ async function openPlaylist(uuid)
 
 async function deleteTrackFromPlaylist(bindId)
 {
-    await apiFetch(`/playlists/${selectedPlaylistUUID}/remove-track/${bindId}`, {}, "POST");
-    openPlaylist(selectedPlaylistUUID)
+    await apiFetch(`/playlists/${selectedPlaylistID}/remove-track/${bindId}`, {}, "POST");
+    openPlaylist(selectedPlaylistID)
 }
 
 
@@ -272,7 +272,7 @@ async function refreshPlaylistsDropBoxes(playlists = null)
     playlists ??= await apiRead("playlist")
 
     playlistDropBoxes.innerHTML = playlists.map(x => `
-    <section class="card" playlist="${x.data.uuid}">
+    <section class="card" playlist="${x.data.id}">
         <section class="flex-row">
             <b>${x.data.name}</b>
         </section>

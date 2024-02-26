@@ -8,7 +8,7 @@ use Sharp\Classes\Http\Response;
 use Sharp\Classes\Web\Controller;
 use Sharp\Classes\Web\Route;
 use Sharp\Classes\Web\Router;
-use Resound\Classes\Straws\UserUUID;
+use Resound\Classes\Straws\UserID;
 use Resound\Middlewares\IsLogged;
 use Resound\Models\Track;
 use Resound\Models\UserListening;
@@ -22,14 +22,14 @@ class TrackController
         $router->addGroup(
             ["path" => "api", "middlewares" => IsLogged::class],
 
-            Route::get("/song/read/{uuid}", [self::class, "read"]),
+            Route::get("/song/read/{id}", [self::class, "read"]),
             Route::get("/song/listen", [self::class, "registerListening"]),
         );
     }
 
-    public static function read(Request $request, string $uuid)
+    public static function read(Request $request, string $id)
     {
-        if (!$track = Track::findId($uuid))
+        if (!$track = Track::findId($id))
             return Response::json("Track not found !");
 
         $content = LibraryController::getLibraryStorage()->read($track["data"]["path"]);
@@ -46,7 +46,7 @@ class TrackController
     public static function registerListening(Request $request)
     {
         UserListening::insertArray([
-            "user"     => UserUUID::get(),
+            "user"     => UserID::get(),
             "track"    => $request->params("track"),
             "playlist" => $request->params("playlist")
         ]);

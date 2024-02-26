@@ -36,13 +36,23 @@ async function displaySettings()
 
         <hr>
 
-        <h2>File Transfer Protocol (FTP)</h2>
+        <h2>Library location</h2>
 
-        <span id="ftpState"></span>
+        <details>
+            <summary>Change Local disk Settings</summary>
+            <section class="flex-column">
+                <label class="form-section">
+                    <span>Path to Music Directory</span>
+                    <input type="text" id="libraryPath">
+                </label>
+                <button class="button orange secondary" id="librarySave" onclick="testAndSaveNewPath()">Test & Save new path</button>
+            </section>
+        </details>
 
         <details>
             <summary>Change FTP Settings</summary>
             <section class="flex-column">
+                <span id="ftpState"></span>
                 <label class="form-section">
                     <span>Host</span>
                     <input type="text" id="ftpHost">
@@ -56,7 +66,7 @@ async function displaySettings()
                     <input type="password" id="ftpPassword">
                 </label>
                 <label class="form-section">
-                    <span>Music Directory</span>
+                    <span>Music Directory (relative to FTP home)</span>
                     <input type="text" id="ftpDirectory">
                 </label>
                 <label class="form-section">
@@ -81,6 +91,7 @@ async function displaySettings()
 
     refreshFtpConnectionState();
     refreshFtpConfiguration();
+    refreshLocalConfiguration();
 }
 
 let discoverInterval = null;
@@ -95,7 +106,7 @@ async function refreshToDiscoverCount()
     let count = await apiFetch("/settings/to-discover")
     let old = parseInt(toDiscoverCount.innerText);
 
-    if (count === old)
+    if (count && count === old)
         return;
 
     if (old)
@@ -115,15 +126,21 @@ async function refreshToDiscoverCount()
     }
 
     if (!count)
-        clearInterval(discoverInterval);
+    {
+        discoverButton.fadeIn();
+        if (discoverInterval)
+        {
+            notifyInfo("End of analyse", "New tracks added");
+            clearInterval(discoverInterval);
+            discoverInterval = null;
+        }
+    }
 }
 
 
 async function discover()
 {
     await apiFetch("/settings/discover");
-
-
 
     notifySuccess("Discovery launched", "Your new tracks should appear in a few seconds");
     discoverInterval = setInterval(refreshToDiscoverCount, 2000);
@@ -203,4 +220,29 @@ async function testAndSaveNewFtp()
 
     }, _ => ftpSave.disabled = false)
 
+}
+
+
+async function refreshLocalConfiguration()
+{
+    let config = await apiFetch(`/settings/local-get-configuration`);
+    libraryPath.value = config.path ?? "";
+}
+
+async function testAndSaveNewPath()
+{
+    librarySave.disabled = true;
+
+    validate({
+        path: read(libraryPath).error("A Directory is needed").notNull(),
+    }, async form => {
+        let feedback = await apiFetch("/settings/local-register-configuration", form, "POST");
+        librarySave.disabled = false;
+
+        if (feedback === true)
+            return notifySuccess("New configuration saved !");
+
+        return alert("Could not register the configuration : " + feedback);
+
+    }, _ => librarySave.disabled = false)
 }

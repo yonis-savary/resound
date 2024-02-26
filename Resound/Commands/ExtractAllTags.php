@@ -5,6 +5,7 @@ namespace Resound\Commands;
 use Sharp\Classes\CLI\Args;
 use Sharp\Classes\CLI\Command;
 use Resound\Controllers\TagController;
+use Sharp\Classes\Data\ObjectArray;
 
 class ExtractAllTags extends Command
 {
@@ -14,7 +15,14 @@ class ExtractAllTags extends Command
 
         $storage = TagController::getQueueStorage();
 
-        while (!$storage->isEmpty())
-          TagController::processQueue();
+        do
+        {
+            TagController::processQueue();
+
+            $remains = ObjectArray::fromArray($storage->listFiles())
+            ->filter(fn($x) => !str_starts_with($x, "#~"))
+            ->collect();
+        }
+        while (count($remains));
     }
 }

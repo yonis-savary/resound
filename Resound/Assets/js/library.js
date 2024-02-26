@@ -75,12 +75,12 @@ document.addEventListener("DOMContentLoaded", _ => displayLibrary())
     \__|  \__|\________|\_______/  \______/ \__|     \__|
 */
 
-async function openAlbum(uuid)
+async function openAlbum(id)
 {
-    let album = (await apiRead("album", { uuid }))[0];
+    let album = (await apiRead("album", { id }))[0];
     await changePageContentTo(`
         <section class="flex-row flex-column-mobile align-start">
-            <img src="${albumCover(uuid)}" album="${uuid}" class="album-cover big">
+            <img src="${albumCover(id)}" album="${id}" class="album-cover big">
 
             <section class="flex-column gap-5 padding-left-5 fill-top fill-bottom">
                 <section class="flex-column gap-1">
@@ -98,7 +98,7 @@ async function openAlbum(uuid)
             </section>
 
             <section class="fill-left">
-                <!--a class="fg-white" href="/api/library/album/${album.data.uuid}/download">${svg("download")}</a-->
+                <!--a class="fg-white" href="/api/library/album/${album.data.id}/download">${svg("download")}</a-->
                 <section class="flex-column">
                     <section id="albumBookmarkSection"></section>
                 </section>
@@ -125,12 +125,12 @@ async function openAlbum(uuid)
     if (accentColor = album.data.accent_color_hex)
         pageContent.style.setProperty(`--track-color`, accentColor);
     else
-        processAlbumVibrantColor(pageContent.querySelector("img"), uuid, pageContent);
+        processAlbumVibrantColor(pageContent.querySelector("img"), id, pageContent);
 
-    apiRead("track", { album: uuid, _ignores: ["track&album&artist"] }).then(tracks => {
+    apiRead("track", { album: id, _ignores: ["track&album&artist"] }).then(tracks => {
         tracks = tracks.sortByKey(x => x.data.position);
         albumContent.innerHTML = tracks.map(x => `
-        <tr track="${x.data.uuid}">
+        <tr track="${x.data.id}">
             <td><span>${x.data.position ?? "-"}</span></td>
             <td>
                 <section class="flex-row align-center">
@@ -146,11 +146,11 @@ async function openAlbum(uuid)
         </tr>
         `).join("")
 
-        let uuids = tracks.map(x => x.data.uuid);
+        let ids = tracks.map(x => x.data.id);
 
         albumContent.querySelectorAll("[track]").forEach((element, id) => {
             element.addEventListener("click", () => {
-                setPlaylist(uuids, id);
+                setPlaylist(ids, id);
             })
         })
     })
@@ -184,9 +184,9 @@ async function openAlbum(uuid)
 
 let openedArtistTrackList = [];
 
-async function openArtist(uuid)
+async function openArtist(id)
 {
-    let artist = (await apiRead("artist", { uuid }))[0];
+    let artist = (await apiRead("artist", { id }))[0];
     await changePageContentTo(`
         <section class="flex-column gap-0">
             <h1 class="giant">${artist.data.name}</h1>
@@ -206,17 +206,12 @@ async function openArtist(uuid)
         </section>
     `)
 
-    apiRead("album", { artist: uuid }).then(async albums => {
+    apiRead("album", { artist: id }).then(async albums => {
         pageContent.querySelector("#albumList").innerHTML = albums.map(renderAlbumPreview).join("");
+    });
 
-        let tracks = [];
 
-        albums = albums.sortByKey(x => x.data.release_year);
-
-        for (let album of albums) {
-            let albumTracks = await apiRead("track", { album: album.data.uuid })
-            tracks.push(...albumTracks.sortByKey(x => x.data.position));
-        }
+    apiFetch(`/library/artist/${id}/tracks`).then(tracks => {
 
         openedArtistTrackList = tracks;
 
@@ -231,7 +226,7 @@ async function openArtist(uuid)
             </thead>
             <tbody>
             ${tracks.map((track, i) => `
-                <tr track="${track.data.uuid}" onclick="playArtistTrackList(${i})">
+                <tr track="${track.data.id}" onclick="playArtistTrackList(${i})">
                     <td>${track.data.position}</td>
                     <td>
                         <section class="flex-row align-center">
@@ -253,12 +248,12 @@ async function openArtist(uuid)
 
 async function playArtistTrackList(index = 0)
 {
-    setPlaylist(openedArtistTrackList.map(x => x.data.uuid), index);
+    setPlaylist(openedArtistTrackList.map(x => x.data.id), index);
 }
 
 async function shuffleArtistTrackList()
 {
-    setPlaylist(shuffleArray(openedArtistTrackList).map(x => x.data.uuid));
+    setPlaylist(shuffleArray(openedArtistTrackList).map(x => x.data.id));
 }
 
 
@@ -403,7 +398,7 @@ async function displayFullGallery()
         let sortedKeys = Object.keys(groupedByArtist).sort();
 
         albumList.innerHTML = sortedKeys.map(artist => groupedByArtist[artist].map(album => `
-        <section album="${album.data.uuid}">
+        <section album="${album.data.id}">
             ${albumCoverImg(album, "no-radius")}
         </section>
         `).join("")).join("")

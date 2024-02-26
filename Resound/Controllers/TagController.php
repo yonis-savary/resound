@@ -76,7 +76,7 @@ class TagController
     protected static function processQueueItem(array $data): bool
     {
         $logger = new Logger("tags.csv");
-        $tmpLibrary = Storage::getInstance()->getSubStorage("tmp-ftp-transfer");
+        $tmpLibrary = Storage::getInstance()->getSubStorage("tmp-track-transfer");
 
         /**
          * Data is : {"files": [...]}
@@ -93,30 +93,39 @@ class TagController
         // Serve as a fallback if the position tag is not set !
         $position = 0;
 
+        $isLibraryLocal = LibraryController::isLibraryLocal();
+
         foreach ($files as $missingFile)
         {
             $position++;
 
             $missingFileFullPath = Utils::joinPath($libraryPath, $missingFile);
-            $missingHash = md5($missingFileFullPath);
+            $fileToProcess = $missingFileFullPath;
+            $deleteTransfer = false;
 
-            $content = $library->read($missingFileFullPath);
-
-            $tmpLibrary->write($missingHash, $content);
+            if (!$isLibraryLocal)
+            {
+                $missingHash = md5($missingFileFullPath);
+                $content = $library->read($missingFileFullPath);
+                $tmpLibrary->write($missingHash, $content);
+                $fileToProcess = $tmpLibrary->path($missingHash);
+                $deleteTransfer = true;
+            }
 
             try
             {
-                self::extractTags($tmpLibrary->path($missingHash), $missingFile, $position);
-                $tmpLibrary->unlink($missingHash);
+                self::extractTags($fileToProcess, $missingFile, $position);
             }
             catch (Throwable $err)
             {
-                $logger->info($err, self::$lastMetadata);
-                $tmpLibrary->unlink($missingHash);
-
+                $logger->info($err);
                 return false;
             }
-
+            finally
+            {
+                if ($deleteTransfer)
+                    $tmpLibrary->unlink($missingHash);
+            }
         }
         return true;
     }
@@ -156,20 +165,30 @@ class TagController
         $band     = $tags["band"] ?? $tags["album_artist"] ?? $artist;
         $song     = $tags["title"];
         $album    = $tags["album"];
-        $year     = $tags["year"] ?? null;
+        $year     = $tags["year"] ?? $tags["creation_date"] ?? null;
         $track    = $tags["track_number"] ?? $position;
         $genre    = $tags["genre"] ?? null;
         $composer = $tags["composer"] ?? null;
         $cover    = $tags["picture"]["0"]["data"] ?? $metadata["comments"]["picture"]["0"]["data"] ?? null;
 
+
         if ($genre === null)
             TagAnomaly::insertArray(["filename" => $distPath, "description" => "Unknown Genre"]);
 
-        if (is_array($genre))
-            $genre = $genre[0] ?? null;
-
-        if (is_array($band))
-            $band = $band[0] ?? null;
+        foreach ([
+            &$artist,
+            &$band,
+            &$song,
+            &$album,
+            &$year,
+            &$track,
+            &$genre,
+            &$composer,
+        ] as &$var)
+        {
+            if (is_array($var))
+                $var = $var[0] ?? null;
+        }
 
         // Transform "5/12" into "5"
         $track = preg_replace("/\/.+$/", "", $track);
@@ -187,28 +206,20 @@ class TagController
 
         $sizeKb = (int)(filesize($file) / 1024);
 
-        $db->query("INSERT IGNORE INTO artist(name) VALUES ({})", [$band]);
-        $artistUUID = Artist::select()->where("name", $band)->first()["data"]["uuid"];
+        $db->query("INSERT OR IGNORE INTO artist(name) VALUES ({})", [$band]);
+        $artistID = Artist::select()->where("name", $band)->first()["data"]["id"];
 
-        $db->query("INSERT IGNORE INTO album(artist, name, genre, release_year) VALUES ({}, {}, {}, {})", [$artistUUID, $album, $genre, $year]);
-        $albumUUID = Album::select()->where("artist", $artistUUID)->where("name", $album)->first()["data"]["uuid"];
+        $db->query("INSERT OR IGNORE INTO album(artist, name, genre, release_year) VALUES ({}, {}, {}, {})", [$artistID, $album, $genre, $year]);
+        $albumID = Album::select()->where("artist", $artistID)->where("name", $album)->first()["data"]["id"];
 
         if ($cover)
-            Storage::getInstance()->write("Resound/Covers/$albumUUID", $cover);
+            Storage::getInstance()->write("Resound/Covers/$albumID", $cover);
 
         $db->query(
-            "INSERT INTO track (album, name, position, artist, producer, duration_seconds, path, edition_date, size_kb)
+            "INSERT OR IGNORE INTO track (album, name, position, artist, producer, duration_seconds, path, edition_date, size_kb)
             VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {})
-            ON DUPLICATE KEY UPDATE
-            position = {},
-            artist = {},
-            producer = {},
-            duration_seconds = {},
-            path = {},
-            edition_date = {},
-            size_kb = {}
         ", [
-            $albumUUID,
+            $albumID,
             $song,
             $track,
             $artist,
@@ -217,7 +228,14 @@ class TagController
             $distPath,
             $editionDate,
             $sizeKb,
+        ]);
 
+        $db->query(
+            "UPDATE track
+            SET position = {}, artist = {}, producer = {}, duration_seconds = {}, path = {}, edition_date = {}, size_kb = {}
+            WHERE album = {}
+            AND name = {}
+        ",[
             $track,
             $artist,
             $composer,
@@ -225,6 +243,8 @@ class TagController
             $distPath,
             $editionDate,
             $sizeKb,
+            $albumID,
+            $song,
         ]);
     }
 }

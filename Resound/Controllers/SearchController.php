@@ -41,7 +41,7 @@ class SearchController
         return [
             "artists" => Artist::select()->whereSQL($getSearchCondition("artist.name"))->fetch(),
             "albums" => Album::select()->whereSQL($getSearchCondition("album.name"))->fetch(),
-            "tracks" => Track::select()->whereSQL($getSearchCondition("CONCAT(track.name, ' ', track.artist)"))->fetch()
+            "tracks" => Track::select()->whereSQL($getSearchCondition("(track.name || ' ' || track.artist)"))->fetch()
         ];
     }
 }

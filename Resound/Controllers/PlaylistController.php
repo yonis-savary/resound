@@ -11,7 +11,7 @@ use Sharp\Classes\Http\Response;
 use Sharp\Classes\Web\Controller;
 use Sharp\Classes\Web\Route;
 use Sharp\Classes\Web\Router;
-use Resound\Classes\Straws\UserUUID;
+use Resound\Classes\Straws\UserID;
 use Resound\Middlewares\IsLogged;
 use Resound\Models\Playlist;
 use Resound\Models\PlaylistTrack;
@@ -29,11 +29,11 @@ class PlaylistController
 
                 // Allow users to edit only their playlists
                 Autobahn::getInstance()->all(Playlist::class,
-                    [fn(array &$params) => $params["user"] = UserUUID::get()],
-                    [fn(array $object) => $object["user"] === UserUUID::get()],
+                    [fn(array &$params) => $params["user"] = UserID::get()],
+                    [fn(array $object) => $object["user"] === UserID::get()],
                     [],
-                    [fn(DatabaseQuery &$query) => $query->where("user", UserUUID::get()) ],
-                    [fn(DatabaseQuery &$query) => $query->where("user", UserUUID::get()) ]
+                    [fn(DatabaseQuery &$query) => $query->where("user", UserID::get()) ],
+                    [fn(DatabaseQuery &$query) => $query->where("user", UserID::get()) ]
                 );
             }
         );
@@ -41,12 +41,12 @@ class PlaylistController
         $router->addGroup(
             ["path" => "api/playlists", "middlewares" => IsLogged::class],
 
-            Route::post("/{uuid:playlist}/add-album/{album}",     [self::class, "addAlbum"]),
-            Route::post("/{uuid:playlist}/add-track/{track}",     [self::class, "addTrack"]),
-            Route::post("/{uuid:playlist}/remove-track/{bindId}", [self::class, "removeTrack"]),
-            Route::post("/{uuid:playlist}/reorder",               [self::class, "reOrderTracks"]),
-            Route::get ("/{uuid:playlist}/covers",                [self::class, "getCovers"]),
-            Route::get ("/{uuid:playlist}/content",               [self::class, "getContent"]),
+            Route::post("/{int:playlist}/add-album/{album}",     [self::class, "addAlbum"]),
+            Route::post("/{int:playlist}/add-track/{track}",     [self::class, "addTrack"]),
+            Route::post("/{int:playlist}/remove-track/{bindId}", [self::class, "removeTrack"]),
+            Route::post("/{int:playlist}/reorder",               [self::class, "reOrderTracks"]),
+            Route::get ("/{int:playlist}/covers",                [self::class, "getCovers"]),
+            Route::get ("/{int:playlist}/content",               [self::class, "getContent"]),
 
             Route::get ("/popular", [self::class, "getPopularPlaylists"]),
         );
@@ -56,7 +56,7 @@ class PlaylistController
     {
         query(
             "INSERT INTO playlist_track (playlist, track)
-            SELECT {}, uuid
+            SELECT {}, id
             FROM track
             WHERE album = {}
         ", [$playlist, $album]);
@@ -77,8 +77,8 @@ class PlaylistController
     public static function removeTrack(Request $request, string $playlist, int $bindId)
     {
         $exists = Playlist::select()
-        ->where("uuid", $playlist)
-        ->where("user", UserUUID::get())
+        ->where("id", $playlist)
+        ->where("user", UserID::get())
         ->first();
 
         if (!$exists)
@@ -97,18 +97,18 @@ class PlaylistController
     public static function getPopularPlaylists()
     {
         $mostListenedPlaylists = query(
-            "SELECT playlist as uuid, COUNT(user_listening.id) as count
+            "SELECT playlist as id, COUNT(user_listening.id) as count
             FROM user_listening
             WHERE playlist IS NOT NULL
             ORDER BY COUNT(user_listening.id) DESC
             LIMIT 10
         ");
 
-        if (count($mostListenedPlaylists) === 1 && $mostListenedPlaylists[0]["uuid"] == null)
+        if (count($mostListenedPlaylists) === 1 && $mostListenedPlaylists[0]["id"] == null)
             return [];
 
         foreach ($mostListenedPlaylists as &$playlist)
-            $playlist = Playlist::findId($playlist["uuid"]);
+            $playlist = Playlist::findId($playlist["id"]);
 
         return $mostListenedPlaylists;
     }
@@ -117,10 +117,10 @@ class PlaylistController
     {
         $private = Playlist::select()
         ->where("private", true)
-        ->where("uuid", $playlist)
+        ->where("id", $playlist)
         ->first();
 
-        if ($private && $private["data"]["user"] !== UserUUID::get())
+        if ($private && $private["data"]["user"] !== UserID::get())
             return "Private playlist !";
 
         return [
@@ -135,12 +135,12 @@ class PlaylistController
     public static function getCovers(Request $request, string $playlist)
     {
         return ObjectArray::fromQuery(
-            "SELECT album, COUNT(track.uuid)
+            "SELECT album, COUNT(track.id)
             FROM playlist_track
-            JOIN track ON track = track.uuid
+            JOIN track ON track = track.id
             WHERE playlist = {}
             GROUP BY track.album
-            ORDER BY COUNT(track.uuid) DESC
+            ORDER BY COUNT(track.id) DESC
             LIMIT 4
         ", [$playlist])
         ->map(fn($album) => "<img src='/api/library/album-cover/$album'>")

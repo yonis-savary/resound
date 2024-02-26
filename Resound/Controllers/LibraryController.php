@@ -14,7 +14,7 @@ use Sharp\Classes\Http\Response;
 use Sharp\Classes\Web\Controller;
 use Sharp\Classes\Web\Route;
 use Sharp\Classes\Web\Router;
-use Resound\Classes\Straws\UserUUID;
+use Resound\Classes\Straws\UserID;
 use Resound\Middlewares\IsLogged;
 use Resound\Models\Album;
 use Resound\Models\Artist;
@@ -30,7 +30,7 @@ class LibraryController
         # Making getAlbumCover public makes it accessible to mediaSession softwares/extensions
         $router->addGroup(
             ["path" => "api/library"],
-            Route::get("/album-cover/{uuid:albumUUID}", [self::class, "getAlbumCover"]),
+            Route::get("/album-cover/{int:albumID}", [self::class, "getAlbumCover"]),
         );
 
         $router->addGroup(
@@ -47,6 +47,8 @@ class LibraryController
 
             Route::post("/player-register-state", [self::class, "registerPlayerState"]),
             Route::get ("/player-get-state",       [self::class, "getPlayerState"]),
+
+            Route::get("/artist/{int:id}/tracks", [self::class, "getArtistTracksAndFeaturing"])
         );
 
         $router->groupCallback(
@@ -65,6 +67,12 @@ class LibraryController
         );
     }
 
+    public static function isLibraryLocal(): bool
+    {
+        $libraryConfig = Configuration::getInstance()->get("library", []);
+        return ($libraryConfig["driver"] ?? "ftp") === "local";
+    }
+
     public static function getLibraryStorage(): Storage
     {
         $libraryConfig = Configuration::getInstance()->get("library", []);
@@ -80,7 +88,7 @@ class LibraryController
                         $libraryConfig["url"],
                         $libraryConfig["username"],
                         $libraryConfig["password"],
-                        $libraryConfig["post"] ?? 21,
+                        $libraryConfig["port"] ?? 21,
                     )
                 );
             case "local":
@@ -101,7 +109,7 @@ class LibraryController
         if (!count($lastAlbums))
             return [];
 
-        return Album::select()->whereSQL("album.uuid IN {}", [$lastAlbums])->fetch();
+        return Album::select()->whereSQL("album.id IN {}", [$lastAlbums])->fetch();
     }
 
     public static function getMostListened()
@@ -109,12 +117,12 @@ class LibraryController
         return ObjectArray::fromQuery(
             "SELECT DISTINCT album, COUNT(user_listening.id) as listening_count
             FROM track
-            JOIN user_listening ON track = track.uuid AND user = {}
-            WHERE user_listening.timestamp > DATE_SUB(NOW(), INTERVAL 1 MONTH)
+            JOIN user_listening ON track = track.id AND user = {}
+            WHERE user_listening.timestamp > DATE('now', '-1 month')
             GROUP BY track.album
             ORDER BY listening_count DESC
             LIMIT 10
-        ", [UserUUID::get()])
+        ", [UserID::get()])
         ->map(fn($x) => Album::findId($x))
         ->collect()
         ;
@@ -125,13 +133,13 @@ class LibraryController
         return Storage::getInstance()->getSubStorage("Resound/Covers");
     }
 
-    public static function getAlbumCover($_, string $albumUUID): Response
+    public static function getAlbumCover($_, string $albumID): Response
     {
         $coverStorage = self::getAlbumCoverStorage();
 
         $content = "";
-        if ($coverStorage->isFile($albumUUID))
-            $content = $coverStorage->read($albumUUID);
+        if ($coverStorage->isFile($albumID))
+            $content = $coverStorage->read($albumID);
 
         return (new Response($content, 200, [
             "access-control-allow-origin" => "*",
@@ -144,9 +152,9 @@ class LibraryController
     public static function getRandomTrackList()
     {
         return ObjectArray::fromQuery(
-            "SELECT uuid
+            "SELECT id
             FROM track
-            ORDER BY RAND()
+            ORDER BY RANDOM()
             LIMIT 100
         ")->collect();
     }
@@ -158,8 +166,8 @@ class LibraryController
         ->map(function($genre) {
             return [
                 $genre,
-                ObjectArray::fromQuery("SELECT uuid FROM album WHERE genre = {}", [$genre])
-                ->map(fn($uuid) => "<img loading='lazy' src='/api/library/album-cover/$uuid' class='album-cover small'>")
+                ObjectArray::fromQuery("SELECT id FROM album WHERE genre = {}", [$genre])
+                ->map(fn($id) => "<img loading='lazy' src='/api/library/album-cover/$id' class='album-cover small'>")
                 ->collect()
             ];
         })
@@ -187,8 +195,8 @@ class LibraryController
         ->map(function($year) {
             return [
                 $year,
-                ObjectArray::fromQuery("SELECT uuid FROM album WHERE release_year = {}", [$year])
-                ->map(fn($uuid) => "<img loading='lazy' src='/api/library/album-cover/$uuid' class='album-cover small'>")
+                ObjectArray::fromQuery("SELECT id FROM album WHERE release_year = {}", [$year])
+                ->map(fn($id) => "<img loading='lazy' src='/api/library/album-cover/$id' class='album-cover small'>")
                 ->collect()
             ];
         })
@@ -221,7 +229,7 @@ class LibraryController
             return Response::json("Too much data", 500);
 
         $storage = self::getUserPlaylistCache();
-        $storage->set(UserUUID::get(), $playlist, Cache::PERMANENT);
+        $storage->set(UserID::get(), $playlist, Cache::PERMANENT);
 
         return "OK";
     }
@@ -229,7 +237,7 @@ class LibraryController
     public static function getPlayList()
     {
         $storage = self::getUserPlaylistCache();
-        return $storage->get(UserUUID::get()) ?? null;
+        return $storage->get(UserID::get()) ?? null;
     }
 
 
@@ -248,7 +256,7 @@ class LibraryController
             return Response::json("Too much data", 500);
 
         $storage = self::getUserPlayerCache();
-        $storage->set(UserUUID::get(), $player, Cache::PERMANENT);
+        $storage->set(UserID::get(), $player, Cache::PERMANENT);
 
         return "OK";
     }
@@ -256,6 +264,20 @@ class LibraryController
     public static function getPlayerState()
     {
         $storage = self::getUserPlayerCache();
-        return $storage->get(UserUUID::get()) ?? null;
+        return $storage->get(UserID::get()) ?? null;
+    }
+
+
+    public static function getArtistTracksAndFeaturing($_, int $artist)
+    {
+        $artistName = Artist::findId($artist)["data"]["name"];
+
+        debug(Track::select()
+        ->whereSQL("(track.artist || ' ' || `track&album`.name) LIKE '%{}%'", [$artistName])
+        ->build());
+
+        return Track::select()
+        ->whereSQL("(track.artist || ' ' || `track&album`.name) LIKE '%{}%'", [$artistName])
+        ->fetch();
     }
 }

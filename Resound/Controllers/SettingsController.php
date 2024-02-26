@@ -28,6 +28,9 @@ class SettingsController
             Route::get ("/settings/ftp-get-configuration",      [self::class, "getPublicFTPConfig"]),
             Route::post("/settings/ftp-register-configuration", [self::class, "replaceFtpConfig"]),
 
+            Route::post("/settings/local-register-configuration", [self::class, "registerLocalPath"]),
+            Route::get ("/settings/local-get-configuration",      [self::class, "getLocalDiskConfig"]),
+
             Route::get("/settings/to-discover",   [self::class, "toDiscover"]),
             Route::get("/settings/discover",      [self::class, "discover"]),
             Route::get("/settings/parse-tags",      [self::class, "parseTags"]),
@@ -76,6 +79,35 @@ class SettingsController
         TagAnomaly::delete()->fetch();
 
         return "OK";
+    }
+
+
+
+
+    public static function getLocalDiskConfig()
+    {
+
+        $config = Configuration::getInstance()->get("library", []);
+        if ($config["driver"] === "local")
+            return $config;
+        return ["path" => null];
+    }
+
+    public static function registerLocalPath(Request $request)
+    {
+        $path = $request->params("path");
+
+        if (!is_dir($path))
+            return Response::json("This directory does not exists", 200);
+
+        $config = Configuration::getInstance();
+        $config->set("library", [
+            "driver" => "local",
+            "path" => $path
+        ]);
+
+        $config->save();
+        return true;
     }
 
     public static function getPublicFTPConfig()

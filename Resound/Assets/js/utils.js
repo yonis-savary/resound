@@ -1,6 +1,6 @@
-const albumCover = uuid => `/api/library/album-cover/${uuid}`;
+const albumCover = id => `/api/library/album-cover/${id}`;
 
-const userUUID = _ => userUUIDInput.value;
+const userID = _ => userIDInput.value;
 
 
 async function playAudioEffect(filename, duration=1000)
@@ -22,11 +22,11 @@ function albumCoverImg(album, className="")
 {
     return html`<img
         style="width: 100%"
-        album="${album.data.uuid}"
-        src="${albumCover(album.data.uuid)}"
+        album="${album.data.id}"
+        src="${albumCover(album.data.id)}"
         loading="lazy"
         class="album-cover ${className} clickable"
-        onclick="openAlbum('${album.data.uuid}')"
+        onclick="openAlbum('${album.data.id}')"
     >`
 }
 
@@ -103,12 +103,12 @@ function renderAlbumPreview(album)
 {
     return html`
     <section
-        album="${album.data.uuid}"
+        album="${album.data.id}"
         class="flex-column gap-0 album-container"
         title="${album.data.name} by ${album.artist.data.name}"
     >
         ${albumCoverImg(album)}
-        <b class="clickable one-liner" title="${album.data.name}" onclick="openAlbum('${album.data.uuid}')">${album.data.name}</b>
+        <b class="clickable one-liner" title="${album.data.name}" onclick="openAlbum('${album.data.id}')">${album.data.name}</b>
         <small class="clickable one-liner" onclick="openArtist('${album.data.artist}')">${album.artist.data.name}</small>
     </section>
     `
