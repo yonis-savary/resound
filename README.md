@@ -44,36 +44,14 @@ git clone https://github.com/yonis-savary/resound.git --recursive
 
 cd resound
 
-# Get default configuration
-cp sharp.json.example sharp.json
-
-# Install dependencies
-php do build
-```
-
-Create a database using [Resound/SCHEMA.sql](./Resound/SCHEMA.sql), then configure the connection in `sharp.json`
-
-```json
-"database": {
-    "driver": "mysql",
-    "database": "resound",
-    "host": "localhost",
-    "port": 3306,
-    "user": "root",
-    "password": "somepassword"
-}
-```
-
-Create a user of your choice with
-```bash
-php do create-user
+# Create the database, a user and configure the library
+./install.sh
 ```
 
 Then, you can either connect to your server through a HTTP Server like Apache, or launch `php do serve` to launch PHP's built-in server
 
 When connected to Re-Sound:
 - go to the 'Settings' page (top-right corner of the window)
-- configure the FTP Connection to your library
 - click the `'Discover new tracks'` button
 
 ## More
