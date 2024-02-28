@@ -76,7 +76,7 @@ class TagController
     protected static function processQueueItem(array $data): bool
     {
         $logger = new Logger("tags.csv");
-        $tmpLibrary = Storage::getInstance()->getSubStorage("tmp-track-transfer");
+        $tmpLibrary = Storage::getInstance()->getSubStorage("tmp/tag-extract-buffer-dir");
 
         /**
          * Data is : {"files": [...]}

@@ -8,6 +8,7 @@ use Resound\Classes\Straws\UserID;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="<?= asset("resound.png") ?>" type="image/x-icon">
+    <link rel="manifest" href="/manifest.json">
     <?= style("assets-kit/style.css") ?>
     <?= style("resound.css") ?>
     <title>Resound</title>
@@ -34,6 +35,7 @@ use Resound\Classes\Straws\UserID;
     <?= render("player") ?>
 
     <?= script("playlist.js") ?>
+    <?= script("upload.js") ?>
 
     <?= script("embedded.js") ?>
     <?= script("settings.js") ?>

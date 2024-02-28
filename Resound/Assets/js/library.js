@@ -25,6 +25,12 @@ async function displayLibrary() {
             > Years ${svg("clock-history")} </span>
 
 
+            <button
+                class="fill-left button secondary white"
+                onclick="displayUploadMenu()"
+            > Add music ${svg("plus")} </button>
+
+
         </section>
 
         <section class="flex-column">
@@ -86,14 +92,16 @@ async function openAlbum(id)
                 <section class="flex-column gap-1">
                     <h1 class="giant">${album.data.name}</h1>
                     <span>
-                        Album by <b class="clickable underline" onclick="openArtist('${album.data.artist}')">${album.artist.data.name}</b>
+                        Released by
+                        <b class="clickable underline" onclick="openArtist('${album.data.artist}')">${album.artist.data.name}</b>
+                        in
+                        <span class="clickable underline" onclick="openYear(${album.data.release_year})">${album.data.release_year}</span>
                     </span>
                     <span class="clickable underline" onclick="openGenre('${album.data.genre}')">${album.data.genre}</span>
                 </section>
                 <section class="flex-column gap-0">
                     <span>${prettyDuration(album.data.cached_total_duration_seconds)}</span>
                     <span>${album.data.cached_track_number} tracks</span>
-                    <a class="clickable underline" onclick="openYear(${album.data.release_year})">${album.data.release_year}</a>
                 </section>
             </section>
 

@@ -1,0 +1,46 @@
+{
+    "short_name": "Resound",
+    "name": "Resound: Listen to your music everywhere !",
+    "icons": [
+        {
+            "src": "/resound.svg",
+            "type": "image/svg+xml",
+            "purpose": "maskable",
+            "sizes": "64x64"
+        },
+        {
+            "src": "/resound.svg",
+            "type": "image/svg+xml",
+            "purpose": "maskable",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/resound.svg",
+            "type": "image/svg+xml",
+            "purpose": "maskable",
+            "sizes": "256x256"
+        },
+        {
+            "src": "/resound.svg",
+            "type": "image/svg+xml",
+            "purpose": "maskable",
+            "sizes": "512x512"
+        }
+    ],
+    "id": "/",
+    "start_url": "/",
+    "background_color": "#000000",
+    "display": "minimal-ui",
+    "scope": "/",
+    "theme_color": "#000000",
+    "description": "Listen to your music libary on any device",
+    "shortcuts": [
+        {
+            "name": "Shuffle through your library",
+            "short_name": "Shuffle",
+            "description": "Shuffle through your entire library",
+            "url": "/?pwa-action=shuffle",
+            "icons": [{"src": "/assets?file=resound.svg", "sizes": "512x512"}]
+        }
+    ]
+}

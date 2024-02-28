@@ -419,6 +419,7 @@ body
     padding: .5em;
 }
 
+.svg-link:hover,
 .navbar a:hover
 {
     color: var(--track-color, --blue) !important;
