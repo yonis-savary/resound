@@ -10,6 +10,7 @@ use Sharp\Classes\Web\Route;
 use Sharp\Classes\Web\Router;
 use Resound\Classes\Straws\UserID;
 use SharpExtensions\RemindMe\Components\RemindMe;
+use SharpExtensions\RemindMe\Middlewares\RememberUser;
 
 class AuthenticationController
 {
@@ -17,8 +18,12 @@ class AuthenticationController
 
     public static function declareRoutes(Router $router)
     {
-        $router->addRoutes(
+        $router->addGroup(
+            ["middlewares" => RememberUser::class],
             Route::view("/login", "login"),
+        );
+
+        $router->addRoutes(
             Route::post("/login", [self::class, "handle"]),
             Route::get("/logout", [self::class, "logout"]),
         );

@@ -1,3 +1,16 @@
+<?php
+
+    use Sharp\Classes\Http\Response;
+    use Sharp\Classes\Security\Authentication;
+
+    if (Authentication::getInstance()->isLogged())
+    {
+        Response::redirect("/")->display();
+        die;
+    }
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
