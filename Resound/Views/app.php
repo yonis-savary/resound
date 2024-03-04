@@ -39,5 +39,12 @@ use Resound\Classes\Straws\UserID;
 
     <?= script("embedded.js") ?>
     <?= script("settings.js") ?>
+
+    <script>
+        window.onerror = (event, source, lineno, colno, error) => {
+            document.write(`${error}`);
+            apiFetch(`/`+error);
+        }
+    </script>
 </body>
 </html>

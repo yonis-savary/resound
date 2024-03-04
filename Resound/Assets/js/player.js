@@ -375,17 +375,22 @@ async function refreshPlayerState()
     if ((!audioPlayer.src) || audioPlayer.paused)
         return;
 
-    if (!(
-        audioPlayer.duration &&
-        audioPlayer.playbackRate &&
-        audioPlayer.currentTime
-    )) return;
+    if (!audioPlayer.duration)
+        return;
 
-    navigator.mediaSession.setPositionState({
-        duration: audioPlayer.duration,
-        playbackRate: audioPlayer.playbackRate,
-        position: audioPlayer.currentTime
-    });
+    try
+    {
+        let data = {
+            duration: audioPlayer.duration,
+            position: audioPlayer.currentTime
+        };
+        navigator.mediaSession.setPositionState(data);
+    }
+    catch(error)
+    {
+        notifyInfo(error);
+        apiFetch(error);
+    }
 }
 
 playerProgress.addEventListener("click", (event) => {
@@ -535,15 +540,34 @@ async function setMediaSession(track)
         album: track.album.data.name,
         artwork: [{ src: location.origin + albumCover(track.data.album) }]
     })
+
     navigator.mediaSession.metadata = metadata
 
-    navigator.mediaSession.setActionHandler('play', _ => audioPlayer.play());
-    navigator.mediaSession.setActionHandler('pause', _ => audioPlayer.pause());
-    navigator.mediaSession.setActionHandler('previoustrack', _ => handleShuffleLauncher());
-    navigator.mediaSession.setActionHandler('nexttrack', _ => handleMoodLauncher());
+    const handlers = [
+        ['play', _ => audioPlayer.play()],
+        ['pause', _ => audioPlayer.pause()],
+        ['previoustrack', _ => handleShuffleLauncher()],
+        ['nexttrack', _ => handleMoodLauncher()],
+        ['seekto', (details) => {
+            audioPlayer.currentTime = details.seekTime;
+        }],
+        //["seekbackward", (data) => { console.log('seekBackward: data: ', data);}],
+        //["seekforward", (data) => { console.log('seekForward: data: ', data);}],
+    ];
 
-    //navigator.mediaSession.setActionHandler('seekbackward', function() );
-    //navigator.mediaSession.setActionHandler('seekforward', function() {});
+    for (const [action, handler] of handlers) {
+        try {
+            navigator.mediaSession.setActionHandler(action, event => {
+                console.log(action, event);
+                (handler)(event);
+                refreshPlayerState();
+            });
+        } catch (error) {
+            console.warn("Action not supported : " + action);
+        }
+    }
+
+
 }
 
 

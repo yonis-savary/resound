@@ -34,12 +34,16 @@ class TrackController
 
         $content = LibraryController::getLibraryStorage()->read($track["data"]["path"]);
 
+        $size = strlen($content);
+
         return new Response($content, 200, [
-            "Content-Type"   => "application/octet-stream",
+            "Content-Type"   => "audio/mpeg",
             "Expires"        => "0",
             "Cache-Control"  => "must-revalidate",
+            "Accept-Ranges"  => "bytes",
+            "Content-Range"  => "bytes $size/$size",
             "Pragma"         => "public",
-            "Content-Length" => strlen($content),
+            "Content-Length" => $size,
         ]);
     }
 

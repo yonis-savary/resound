@@ -20,6 +20,7 @@ use Resound\Models\Album;
 use Resound\Models\Artist;
 use Resound\Models\TagAnomaly;
 use Resound\Models\Track;
+use ZipArchive;
 
 class LibraryController
 {
@@ -48,7 +49,11 @@ class LibraryController
             Route::post("/player-register-state", [self::class, "registerPlayerState"]),
             Route::get ("/player-get-state",       [self::class, "getPlayerState"]),
 
-            Route::get("/artist/{int:id}/tracks", [self::class, "getArtistTracksAndFeaturing"])
+            Route::get("/artist/{int:id}/tracks", [self::class, "getArtistTracksAndFeaturing"]),
+
+            Route::get("/album/{int:id}/download", [self::class, "downloadAlbumZIP"]),
+            Route::get("/album/{int:id}/delete-data", [self::class, "deleteAlbumData"]),
+            Route::get("/album/{int:id}/delete-files", [self::class, "deleteAlbumFiles"]),
         );
 
         $router->groupCallback(
@@ -133,13 +138,13 @@ class LibraryController
         return Storage::getInstance()->getSubStorage("Resound/Covers");
     }
 
-    public static function getAlbumCover($_, string $albumID): Response
+    public static function getAlbumCover($_, string $albumId): Response
     {
         $coverStorage = self::getAlbumCoverStorage();
 
         $content = "";
-        if ($coverStorage->isFile($albumID))
-            $content = $coverStorage->read($albumID);
+        if ($coverStorage->isFile($albumId))
+            $content = $coverStorage->read($albumId);
 
         return (new Response($content, 200, [
             "access-control-allow-origin" => "*",
@@ -280,4 +285,66 @@ class LibraryController
         ->whereSQL("(track.artist || ' ' || `track&album`.name) LIKE '%{}%'", [$artistName])
         ->fetch();
     }
+
+
+    public static function downloadAlbumZIP(Request $request, int $albumId)
+    {
+        $album = Album::findId($albumId);
+        $albumLabel = $album["artist"]["data"]["name"] . "-". $album["data"]["name"];
+
+        $tracks = Track::select()->where("album", $albumId)->fetch();
+        $libary = self::getLibraryStorage();
+
+        $tmpStorage = Storage::getInstance()->getSubStorage("tmp/download");
+        $zipName = $tmpStorage->path(uniqid($albumLabel . "-") . ".zip");
+        $zip = new ZipArchive();
+
+        if (!$zip->open($zipName, ZipArchive::CREATE))
+            die("Fatal: could not open archive");
+
+        foreach ($tracks as $track)
+        {
+            $path = $track["data"]["path"];
+            $entryName = str_replace($libary->getRoot(), "", $path);
+            $entryName = preg_replace("/^\\//", "", $entryName);
+
+            $tmpFile = $tmpStorage->path(uniqid("download"));
+            file_put_contents($tmpFile, $libary->read($path));
+
+            $zip->addFile($tmpFile, $entryName);
+        }
+
+        $zip->close();
+
+        foreach ($tmpStorage->listFiles() as $file)
+        {
+            if ($file == $zipName)
+                continue;
+            unlink($file);
+        }
+
+        return Response::file($zipName, basename($zipName));
+    }
+
+    public static function deleteAlbumData(Request $request, int $albumId)
+    {
+        Album::delete()->where("id", $albumId)->fetch();
+        return "OK";
+    }
+
+    public static function deleteAlbumFiles(Request $request, int $albumId)
+    {
+        $tracks = Track::select()->where("album", $albumId)->fetch();
+        $libary = self::getLibraryStorage();
+
+        foreach ($tracks as $track)
+        {
+            $path = $track["data"]["path"];
+            $libary->unlink($path);
+        }
+
+        return self::deleteAlbumData($request, $albumId);
+    }
+
+
 }

@@ -127,6 +127,22 @@ async function openAlbum(id)
             </thead>
             <tbody id="albumContent"> </tbody>
         </table>
+
+        <section class="flex-column small margin-top-5">
+
+            <section class="flex-column gap-1">
+                <span class="underline clickable" onclick="downloadAlbum(${album.data.id})">Download</span>
+                <p>Download a zip file containing this album tracks</p>
+            </section>
+            <section class="flex-column gap-1">
+                <span class="underline clickable" onclick="deleteAlbumData(${album.data.id})">Delete data</span>
+                <p>Delete album data but not its files</p>
+            </section>
+            <section class="flex-column gap-1">
+                <span class="underline clickable" onclick="deleteAlbumFiles(${album.data.id})">Delete files</span>
+                <p>Completely erase this album from your library</p>
+            </section>
+        </section>
     `)
 
     let accentColor = null;
@@ -164,7 +180,29 @@ async function openAlbum(id)
     })
 }
 
+async function downloadAlbum(albumId)
+{
+    notifyInfo("Your download will begin in a few seconds", "A ZIP file containing your album is being generated")
+    location.href = `/api/library/album/${albumId}/download`;
+}
 
+async function deleteAlbumData(albumId)
+{
+    if (!confirm("Delete this album from your library ? Files will be kept"))
+        return;
+
+    await apiFetch(`/api/library/album/${albumId}/delete-data`);
+    displayLibrary();
+}
+
+async function deleteAlbumFiles(albumId)
+{
+    if (!confirm("Delete this album's files ? This action cannot be undone"))
+        return;
+
+    await apiFetch(`/api/library/album/${albumId}/delete-files`);
+    displayLibrary();
+}
 
 
 
@@ -393,7 +431,7 @@ async function displayFullGallery()
     await changePageContentTo(`
         <h1 class="giant">Releases</h1>
         <small>Sorted by artist</small>
-        <section class="flex-row gap-0 flex-wrap" id="albumList"></section>
+        <section class="flex-row gap-0 justify-between flex-wrap" id="albumList"></section>
     `)
 
     apiRead("album").then(albums => {

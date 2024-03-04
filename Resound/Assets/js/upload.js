@@ -91,10 +91,10 @@ async function displayUploadMenu()
         displayUploadMenu()
     })
     confirmUploadButton.addEventListener("click", async _ => {
-        await apiFetch(`/upload/move-upload/${currentUploadToken}`, {}, "POST");
-
         cancelUploadButton.disabled = true;
         confirmUploadButton.disabled = true;
+
+        await apiFetch(`/upload/move-upload/${currentUploadToken}`, {}, "POST");
 
         displayUploadMenu();
         notifySuccess("New tracks were added to your library !");
