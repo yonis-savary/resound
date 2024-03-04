@@ -431,7 +431,7 @@ async function displayFullGallery()
     await changePageContentTo(`
         <h1 class="giant">Releases</h1>
         <small>Sorted by artist</small>
-        <section class="flex-row gap-0 flex-wrap" id="albumList"></section>
+        <section class="flex-row gap-0 justify-between flex-wrap" id="albumList"></section>
     `)
 
     apiRead("album").then(albums => {

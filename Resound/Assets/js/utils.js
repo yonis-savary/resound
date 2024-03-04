@@ -104,12 +104,14 @@ function renderAlbumPreview(album)
     return html`
     <section
         album="${album.data.id}"
-        class="flex-column gap-0 album-container"
+        class="flex-column gap-1 album-container"
         title="${album.data.name} by ${album.artist.data.name}"
     >
         ${albumCoverImg(album)}
-        <b class="clickable one-liner" title="${album.data.name}" onclick="openAlbum('${album.data.id}')">${album.data.name}</b>
-        <small class="clickable one-liner" onclick="openArtist('${album.data.artist}')">${album.artist.data.name}</small>
+        <section class="flex-column gap-0">
+            <b class="clickable one-liner" title="${album.data.name}" onclick="openAlbum('${album.data.id}')">${album.data.name}</b>
+            <small class="clickable one-liner" onclick="openArtist('${album.data.artist}')">${album.artist.data.name}</small>
+        </section>
     </section>
     `
 }

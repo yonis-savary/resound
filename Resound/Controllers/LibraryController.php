@@ -138,13 +138,13 @@ class LibraryController
         return Storage::getInstance()->getSubStorage("Resound/Covers");
     }
 
-    public static function getAlbumCover($_, string $albumID): Response
+    public static function getAlbumCover($_, string $albumId): Response
     {
         $coverStorage = self::getAlbumCoverStorage();
 
         $content = "";
-        if ($coverStorage->isFile($albumID))
-            $content = $coverStorage->read($albumID);
+        if ($coverStorage->isFile($albumId))
+            $content = $coverStorage->read($albumId);
 
         return (new Response($content, 200, [
             "access-control-allow-origin" => "*",
@@ -289,11 +289,14 @@ class LibraryController
 
     public static function downloadAlbumZIP(Request $request, int $albumId)
     {
+        $album = Album::findId($albumId);
+        $albumLabel = $album["artist"]["data"]["name"] . "-". $album["data"]["name"];
+
         $tracks = Track::select()->where("album", $albumId)->fetch();
         $libary = self::getLibraryStorage();
 
         $tmpStorage = Storage::getInstance()->getSubStorage("tmp/download");
-        $zipName = $tmpStorage->path(uniqid($albumId . "-") . ".zip");
+        $zipName = $tmpStorage->path(uniqid($albumLabel . "-") . ".zip");
         $zip = new ZipArchive();
 
         if (!$zip->open($zipName, ZipArchive::CREATE))
