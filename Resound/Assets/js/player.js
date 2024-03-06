@@ -140,6 +140,8 @@ async function playSong(id, autoplay = true)
         document.body.style.setProperty(`--track-color`, accentColor);
     else
         processAlbumVibrantColor(playerTrackCover.querySelector("img"), track.data.album);
+
+    document.dispatchEvent(new Event("songChanged"));
 }
 
 async function gotoNextSong()
@@ -632,3 +634,110 @@ moodModeButton.addEventListener("click", async _ => {
     ], { duration: 500 });
     vinyl.style.color = "white";
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+$$$$$$$$\ $$$$$$$\  $$$$$$$$\  $$$$$$\  $$\   $$\ $$$$$$$$\ $$\   $$\  $$$$$$\ $$\     $$\
+$$  _____|$$  __$$\ $$  _____|$$  __$$\ $$ |  $$ |$$  _____|$$$\  $$ |$$  __$$\\$$\   $$  |
+$$ |      $$ |  $$ |$$ |      $$ /  $$ |$$ |  $$ |$$ |      $$$$\ $$ |$$ /  \__|\$$\ $$  /
+$$$$$\    $$$$$$$  |$$$$$\    $$ |  $$ |$$ |  $$ |$$$$$\    $$ $$\$$ |$$ |       \$$$$  /
+$$  __|   $$  __$$< $$  __|   $$ |  $$ |$$ |  $$ |$$  __|   $$ \$$$$ |$$ |        \$$  /
+$$ |      $$ |  $$ |$$ |      $$ $$\$$ |$$ |  $$ |$$ |      $$ |\$$$ |$$ |  $$\    $$ |
+$$ |      $$ |  $$ |$$$$$$$$\ \$$$$$$ / \$$$$$$  |$$$$$$$$\ $$ | \$$ |\$$$$$$  |   $$ |
+\__|      \__|  \__|\________| \___$$$\  \______/ \________|\__|  \__| \______/    \__|
+                                   \___|
+*/
+
+// https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Visualizations_with_Web_Audio_API#creating_a_frequency_bar_graph
+// https://stackoverflow.com/a/61090373
+// 🙏
+
+const audioContext = new(window.AudioContext || window.webkitAudioContext)();
+
+audioPlayer.addEventListener("play", _ => audioContext.resume());
+const source = audioContext.createMediaElementSource(audioPlayer);
+
+// Create an analyser
+const analyser = audioContext.createAnalyser();
+analyser.fftSize = 256;
+
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+
+// Connect parts
+source.connect(analyser);
+analyser.connect(audioContext.destination);
+
+const usualBytesRange = bufferLength * .6;
+
+const bassSamplesSize = [Math.round(usualBytesRange*.0), Math.round(usualBytesRange*.1)];
+const mediumSamplesSize = [Math.round(usualBytesRange*.1)+1, Math.round(usualBytesRange*.5)];
+const highSamplesSize = [Math.round(usualBytesRange*.5)+1, bufferLength];
+
+const frequencyCanvas = document.querySelector(".frequencyRythmCanvas");
+
+frequencyCanvas.width = 256;
+frequencyCanvas.height = 256;
+
+const frequencyContext = frequencyCanvas.getContext("2d");
+frequencyContext.fillStyle = "#FFFFFF55";
+
+async function drawFrequencyCircles()
+{
+    analyser.getByteFrequencyData(dataArray);
+
+    const size = frequencyCanvas.width;
+    const halfSize = size/2;
+
+    const MAX_BASS = Math.max(...dataArray.slice(...bassSamplesSize));
+    const BASS_RADIUS = (MAX_BASS * (halfSize * .9 )) / 256;
+
+    const MAX_MEDIUM = Math.max(...dataArray.slice(...mediumSamplesSize));
+    const MEDIUM_RADIUS = (MAX_MEDIUM * (halfSize * .8) ) / 256;
+
+    const MAX_HIGH = Math.max(...dataArray.slice(...highSamplesSize));
+    const HIGH_RADIUS = (MAX_HIGH * (halfSize * 1)) / 200;
+
+    frequencyContext.clearRect(0, 0, size, size);
+
+    frequencyContext.beginPath();
+    frequencyContext.arc(size/2, size/2, BASS_RADIUS, 0, Math.PI*2);
+    frequencyContext.fill();
+
+    frequencyContext.beginPath();
+    frequencyContext.arc(size/2, size/2, MEDIUM_RADIUS, 0, Math.PI*2);
+    frequencyContext.fill();
+
+    frequencyContext.beginPath();
+    frequencyContext.arc(size/2, size/2, HIGH_RADIUS, 0, Math.PI*2);
+    frequencyContext.fill();
+
+    if (!audioPlayer.paused)
+        requestAnimationFrame(drawFrequencyCircles);
+}
+
+document.addEventListener("songChanged", _ => {
+    frequencyContext.fillStyle = document.body.style.getPropertyValue("--track-color") + "66";
+})
+
+audioPlayer.addEventListener("play", drawFrequencyCircles);

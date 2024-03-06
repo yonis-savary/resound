@@ -332,9 +332,8 @@ body
 
 #screenSaverCover
 {
-    min-width: 256px;
-    width: 30vw;
-    max-width: 512px;
+    width: 50%;
+    height: 50%;
     aspect-ratio: 1/1;
     border-radius: 100%;
     animation: spinning infinite 12s linear;
@@ -342,14 +341,6 @@ body
 }
 
 @media only screen and (max-width: 1000px) {
-
-    #screenSaverCover
-    {
-        min-width: 0px !important;
-        width: 50% !important;
-        max-width: 100% !important;
-    }
-
     #vinylSection::after
     {
         width: 24px !important;
@@ -364,10 +355,15 @@ body
 
 #vinylSection
 {
+    --size : 50vw;
+
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    width: var(--size);
+    height: var(--size);
 }
 
 #vinylSection::after
@@ -383,6 +379,25 @@ body
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+
+#vinylSection .frequencyRythmCanvas
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--size);
+    height: var(--size);
+}
+
+@media only screen and (max-width: 700px) {
+    #vinylSection
+    {
+        --size : 90vw;
+    }
+
 }
 
 

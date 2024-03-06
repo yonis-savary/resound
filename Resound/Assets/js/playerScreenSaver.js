@@ -6,6 +6,7 @@ SCREEN_SAVER_ELEMENT.innerHTML = `
 <img id="screenSaverBackground">
 <section id="screenSaverContent" class="flex-column align-center">
     <section id="vinylSection">
+        <canvas class="frequencyRythmCanvas"></canvas>
         <img id="screenSaverCover" style="box-shadow: var(--track-color) 0px 0px 6px">
     </section>
     <section class="flex-column align-center gap-0" id="screenSaverInfo"></section>
