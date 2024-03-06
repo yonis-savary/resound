@@ -21,7 +21,7 @@ async function displaySearchPage()
             <h1>Artists</h1>
             <section class="flex-column scrollable max-vh-40">
                 ${artists.sortByKey(x => x.data.name).map(x => `
-                    <b onclick="openArtist('${x.data.id}')" class="svg-text">${svg("person-fill")} ${x.data.name}</b>
+                    <b onclick="openArtist('${x.data.id}')" class="svg-text clickable">${svg("person-fill")} ${x.data.name}</b>
                 `).join("")}
             </section>
             `) +
@@ -42,7 +42,7 @@ async function displaySearchPage()
                         <td>${albumCoverImg(x.album, "small")}</td>
                         <td>
                             <section track="${x.data.id}" class="flex-column gap-0">
-                                <b class="clickable" onclick="setPlaylist('${x.data.id}')">${x.data.name}</b>
+                                <b class="clickable" onclick="setTracklist('${x.data.id}')">${x.data.name}</b>
                                 <small class="clickable" onclick="openArtist('${x.album.data.artist}')">${x.data.artist}</small>
                             </section>
                         </td>

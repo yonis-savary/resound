@@ -3,27 +3,33 @@
     "name": "Resound: Listen to your music everywhere !",
     "icons": [
         {
-            "src": "/resound.svg",
+            "src": "/resound/resound.svg",
             "type": "image/svg+xml",
-            "purpose": "maskable",
-            "sizes": "64x64"
+            "purpose": "any",
+            "sizes": "1024x1024"
         },
         {
-            "src": "/resound.svg",
+            "src": "/resound/resound72.png",
             "type": "image/svg+xml",
-            "purpose": "maskable",
+            "purpose": "any",
+            "sizes": "72x72"
+        },
+        {
+            "src": "/resound/resound96.png",
+            "type": "image/svg+xml",
+            "purpose": "any",
+            "sizes": "96x96"
+        },
+        {
+            "src": "/resound/resound192.png",
+            "type": "image/svg+xml",
+            "purpose": "any",
             "sizes": "192x192"
         },
         {
-            "src": "/resound.svg",
+            "src": "/resound/resound512.png",
             "type": "image/svg+xml",
-            "purpose": "maskable",
-            "sizes": "256x256"
-        },
-        {
-            "src": "/resound.svg",
-            "type": "image/svg+xml",
-            "purpose": "maskable",
+            "purpose": "any",
             "sizes": "512x512"
         }
     ],
@@ -40,7 +46,7 @@
             "short_name": "Shuffle",
             "description": "Shuffle through your entire library",
             "url": "/?pwa-action=shuffle",
-            "icons": [{"src": "/assets?file=resound.svg", "sizes": "512x512"}]
+            "icons": [{"src": "/resound/resound.svg", "sizes": "1024x1024"}]
         }
     ]
 }

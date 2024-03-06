@@ -66,12 +66,15 @@ const changePageContentTo = async (content)=>
     pageContent.innerHTML = content;
     addOverlayListeners();
     addMenuListeners();
+    window.scrollTo(0,0)
     await pageContent.fadeIn();
     document.dispatchEvent(new Event("PageContentChanged"));
 }
 
-if (isMobile())
-{
+
+document.addEventListener("DOMContentLoaded", _ => {
+    if (!isMobile()) return;
+
     let navbar = document.querySelector(".navbar")
     navbar.style.background = "black";
 
@@ -81,8 +84,7 @@ if (isMobile())
     ]) {
         navbar.querySelectorAll("." + source).forEach(x => x.classList.replace(source, target));
     }
-
-}
+})
 
 /**
  * edited version of https://stackoverflow.com/a/12646864

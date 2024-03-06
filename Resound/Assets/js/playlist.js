@@ -174,12 +174,12 @@ async function openPlaylist(id)
 
     playlistContent.querySelectorAll("[track]").forEach((element, id) => {
         element.addEventListener("click", () => {
-            setPlaylist(ids, id, selectedPlaylistID);
+            setTracklist(ids, id, selectedPlaylistID);
         })
     })
 
     shufflePlayListButton.addEventListener("click", async () => {
-        setPlaylist(
+        setTracklist(
             shuffleArray(openedPlaylistTracks).map(x => x.data.track),
             0,
             selectedPlaylistID

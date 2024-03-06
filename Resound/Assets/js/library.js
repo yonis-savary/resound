@@ -1,37 +1,6 @@
-
-
 async function displayLibrary() {
     await changePageContentTo(`
     <section class="flex-column gap-7">
-        <section class="flex-row flex-wrap gap-7">
-            <span
-                class="svg-link"
-                onclick="displayFullGallery()"
-            > Gallery ${svg("collection")} </span>
-
-            <span
-                class="svg-link"
-                onclick="shuffleAllLibrary()"
-            > Shuffle ${svg("shuffle")} </span>
-
-            <span
-                class="svg-link"
-                onclick="displayGenreGallery()"
-            > Genres ${svg("palette")} </span>
-
-            <span
-                class="svg-link"
-                onclick="displayYearsGallery()"
-            > Years ${svg("clock-history")} </span>
-
-
-            <button
-                class="fill-left button secondary white"
-                onclick="displayUploadMenu()"
-            > Add music ${svg("plus")} </button>
-
-
-        </section>
 
         <section class="flex-column">
             <h2 class="svg-text">${svg("plus-lg")} Last Additions</h2>
@@ -86,7 +55,7 @@ async function openAlbum(id)
     let album = (await apiRead("album", { id }))[0];
     await changePageContentTo(`
         <section class="flex-row flex-column-mobile align-start">
-            <img src="${albumCover(id)}" album="${id}" class="album-cover big">
+            <img src="${albumCover(id)}" album="${id}" class="album-cover big ${isMobile() ? "fill-left fill-right": ""}">
 
             <section class="flex-column gap-5 padding-left-5 fill-top fill-bottom">
                 <section class="flex-column gap-1">
@@ -174,7 +143,7 @@ async function openAlbum(id)
 
         albumContent.querySelectorAll("[track]").forEach((element, id) => {
             element.addEventListener("click", () => {
-                setPlaylist(ids, id);
+                setTracklist(ids, id);
             })
         })
     })
@@ -294,12 +263,12 @@ async function openArtist(id)
 
 async function playArtistTrackList(index = 0)
 {
-    setPlaylist(openedArtistTrackList.map(x => x.data.id), index);
+    setTracklist(openedArtistTrackList.map(x => x.data.id), index);
 }
 
 async function shuffleArtistTrackList()
 {
-    setPlaylist(shuffleArray(openedArtistTrackList).map(x => x.data.id));
+    setTracklist(shuffleArray(openedArtistTrackList).map(x => x.data.id));
 }
 
 
@@ -429,7 +398,7 @@ async function displayYearsGallery()
 async function displayFullGallery()
 {
     await changePageContentTo(`
-        <h1 class="giant">Releases</h1>
+        <h1 class="giant">Albums</h1>
         <small>Sorted by artist</small>
         <section class="flex-row gap-0 justify-between flex-wrap" id="albumList"></section>
     `)
@@ -453,7 +422,7 @@ async function displayFullGallery()
 
 async function shuffleAllLibrary()
 {
-    setPlaylist(
+    setTracklist(
         await apiFetch("/library/random-all")
     );
 }

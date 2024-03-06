@@ -22,7 +22,11 @@
         <section class="flex-column gap-0 flex-1">
             <section class="flex-column gap-0" id="playerTrackInfo"></section>
             <section class="flex-row align-center flex-1" id="playerProgressSection">
-                <progress style="width: 100%" id="playerProgress"></progress>
+
+                <section class="player-progress">
+                    <section id="playerProgress" class="progress-bar"></section>
+                </section>
+
                 <small class="flex-shrink-0" id="playerProgressInfo"></small>
             </section>
         </section>

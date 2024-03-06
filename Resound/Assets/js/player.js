@@ -4,12 +4,13 @@ const PLAYER_PROGRESS_RESOLUTION = 20;
 if (isMobile())
 {
     player.classList.replace("flex-row", "flex-column");
-    player.classList.replace("gap-10", "gap-0");
+    player.classList.replace("gap-10", "gap-1");
 
     playerVolumeInput.removeAttribute("orient");
 
     playerTrackCover.style.display = "none";
     playerControls.appendChild(playerVolumeButton);
+    playerControls.classList.add("margin-bottom-3")
     player.appendChild(playerProgressSection);
     Array.from(player.childNodes)
         .filter(x => 'innerHTML' in x)
@@ -20,9 +21,9 @@ if (isMobile())
 
 let playerPlaylistID = null;
 
-let playlistIndex = 0;
-let playlistIDList = [];
-let playlistSize = -1;
+let tracklistIndex = 0;
+let tracklistIdList = [];
+let tracklistSize = -1;
 let audioPlayer = new Audio();
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -45,9 +46,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         time = state.time;
     }
 
+    // Registered player state may be invalid (ex: index = 30 where songs.length = 10)
+    // In this case we keep the tracklist but reset its "progression"
+    if (index > songs.length)
+    {
+        console.error("Invalid player state, reseting playlist");
+        index = 0;
+        time = 0;
+    }
+
     playerPauseButton.hide();
 
-    setPlaylist(songs, index, playlistID, false);
+    setTracklist(songs, index, playlistID, false);
     audioPlayer.pause();
 
     audioPlayer.oncanplay = _ => {
@@ -61,39 +71,31 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-
-
-
-
-
-
-
-
-
 /*
-$$$$$$$\  $$\        $$$$$$\ $$\     $$\ $$\       $$$$$$\  $$$$$$\ $$$$$$$$\
-$$  __$$\ $$ |      $$  __$$\\$$\   $$  |$$ |      \_$$  _|$$  __$$\\__$$  __|
-$$ |  $$ |$$ |      $$ /  $$ |\$$\ $$  / $$ |        $$ |  $$ /  \__|  $$ |
-$$$$$$$  |$$ |      $$$$$$$$ | \$$$$  /  $$ |        $$ |  \$$$$$$\    $$ |
-$$  ____/ $$ |      $$  __$$ |  \$$  /   $$ |        $$ |   \____$$\   $$ |
-$$ |      $$ |      $$ |  $$ |   $$ |    $$ |        $$ |  $$\   $$ |  $$ |
-$$ |      $$$$$$$$\ $$ |  $$ |   $$ |    $$$$$$$$\ $$$$$$\ \$$$$$$  |  $$ |
-\__|      \________|\__|  \__|   \__|    \________|\______| \______/   \__|
+
+$$$$$$$$\ $$$$$$$\   $$$$$$\   $$$$$$\  $$\   $$\ $$\       $$$$$$\  $$$$$$\ $$$$$$$$\
+\__$$  __|$$  __$$\ $$  __$$\ $$  __$$\ $$ | $$  |$$ |      \_$$  _|$$  __$$\\__$$  __|
+   $$ |   $$ |  $$ |$$ /  $$ |$$ /  \__|$$ |$$  / $$ |        $$ |  $$ /  \__|  $$ |
+   $$ |   $$$$$$$  |$$$$$$$$ |$$ |      $$$$$  /  $$ |        $$ |  \$$$$$$\    $$ |
+   $$ |   $$  __$$< $$  __$$ |$$ |      $$  $$<   $$ |        $$ |   \____$$\   $$ |
+   $$ |   $$ |  $$ |$$ |  $$ |$$ |  $$\ $$ |\$$\  $$ |        $$ |  $$\   $$ |  $$ |
+   $$ |   $$ |  $$ |$$ |  $$ |\$$$$$$  |$$ | \$$\ $$$$$$$$\ $$$$$$\ \$$$$$$  |  $$ |
+   \__|   \__|  \__|\__|  \__| \______/ \__|  \__|\________|\______| \______/   \__|
 
 */
 
-async function setPlaylist(songs, startIndex = 0, playlistID = null, autoplay = true)
+async function setTracklist(songs, startIndex = 0, playlistID = null, autoplay = true)
 {
     if (!Array.isArray(songs))
         songs = [songs];
 
     playerPlaylistID = playlistID;
-    playlistIDList = songs;
-    playlistIndex = startIndex;
-    playlistSize = songs.length;
+    tracklistIdList = songs;
+    tracklistIndex = startIndex;
+    tracklistSize = songs.length;
 
     await apiFetchJSON(`/library/play-list-register`, { songs, playlistID }, "POST");
-    playSong(playlistIDList[playlistIndex], autoplay);
+    playSong(tracklistIdList[tracklistIndex], autoplay);
 }
 
 let playedSongID = null;
@@ -119,11 +121,13 @@ async function playSong(id, autoplay = true)
     setPageBackground(track.data.album);
 
     document.dispatchEvent(new CustomEvent("songStartPlaying", { detail: { track } }));
-    audioPlayer.currentTime = 0;
     audioPlayer.src = `/api/song/read/` + id;
 
     if (autoplay)
+    {
         await audioPlayer.play();
+        audioPlayer.currentTime = 0;
+    }
 
     let accentColor = null;
     if (accentColor = track.album.data.accent_color_hex)
@@ -134,21 +138,21 @@ async function playSong(id, autoplay = true)
 
 async function gotoNextSong()
 {
-    if (playlistIndex === playlistSize - 1)
+    if (tracklistIndex === tracklistSize - 1)
         return false;
 
-    playlistIndex++;
-    playSong(playlistIDList[playlistIndex])
+    tracklistIndex++;
+    playSong(tracklistIdList[tracklistIndex])
     return true;
 }
 
 async function gotoPreviousSong()
 {
-    if (playlistIndex === 0)
+    if (tracklistIndex === 0)
         return false;
 
-    playlistIndex--;
-    playSong(playlistIDList[playlistIndex])
+    tracklistIndex--;
+    playSong(tracklistIdList[tracklistIndex])
     return true;
 }
 
@@ -349,7 +353,7 @@ setInterval(async _ => {
         return;
 
     await apiFetchJSON("/library/player-register-state", {
-        index: playlistIndex,
+        index: tracklistIndex,
         time: audioPlayer.currentTime
     }, "POST");
 
@@ -364,9 +368,7 @@ async function refreshPlayerState()
     let duration = Math.round(audioPlayer.duration)
     let currentTime = Math.round(audioPlayer.currentTime)
 
-    let progressTime = Math.round(audioPlayer.currentTime * PLAYER_PROGRESS_RESOLUTION);
-
-    playerProgress.setAttribute("value", progressTime)
+    playerProgress.style.width = (( currentTime * 100 ) / duration) + "%"
     playerProgressInfo.innerText = `${digitsDuration(currentTime)} / ${digitsDuration(duration)}`
 
     if (!('mediaSession' in navigator))
@@ -393,26 +395,16 @@ async function refreshPlayerState()
     }
 }
 
-playerProgress.addEventListener("click", (event) => {
-    let box = playerProgress.getBoundingClientRect();
-    let x = event.clientX;
-
+playerProgress.parentNode.addEventListener("click", (event) => {
+    let box = playerProgress.parentNode.getBoundingClientRect();
     let toGoto = Math.map(event.clientX, box.x, box.x + box.width, 0, audioPlayer.duration)
 
     audioPlayer.pause();
     audioPlayer.currentTime = Math.floor(toGoto);
     audioPlayer.play();
-
-    playerProgress.setAttribute("value", toGoto * PLAYER_PROGRESS_RESOLUTION)
 })
 
-audioPlayer.addEventListener("canplaythrough", _ => {
-    playerProgress.setAttribute("max", Math.floor(audioPlayer.duration) * PLAYER_PROGRESS_RESOLUTION);
-});
-
 setInterval(refreshPlayerState, 200);
-playerProgress.setAttribute("max", 1);
-playerProgress.setAttribute("value", 0);
 
 
 
@@ -573,7 +565,7 @@ async function setMediaSession(track)
 
 function refreshTrackPlayingClassTracker()
 {
-    let id = playlistIDList[playlistIndex]
+    let id = tracklistIdList[tracklistIndex]
 
     pageContent.querySelectorAll(".playing").forEach(x => {
         x.classList.remove("playing");
@@ -622,7 +614,7 @@ moodModeButton.addEventListener("click", async _ => {
     let playlist = await apiFetch("/mood/generate/" + playedSongID);
     playlist = playlist.map(x => x.id);
     playlist.unshift(playedSongID);
-    setPlaylist(playlist);
+    setTracklist(playlist);
 
     let vinyl = moodModeButton.querySelector("svg")
     vinyl.style.transition = "all 300ms";
