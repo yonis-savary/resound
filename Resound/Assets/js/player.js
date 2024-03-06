@@ -737,7 +737,7 @@ async function drawFrequencyCircles()
 }
 
 document.addEventListener("songChanged", _ => {
-    frequencyContext.fillStyle = document.body.style.getPropertyValue("--track-color") + "66";
+    frequencyContext.fillStyle = document.body.style.getPropertyValue("--track-color") + "33";
 })
 
 audioPlayer.addEventListener("play", drawFrequencyCircles);
