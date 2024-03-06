@@ -120,6 +120,12 @@ async function playSong(id, autoplay = true)
     setMediaSession(track);
     setPageBackground(track.data.album);
 
+    // Stop the current media download
+    // Useful if skiping a long track
+    // https://developer.mozilla.org/en-US/docs/Web/Media/Audio_and_video_delivery#other_tips_for_audiovideo
+    audioPlayer.removeAttribute("src");
+    audioPlayer.load();
+
     document.dispatchEvent(new CustomEvent("songStartPlaying", { detail: { track } }));
     audioPlayer.src = `/api/song/read/` + id;
 
