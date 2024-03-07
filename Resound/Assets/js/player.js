@@ -8,14 +8,33 @@ if (isMobile())
 
     playerVolumeInput.removeAttribute("orient");
 
-    playerTrackCover.style.display = "none";
-    playerControls.appendChild(playerVolumeButton);
-    playerControls.classList.add("margin-bottom-3")
-    player.appendChild(playerProgressSection);
-    Array.from(player.childNodes)
-        .filter(x => 'innerHTML' in x)
-        .slice(1)
-        .forEach(x => x.style.width = "100%")
+    screenSaverInfo.classList.add("h4");
+
+    const getOrientation = _ => window.innerWidth > window.innerHeight ? "horizontal": "vertical";
+    let lastOrientation = null;
+
+    window.addEventListener("resize", _ => {
+        let currentOrientation = getOrientation();
+
+        if (currentOrientation == lastOrientation)
+            return;
+
+        switch (currentOrientation)
+        {
+            case "horizontal":
+                screenSaverContent.classList.replace("flex-column", "flex-row");
+                player.classList.replace("flex-column", "flex-row");
+                break;
+
+            case "vertical":
+                screenSaverContent.classList.replace("flex-row", "flex-column");
+                player.classList.replace("flex-row", "flex-column");
+                break;
+        }
+
+        lastOrientation = currentOrientation;
+    });
+    window.dispatchEvent(new Event("resize"));
 }
 
 

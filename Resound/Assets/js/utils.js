@@ -72,20 +72,6 @@ const changePageContentTo = async (content)=>
 }
 
 
-document.addEventListener("DOMContentLoaded", _ => {
-    if (!isMobile()) return;
-
-    let navbar = document.querySelector(".navbar")
-    navbar.style.background = "black";
-
-    for (let [source, target] of [
-        ["fill-left", "fill-top"],
-        ["fill-right", "fill-bottom"]
-    ]) {
-        navbar.querySelectorAll("." + source).forEach(x => x.classList.replace(source, target));
-    }
-})
-
 /**
  * edited version of https://stackoverflow.com/a/12646864
  * return a clone of the array
