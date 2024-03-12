@@ -289,6 +289,16 @@ body
     outline: none;
 }
 
+body:not(.is-mobile).player
+{
+    align-items: center;
+}
+
+body.is-mobile #playerControls
+{
+    justify-content: space-evenly;
+}
+
 #screenSaver
 {
     display: flex;
@@ -503,3 +513,4 @@ body.is-mobile .navbar
 {
     background: black !important;
 }
+

@@ -95,7 +95,8 @@ document.addEventListener("songStartPlaying", ({ detail }) => {
 
     screenSaverInfo.innerHTML = `
         <b>${track.data.name}</b>
-        <small>${track.data.artist} (${track.album.data.name})</small>
+        <small>${track.data.artist}</small>
+        <small>(${track.album.data.name})</small>
     `
 });
 

@@ -1,4 +1,4 @@
-<section class="player align-center gap-10 flex-row" id="player">
+<section class="player gap-10 flex-row" id="player">
     <section class="flex-row align-center gap-2" id="playerControls">
         <button id="playerPreviousButton" title="Go to previous track">
             <?= svg("chevron-left") ?>

@@ -4,11 +4,13 @@ const PLAYER_PROGRESS_RESOLUTION = 20;
 if (isMobile())
 {
     player.classList.replace("flex-row", "flex-column");
-    player.classList.replace("gap-10", "gap-1");
+    player.classList.replace("gap-10", "gap-3");
 
     playerVolumeInput.removeAttribute("orient");
 
     screenSaverInfo.classList.add("h4");
+
+    playerControls.appendChild(playerVolumeButton)
 
     const getOrientation = _ => window.innerWidth > window.innerHeight ? "horizontal": "vertical";
     let lastOrientation = null;
@@ -124,6 +126,12 @@ async function playSong(id, autoplay = true)
         return;
     playedSongID = id;
 
+    // When downloading a long track, the network is blocked until the file is completely sent
+    // Stop the current media download, useful if skiping a long track
+    // https://developer.mozilla.org/en-US/docs/Web/Media/Audio_and_video_delivery#other_tips_for_audiovideo
+    audioPlayer.removeAttribute("src");
+    audioPlayer.load();
+
     let track = (await apiRead("track", { id }))[0];
     apiFetch("/song/listen", { track: id, playlist: playerPlaylistID });
 
@@ -138,12 +146,6 @@ async function playSong(id, autoplay = true)
 
     setMediaSession(track);
     setPageBackground(track.data.album);
-
-    // Stop the current media download
-    // Useful if skiping a long track
-    // https://developer.mozilla.org/en-US/docs/Web/Media/Audio_and_video_delivery#other_tips_for_audiovideo
-    audioPlayer.removeAttribute("src");
-    audioPlayer.load();
 
     document.dispatchEvent(new CustomEvent("songStartPlaying", { detail: { track } }));
     audioPlayer.src = `/api/song/read/` + id;
@@ -224,7 +226,7 @@ audioPlayer.addEventListener("pause", () => {
 });
 
 audioPlayer.addEventListener("ended", _ => {
-    console.log("SONG ENDED");
+    console.log("SONG ENDED", audioPlayer.currentTime, audioPlayer.duration);
     if (!gotoNextSong())
         audioPlayer.pause();
 });
@@ -721,8 +723,14 @@ frequencyCanvas.height = 256;
 const frequencyContext = frequencyCanvas.getContext("2d");
 frequencyContext.fillStyle = "#FFFFFF55";
 
+let blockedFrequencyCircles = false;
+
+
 async function drawFrequencyCircles()
 {
+    if (blockedFrequencyCircles)
+        return;
+
     analyser.getByteFrequencyData(dataArray);
 
     const size = frequencyCanvas.width;
@@ -759,4 +767,73 @@ document.addEventListener("songChanged", _ => {
     frequencyContext.fillStyle = document.body.style.getPropertyValue("--track-color") + "33";
 })
 
+if ('getBattery' in navigator)
+{
+    setInterval(async _ => {
+        let battery = await navigator.getBattery()
+        if ((!blockedFrequencyCircles) && (battery.level <= .5))
+        {
+            blockedFrequencyCircles = true;
+            const size = frequencyCanvas.width;
+            frequencyContext.clearRect(0, 0, size, size);
+            console.info("Blocking frequency circles to save battery")
+        }
+        else
+        {
+            blockedFrequencyCircles = false;
+        }
+    }, 1000*120);
+}
+
 audioPlayer.addEventListener("play", drawFrequencyCircles);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+ $$$$$$\   $$$$$$\  $$$$$$$\  $$$$$$$$\ $$$$$$$$\ $$\   $$\ $$\       $$$$$$\   $$$$$$\  $$\   $$\
+$$  __$$\ $$  __$$\ $$  __$$\ $$  _____|$$  _____|$$$\  $$ |$$ |     $$  __$$\ $$  __$$\ $$ | $$  |
+$$ /  \__|$$ /  \__|$$ |  $$ |$$ |      $$ |      $$$$\ $$ |$$ |     $$ /  $$ |$$ /  \__|$$ |$$  /
+\$$$$$$\  $$ |      $$$$$$$  |$$$$$\    $$$$$\    $$ $$\$$ |$$ |     $$ |  $$ |$$ |      $$$$$  /
+ \____$$\ $$ |      $$  __$$< $$  __|   $$  __|   $$ \$$$$ |$$ |     $$ |  $$ |$$ |      $$  $$<
+$$\   $$ |$$ |  $$\ $$ |  $$ |$$ |      $$ |      $$ |\$$$ |$$ |     $$ |  $$ |$$ |  $$\ $$ |\$$\
+\$$$$$$  |\$$$$$$  |$$ |  $$ |$$$$$$$$\ $$$$$$$$\ $$ | \$$ |$$$$$$$$\ $$$$$$  |\$$$$$$  |$$ | \$$\
+ \______/  \______/ \__|  \__|\________|\________|\__|  \__|\________|\______/  \______/ \__|  \__|
+*/
+
+if  ('wakeLock' in navigator)
+{
+    let screenLock = null;
+
+    audioPlayer.addEventListener("play", async _ => {
+        try {
+           screenLock = await navigator.wakeLock.request('screen');
+        } catch(err) {
+            console.error(err);
+           return;
+        }
+    });
+
+    audioPlayer.addEventListener("pause", async _ => {
+        if (!screenLock)
+            return;
+
+        screenLock.release();
+        screenLock = null;
+    });
+}
