@@ -771,16 +771,17 @@ if ('getBattery' in navigator)
 {
     setInterval(async _ => {
         let battery = await navigator.getBattery()
-        if ((!blockedFrequencyCircles) && (battery.level <= .5))
+
+        if (battery.level >= .5)
+        {
+            blockedFrequencyCircles = false;
+        }
+        else if (!blockedFrequencyCircles)
         {
             blockedFrequencyCircles = true;
             const size = frequencyCanvas.width;
             frequencyContext.clearRect(0, 0, size, size);
             console.info("Blocking frequency circles to save battery")
-        }
-        else
-        {
-            blockedFrequencyCircles = false;
         }
     }, 1000*120);
 }
