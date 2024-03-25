@@ -508,3 +508,23 @@ body.is-mobile .navbar
     background: black !important;
 }
 
+
+
+
+::-webkit-scrollbar {
+    width: .5em;
+    height: .5em;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: rgba(0,0,0, .5);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: var(--track-color, var(--blue));
+    border-radius: 10px;
+    transition: all 100ms ease;
+}
