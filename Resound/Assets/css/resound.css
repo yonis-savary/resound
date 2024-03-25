@@ -355,7 +355,7 @@ body:not(.is-mobile) #screenSaverInfo
     }
 }
 
-#screenSaverCover:not(.playing)
+#screenSaverCover:not(.currently-playing)
 {
     animation-play-state: paused;
 }

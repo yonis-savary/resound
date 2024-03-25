@@ -102,16 +102,16 @@ document.addEventListener("songStartPlaying", ({ detail }) => {
 
 document.addEventListener("DOMContentLoaded", _ => {
     audioPlayer.addEventListener("play", () => {
-        screenSaverCover.classList.add("playing")
+        screenSaverCover.classList.add("currently-playing")
     })
     audioPlayer.addEventListener("playing", () => {
-        screenSaverCover.classList.add("playing")
+        screenSaverCover.classList.add("currently-playing")
     })
     audioPlayer.addEventListener("pause", () => {
-        screenSaverCover.classList.remove("playing")
+        screenSaverCover.classList.remove("currently-playing")
     })
     audioPlayer.addEventListener("ended", () => {
-        screenSaverCover.classList.remove("playing")
+        screenSaverCover.classList.remove("currently-playing")
     })
 });
 
