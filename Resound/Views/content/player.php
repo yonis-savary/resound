@@ -1,4 +1,4 @@
-<section class="player gap-10 flex-row" id="player">
+<section class="player gap-10 flex-row align-center" id="player">
     <section class="flex-row align-center gap-2" id="playerControls">
         <button id="playerPreviousButton" title="Go to previous track">
             <?= svg("chevron-left") ?>
@@ -14,6 +14,9 @@
         </button>
         <button id="moodModeButton" title="Listen to similar tracks !">
             <?= svg("vinyl-fill") ?>
+        </button>
+        <button id="trackListButton" title="See current play list" top menu="playerTracklistMenu">
+            <?= svg("list-ul") ?>
         </button>
     </section>
 
@@ -36,6 +39,11 @@
         <?= svg("volume-up") ?>
     </button>
 
+</section>
+
+
+<section class="menu" id="playerTracklistMenu">
+    <table class="track-list" id="playerTracklistTable"></table>
 </section>
 
 <section class="menu" id="playerVolumeMenu">

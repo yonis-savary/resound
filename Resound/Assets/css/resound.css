@@ -19,14 +19,8 @@ body
 
 .menu
 {
-
-    --fg: #282828;
-    --contrast: #ffffff;
-    --discreet: #686868;
-    --stealth: #dbdbdb;
-    --bg: #f0f1f3;
-    --highlight: #c6c9d1;
-    --input-background: #fefefe;
+    --menu-background: rgba(0, 0, 0, 0.805);
+    backdrop-filter: blur(8px);
 }
 
 

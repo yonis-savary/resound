@@ -55,9 +55,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     let playerData = await apiFetch("/library/play-list-get")
-    if (!playerData)
+    if (!playerData.songs.length)
         return;
-    let { songs, playlistID } = playerData;
+    let { songs, playlistID, songsData} = playerData;
+
+    refreshTracklistMenu(songs, songsData);
 
     let index = 0;
     let time = 0;
@@ -117,6 +119,7 @@ async function setTracklist(songs, startIndex = 0, playlistID = null, autoplay =
 
     await apiFetchJSON(`/library/play-list-register`, { songs, playlistID }, "POST");
     playSong(tracklistIdList[tracklistIndex], autoplay);
+    refreshTracklistMenu()
 }
 
 let playedSongID = null;
@@ -185,6 +188,61 @@ async function gotoPreviousSong()
     return true;
 }
 
+
+async function gotoIndexSong(index)
+{
+    tracklistIndex = index;
+    playSong(tracklistIdList[tracklistIndex])
+    return true;
+}
+
+async function refreshTracklistMenu(songs=null, songsData=null)
+{
+    if (!songs)
+    {
+
+        let playerData = await apiFetch("/library/play-list-get")
+
+        songs = playerData.songs;
+        songsData = playerData.songsData;
+    }
+
+    let sortedSongsData = [];
+
+    for (let songId of songs)
+    {
+        let index = songsData.findIndex(x => x.data.id == songId);
+        let data = songsData[index];
+        sortedSongsData.push(data);
+    }
+
+    playerTracklistTable.innerHTML = `
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Duration</th>
+        </tr>
+    </thead>
+    <tbody>
+    ${sortedSongsData.map((track, i) => `
+        <tr track="${track.data.id}" onclick="gotoIndexSong(${i})">
+            <td>${track.data.position}</td>
+            <td>
+                <section class="flex-row align-center">
+                    ${albumCoverImg(track.album, "small")}
+                    <section class="flex-column gap-0">
+                        <b>${track.data.name}</b>
+                        <small>${track.album.data.name}</small>
+                    </section>
+                </section>
+            </td>
+            <td>${prettyDuration(track.data.duration_seconds)}</td>
+        </tr>
+    `).join("")}
+    </tbody>
+    `
+}
 
 
 
@@ -514,7 +572,7 @@ async function handleMoodLauncher()
     if (handleMoodLauncherTimeout) {
         clearTimeout(handleMoodLauncherTimeout);
         handleMoodLauncherTimeout = null;
-        moodModeButton.click();
+        enableMoodMode();
 
         audioPlayer.pause();
         await playAudioEffect("mode-mode-activation.wav")
@@ -596,16 +654,15 @@ function refreshTrackPlayingClassTracker()
 {
     let id = tracklistIdList[tracklistIndex]
 
-    pageContent.querySelectorAll(".playing").forEach(x => {
+    document.body.querySelectorAll(".playing").forEach(x => {
         x.classList.remove("playing");
     })
 
-    pageContent.querySelectorAll(`[track='${id}']`).forEach(x => {
+    document.body.querySelectorAll(`[track='${id}']`).forEach(x => {
         x.classList.add("playing");
     })
 }
-
-document.addEventListener("songStartPlaying", refreshTrackPlayingClassTracker)
+document.addEventListener("songChanged", refreshTrackPlayingClassTracker)
 document.addEventListener("pageContentEdited", refreshTrackPlayingClassTracker)
 
 
@@ -638,8 +695,8 @@ $$ | \_/ $$ | $$$$$$  | $$$$$$  |$$$$$$$  |
 \__|     \__| \______/  \______/ \_______/
 */
 
-
-moodModeButton.addEventListener("click", async _ => {
+async function enableMoodMode()
+{
     let playlist = await apiFetch("/mood/generate/" + playedSongID);
     playlist = playlist.map(x => x.id);
     playlist.unshift(playedSongID);
@@ -654,7 +711,9 @@ moodModeButton.addEventListener("click", async _ => {
         { filter: "hue-rotate(360deg)" },
     ], { duration: 500 });
     vinyl.style.color = "white";
-});
+}
+
+moodModeButton.addEventListener("click", enableMoodMode);
 
 
 

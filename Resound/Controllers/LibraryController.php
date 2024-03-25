@@ -242,7 +242,23 @@ class LibraryController
     public static function getPlayList()
     {
         $storage = self::getUserPlaylistCache();
-        return $storage->get(UserID::get()) ?? null;
+        if (! $data = $storage->try(UserID::get()))
+            return [
+                "songs" => [],
+                "playlistId" => null
+            ];
+
+        $songs = $data["songs"];
+        $songsData = Track::select()->whereSQL("track.id IN {}", [$songs])->fetch();
+
+        return [
+            "songs" => $songs,
+            "songsData" => $songsData,
+            "playlistID" => $data["playlistID"]
+        ];
+
+
+
     }
 
 
