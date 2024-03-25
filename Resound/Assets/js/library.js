@@ -121,10 +121,21 @@ async function openAlbum(id)
         processAlbumVibrantColor(pageContent.querySelector("img"), id, pageContent);
 
     apiRead("track", { album: id, _ignores: ["track&album&artist"] }).then(tracks => {
-        tracks = tracks.sortByKey(x => x.data.position);
+        let groupedTracks = tracks.groupByKey(x => x.data.disc_number);
+        let discNumbers = Object.keys(groupedTracks).sort();
+
+        tracks = [];
+        for (const [discNumber, discTracks] of Object.entries(groupedTracks))
+            tracks.push(...discTracks.sortByKey(x => x.data.position));
+
+        const showDisc = discNumbers.length > 1;
+
+
         albumContent.innerHTML = tracks.map(x => `
         <tr track="${x.data.id}">
-            <td><span>${x.data.position ?? "-"}</span></td>
+            <td>
+                <span>${x.data.position ?? "-"}</span>
+            </td>
             <td>
                 <section class="flex-row align-center">
                     ${albumCoverImg(x.album, "small")}
@@ -136,6 +147,11 @@ async function openAlbum(id)
             </td>
             <td><span></span></td>
             <td><span>${digitsDuration(x.data.duration_seconds)}</span></td>
+            <td>
+                ${showDisc ? `
+                <span class="svg-text">${x.data.disc_number} ${svg("disc", 18)}</span>
+                `: ''}
+            </td>
         </tr>
         `).join("")
 

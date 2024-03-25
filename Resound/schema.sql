@@ -38,6 +38,7 @@ CREATE TABLE track (
     album INTEGER NOT NULL REFERENCES album(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     position INT NULL,
+    disc_number SMALLINT NULL,
     artist VARCHAR(100) NULL,
     producer VARCHAR(255) NULL,
     duration_seconds INT NULL,

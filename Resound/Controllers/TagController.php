@@ -161,16 +161,16 @@ class TagController
             false)
         ) return TagAnomaly::insertArray([ "filename" => $distPath, "description" => "Tags not found" ]);
 
-        $artist   = $tags["artist"];
-        $band     = $tags["band"] ?? $tags["album_artist"] ?? $artist;
-        $song     = $tags["title"];
-        $album    = $tags["album"];
-        $year     = $tags["year"] ?? $tags["creation_date"] ?? null;
-        $track    = $tags["track_number"] ?? $position;
-        $genre    = $tags["genre"] ?? null;
-        $composer = $tags["composer"] ?? null;
-        $cover    = $tags["picture"]["0"]["data"] ?? $metadata["comments"]["picture"]["0"]["data"] ?? null;
-
+        $artist     = $tags["artist"];
+        $band       = $tags["band"] ?? $tags["album_artist"] ?? $artist;
+        $song       = $tags["title"];
+        $album      = $tags["album"];
+        $year       = $tags["year"] ?? $tags["creation_date"] ?? null;
+        $track      = $tags["track_number"] ?? $position;
+        $genre      = $tags["genre"] ?? null;
+        $composer   = $tags["composer"] ?? null;
+        $cover      = $tags["picture"]["0"]["data"] ?? $metadata["comments"]["picture"]["0"]["data"] ?? null;
+        $discNumber = $tags["part_of_a_set"] ?? "1";
 
         if ($genre === null)
             TagAnomaly::insertArray(["filename" => $distPath, "description" => "Unknown Genre"]);
@@ -184,6 +184,7 @@ class TagController
             &$track,
             &$genre,
             &$composer,
+            &$discNumber
         ] as &$var)
         {
             if (is_array($var))
@@ -192,6 +193,7 @@ class TagController
 
         // Transform "5/12" into "5"
         $track = preg_replace("/\/.+$/", "", $track);
+        $discNumber = preg_replace("/\/.+$/", "", $discNumber);
 
         $duration = isset($metadata["playtime_seconds"]) ? intval($metadata["playtime_seconds"]) : null;
 
@@ -216,12 +218,13 @@ class TagController
             Storage::getInstance()->write("Resound/Covers/$albumID", $cover);
 
         $db->query(
-            "INSERT OR IGNORE INTO track (album, name, position, artist, producer, duration_seconds, path, edition_date, size_kb)
-            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {})
+            "INSERT OR IGNORE INTO track (album, name, position, disc_number, artist, producer, duration_seconds, path, edition_date, size_kb)
+            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})
         ", [
             $albumID,
             $song,
             $track,
+            $discNumber,
             $artist,
             $composer,
             $duration,
