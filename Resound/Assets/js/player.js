@@ -233,7 +233,7 @@ async function refreshTracklistMenu(songs=null, songsData=null)
                     ${albumCoverImg(track.album, "small")}
                     <section class="flex-column gap-0">
                         <b>${track.data.name}</b>
-                        <small>${track.album.data.name}</small>
+                        <small>${track.data.artist}</small>
                     </section>
                 </section>
             </td>
