@@ -312,8 +312,11 @@ async function shuffleArtistTrackList()
 
 async function openGenre(genre)
 {
-    await changePageContentTo(`
-        <h1>'${genre}' releases</h1>
+    await changePageContentTo(html`
+        <section class="flex-row align-center justify-between">
+            <h1>'${genre}' releases</h1>
+            <span class="svg-text" onclick="shuffleGenre('${genre}')">${svg("shuffle")} Shuffle</span>
+        </section>
 
         <section class="flex-row flex-wrap" id="albumList">
         </section>
@@ -339,6 +342,12 @@ async function displayGenreGallery()
     })
 }
 
+
+async function shuffleGenre(genre)
+{
+    let playlist = await apiFetch(`/library/random-from-genre/` + genre);
+    setTracklist(playlist);
+}
 
 
 

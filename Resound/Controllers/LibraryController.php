@@ -40,6 +40,7 @@ class LibraryController
             Route::get("/last-additions", [self::class, "getLastAdditions"]),
             Route::get("/most-listened",  [self::class, "getMostListened"]),
             Route::get("/random-all",     [self::class, "getRandomTrackList"]),
+            Route::get("/random-from-genre/{genre}",     [self::class, "getRandomTrackListFromGenre"]),
             Route::get("/genres-list",    [self::class, "getGenreHTML"]),
             Route::get("/years-list",     [self::class, "getYearsHTML"]),
 
@@ -162,6 +163,17 @@ class LibraryController
             ORDER BY RANDOM()
             LIMIT 100
         ")->collect();
+    }
+
+    public static function getRandomTrackListFromGenre($_, string $genre)
+    {
+        return ObjectArray::fromQuery(buildQuery(
+            "SELECT track.id
+            FROM track
+            JOIN album ON album = album.id AND album.genre = {}
+            ORDER BY RANDOM()
+            LIMIT 100
+        ", [$genre]))->collect();
     }
 
     public static function getGenreHTML()
