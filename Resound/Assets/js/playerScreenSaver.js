@@ -70,7 +70,7 @@ function displayScreenSaver()
         playerPreviousButton.click();
     });
     screenSaverPauseButton.addEventListener("click", _ => {
-        playerPauseButton.click();
+        playerPreviousButton.dispatchEvent(new Event("dblclick"))
     });
     screenSaverPlayButton.addEventListener("click", _ => {
         playerPlayButton.click();
