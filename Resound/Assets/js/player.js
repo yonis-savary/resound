@@ -419,11 +419,18 @@ async function refreshPlayButtonVisibility()
     {
         playerPlayButton.show()
         playerPauseButton.hide()
+
+        screenSaverPlayButton.show()
+        screenSaverPauseButton.hide()
+
     }
     else
     {
         playerPauseButton.show()
         playerPlayButton.hide()
+
+        screenSaverPauseButton.show()
+        screenSaverPlayButton.hide()
     }
 }
 
@@ -702,15 +709,18 @@ async function enableMoodMode()
     playlist.unshift(playedSongID);
     setTracklist(playlist);
 
-    let vinyl = moodModeButton.querySelector("svg")
-    vinyl.style.transition = "all 300ms";
-    vinyl.style.color = "#F99";
-    await sleep(300);
-    await vinyl.animateAsync([
-        { filter: "hue-rotate(0deg)" },
-        { filter: "hue-rotate(360deg)" },
-    ], { duration: 500 });
-    vinyl.style.color = "white";
+    [moodModeButton, screenSaverMoodButton].forEach(async button => {
+        let vinyl = button.querySelector("svg");
+        vinyl.style.transition = "all 300ms";
+        vinyl.style.color = "#F99";
+        await sleep(300);
+        await vinyl.animateAsync([
+            { filter: "hue-rotate(0deg)" },
+            { filter: "hue-rotate(360deg)" },
+        ], { duration: 500 });
+        vinyl.style.color = "white";
+    })
+
 }
 
 moodModeButton.addEventListener("click", enableMoodMode);
