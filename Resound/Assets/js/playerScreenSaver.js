@@ -67,10 +67,10 @@ function displayScreenSaver()
     screenSaver.fadeIn();
 
     screenSaverPreviousButton.addEventListener("click", _ => {
-        playerPreviousButton.click();
+        playerPreviousButton.dispatchEvent(new Event("dblclick"))
     });
     screenSaverPauseButton.addEventListener("click", _ => {
-        playerPreviousButton.dispatchEvent(new Event("dblclick"))
+        playerPauseButton.click();
     });
     screenSaverPlayButton.addEventListener("click", _ => {
         playerPlayButton.click();
