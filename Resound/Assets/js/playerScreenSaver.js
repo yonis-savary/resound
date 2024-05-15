@@ -11,32 +11,40 @@ SCREEN_SAVER_ELEMENT.innerHTML = `
     </section>
     <section class="flex-column">
         <section class="flex-column align-center gap-0" id="screenSaverInfo"></section>
-        <section class="flex-row flex-wrap" id="screenSaverControls">
-            <button id="screenSaverPreviousButton" title="Go to previous track">
-                ${ svg("chevron-left", 32) }
-            </button>
-            <button id="screenSaverPauseButton" title="Pause">
-                ${ svg("pause-fill", 32) }
-            </button>
-            <button id="screenSaverPlayButton" title="Play / Resume">
-                ${ svg("caret-right-fill", 32) }
-            </button>
-            <button id="screenSaverNextButton" title="Go to next track">
-                ${ svg("chevron-right", 32) }
-            </button>
-            <button id="screenSaverMoodButton" title="Enable mood mode">
-                ${ svg("vinyl-fill", 32) }
-            </button>
-            <button id="screenSaverUnlockButton" title="Unlock the screen">
-                ${ svg("unlock", 32) }
-            </button>
+        <section class="flex-column gap-8" id="screenSaverControls">
+            <section class="flex-row gap-8">
+                <button class="player-button" id="screenSaverPreviousButton" title="Go to previous track">
+                    ${ svg("chevron-left", 32) }
+                </button>
+                <button class="player-button" id="screenSaverPauseButton" title="Pause">
+                    ${ svg("pause-fill", 32) }
+                </button>
+                <button class="player-button" id="screenSaverPlayButton" title="Play / Resume">
+                    ${ svg("caret-right-fill", 32) }
+                </button>
+                <button class="player-button" id="screenSaverNextButton" title="Go to next track">
+                    ${ svg("chevron-right", 32) }
+                </button>
+            </section>
+            <section class="flex-row gap-8">
+                <button class="player-button" id="screenSaverMoodButton" title="Enable mood mode">
+                    ${ svg("vinyl-fill", 32) }
+                </button>
+                <button class="player-button" id="screenSaverUnlockButton" title="Unlock the screen">
+                    ${ svg("unlock", 32) }
+                </button>
+            </section>
         </section>
     </section>
 </section>
 `
 document.body.appendChild(SCREEN_SAVER_ELEMENT);
 
-const SCREEN_SAVER_DELAY_SECONDS = 15;
+let screenSaverLikeButton = likeButton(null, 32);
+
+screenSaverControls.childNodes[3].appendChild(screenSaverLikeButton);
+
+const SCREEN_SAVER_DELAY_SECONDS = 3;
 
 const SCREEN_SAVER_EVENTS = [
     "mousemove",

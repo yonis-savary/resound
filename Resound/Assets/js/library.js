@@ -15,6 +15,12 @@ async function displayLibrary() {
                 <section class="album-folder"></section>
             </section>
         </section>
+
+
+        <section class="flex-column">
+            <h2 class="svg-text">${svg("heart")} Liked tracks & genres</h2>
+            <section class="flex-column flex-wrap max-vh-20" id="likedGenresSection"></section>
+        </section>
     </section>
 
     `)
@@ -27,7 +33,22 @@ async function displayLibrary() {
     apiFetch(`/library/most-listened`).then(mostListened => {
         let section = pageContent.querySelector("#mostListened")
         section.innerHTML = mostListened.length ? mostListened.map(renderAlbumPreview).join("") : "No title played so far"
-    })
+    });
+
+    apiFetch(`/likes/genres`).then(likedGenres => {
+        likedGenresSection.innerHTML =`
+
+        <section class="svg-text">
+            <button onclick="shuffleAllLikes()" class="player-button svg-text">${svg("caret-right-fill")}</button>
+            <span>Shuffle All Likes</span>
+        </section>
+        ` +  likedGenres.map(x => `
+        <section class="svg-text">
+            <button onclick="shuffleLikedGenre('${x.genre}')" class="player-button svg-text">${svg("caret-right-fill")}</button>
+            <span>${x.genre} (${x.count})</span>
+        </section>
+        `).join("");
+    });
 }
 
 document.addEventListener("DOMContentLoaded", _ => displayLibrary())
@@ -147,6 +168,8 @@ async function openAlbum(id)
             </td>
             <td><span></span></td>
             <td><span>${digitsDuration(x.data.duration_seconds)}</span></td>
+            <td class="like-holder" trackId="${x.data.id}">
+            </td>
             <td>
                 ${showDisc ? `
                 <span class="svg-text">${x.data.disc_number} ${svg("disc", 18)}</span>
@@ -161,6 +184,9 @@ async function openAlbum(id)
             element.addEventListener("click", () => {
                 setTracklist(ids, id);
             })
+        })
+        albumContent.querySelectorAll(".like-holder").forEach((element, id) => {
+            element.appendChild(likeButton(element.getAttribute("trackId")));
         })
     })
 }

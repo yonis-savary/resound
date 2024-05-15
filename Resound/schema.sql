@@ -135,3 +135,12 @@ BEGIN
         WHERE id = old.album;
 END;
 -- DELIMITER
+
+
+
+CREATE TABLE user_like (
+    user INTEGER NOT NULL REFERENCES user(id) ON DELETE CASCADE,
+    track INTEGER NOT NULL REFERENCES track(id) ON DELETE CASCADE,
+    UNIQUE(user, track)
+);
+-- DELIMITER

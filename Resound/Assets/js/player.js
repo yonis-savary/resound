@@ -147,6 +147,9 @@ async function playSong(id, autoplay = true)
     </small>
     `
 
+    changeButtonTrackId(playerLikeButton, track.data.id);
+    changeButtonTrackId(screenSaverLikeButton, track.data.id);
+
     setMediaSession(track);
     setPageBackground(track.data.album);
 
@@ -545,7 +548,8 @@ document.addEventListener("keydown", (event) => {
 
 audioPlayer.pause()
 
-
+let playerLikeButton = likeButton(null);
+playerLikeButtonSpan.appendChild(playerLikeButton);
 
 
 

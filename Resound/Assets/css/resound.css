@@ -10,6 +10,9 @@ body
     --input-background: rgba(128, 128, 128, 30%);
     color: white;
     margin-bottom: 10em;
+
+    height: unset !important;
+    max-height: unset !important;
 }
 
 .notifier-log
@@ -254,7 +257,7 @@ body
     transform: rotate(180deg);
 }
 
-.player button, #screenSaverContent button
+.player button, .player-button
 {
     color: var(--fg);
     padding: .5em;
@@ -263,11 +266,12 @@ body
     border: solid 1px var(--stealth);
     display: flex;
     align-items: center;
+    justify-content: center;
     transition: all 50ms ease;
     box-shadow: 0px 0px 0px rgba(0,0,0, 8%);
 }
 
-.player button:hover, #screenSaverContent button:hover
+.player button:hover, .player-button:hover
 {
     box-shadow: 0px 0px 12px rgba(0,0,0, 8%);
     background-color: rgba(255, 255, 255, 9%);
@@ -534,3 +538,15 @@ body.is-mobile .navbar
     border-radius: 10px;
     transition: all 100ms ease;
 }
+
+
+
+.like-button *
+{
+}
+
+.like-button:not([liked]) .liked-svg     { display: none;  }
+.like-button[liked]       .liked-svg     {  }
+
+.like-button[liked]       .not-liked-svg { display: none; }
+.like-button:not([liked]) .not-liked-svg {  }

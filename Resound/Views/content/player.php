@@ -15,6 +15,7 @@
         <button id="moodModeButton" title="Listen to similar tracks !">
             <?= svg("vinyl-fill") ?>
         </button>
+        <span id="playerLikeButtonSpan"></span>
         <button id="trackListButton" title="See current play list" top menu="playerTracklistMenu">
             <?= svg("list-ul") ?>
         </button>

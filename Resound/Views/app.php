@@ -19,6 +19,8 @@ use Resound\Classes\Straws\UserID;
     <input type="hidden" id="userIDInput" value="<?= UserID::get() ?>">
 
     <?= script("utils.js") ?>
+    <?= script("like.js") ?>
+
     <?= render("navbar") ?>
 
     <img class="backgroundCoverImage" id="backgroundCoverImageFront">
@@ -39,6 +41,7 @@ use Resound\Classes\Straws\UserID;
 
     <?= script("embedded.js") ?>
     <?= script("settings.js") ?>
+
 
     <script>
         window.onerror = (event, source, lineno, colno, error) => {
