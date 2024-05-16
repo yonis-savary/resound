@@ -44,7 +44,7 @@ let screenSaverLikeButton = likeButton(null, 32);
 
 screenSaverControls.childNodes[3].appendChild(screenSaverLikeButton);
 
-const SCREEN_SAVER_DELAY_SECONDS = 3;
+const SCREEN_SAVER_DELAY_SECONDS = 15;
 
 const SCREEN_SAVER_EVENTS = [
     "mousemove",
