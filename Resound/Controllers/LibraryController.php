@@ -52,6 +52,7 @@ class LibraryController
 
             Route::get("/artist/{int:id}/tracks", [self::class, "getArtistTracksAndFeaturing"]),
 
+            Route::get("/album/{int:id}/shuffle", [self::class, "shuffleAlbumTracks"]),
             Route::get("/album/{int:id}/download", [self::class, "downloadAlbumZIP"]),
             Route::get("/album/{int:id}/delete-data", [self::class, "deleteAlbumData"]),
             Route::get("/album/{int:id}/delete-files", [self::class, "deleteAlbumFiles"]),
@@ -105,17 +106,10 @@ class LibraryController
 
     public static function getLastAdditions()
     {
-        $lastAlbums = ObjectArray::fromQuery(
-            "SELECT DISTINCT album
-            FROM track
-            ORDER BY edition_date DESC
-            LIMIT 10
-        ")->collect();
-
-        if (!count($lastAlbums))
-            return [];
-
-        return Album::select()->whereSQL("album.id IN {}", [$lastAlbums])->fetch();
+        return Album::select()
+        ->order("album", "id", "desc")
+        ->limit(10)
+        ->fetch();
     }
 
     public static function getMostListened()
@@ -226,7 +220,7 @@ class LibraryController
                         <h2 class='h4'>$year</h2>
                         <small>(".count($albums)." releases)</small>
                     </section>
-                    <section class='flex-row align-center gap-1'>".join("", $albums)."</section>
+                    <section class='flex-row scrollable horizontal align-center gap-1'>".join("", $albums)."</section>
                 </section>
             </section>";
         })
@@ -305,12 +299,8 @@ class LibraryController
     {
         $artistName = Artist::findId($artist)["data"]["name"];
 
-        debug(Track::select()
-        ->whereSQL("(track.artist || ' ' || `track&album`.name) LIKE '%{}%'", [$artistName])
-        ->build());
-
         return Track::select()
-        ->whereSQL("(track.artist || ' ' || `track&album`.name) LIKE '%{}%'", [$artistName])
+        ->whereSQL("(track.artist || ' ' || `track&album&artist`.name) LIKE '%{}%'", [$artistName])
         ->fetch();
     }
 
@@ -374,5 +364,8 @@ class LibraryController
         return self::deleteAlbumData($request, $albumId);
     }
 
-
+    public static function shuffleAlbumTracks($_, int $id)
+    {
+        return ObjectArray::fromQuery("SELECT id FROM track WHERE album = {} ORDER BY RANDOM()", [$id])->collect();
+    }
 }

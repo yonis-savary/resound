@@ -191,6 +191,8 @@ class TagController
                 $var = $var[0] ?? null;
         }
 
+        $year = preg_replace("/\-.+/", "", $year); // transform timestamps to year
+
         // Transform "5/12" into "5"
         $track = preg_replace("/\/.+$/", "", $track);
         $discNumber = preg_replace("/\/.+$/", "", $discNumber);

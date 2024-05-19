@@ -104,7 +104,10 @@ async function openAlbum(id)
 
         </section>
 
-        <h2 class="margin-top-3">Tracks</h2>
+        <section class="flex-row justify-between">
+            <h2 class="margin-top-3">Tracks</h2>
+            <span onclick="shuffleAlbum(${album.data.id})" class="svg-text svg-link">${svg("shuffle")} Shuffle</span>
+        </section>
 
         <table class="track-list">
             <thead>
@@ -215,7 +218,12 @@ async function deleteAlbumFiles(albumId)
     displayLibrary();
 }
 
+async function shuffleAlbum(albumId)
+{
+    let tracklist = await apiFetch(`/library/album/${albumId}/shuffle`);
 
+    setTracklist(tracklist);
+}
 
 
 
@@ -341,7 +349,7 @@ async function openGenre(genre)
     await changePageContentTo(html`
         <section class="flex-row align-center justify-between">
             <h1>'${genre}' releases</h1>
-            <span class="svg-text" onclick="shuffleGenre('${genre}')">${svg("shuffle")} Shuffle</span>
+            <span class="svg-text svg-link" onclick="shuffleGenre('${genre}')">${svg("shuffle")} Shuffle</span>
         </section>
 
         <section class="flex-row flex-wrap" id="albumList">
