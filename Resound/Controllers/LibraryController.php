@@ -191,7 +191,7 @@ class LibraryController
                         <h2 class='h4'>$genre</h2>
                         <small>(".count($albums)." releases)</small>
                     </section>
-                    <section class='flex-row align-center gap-1'>".join("", $albums)."</section>
+                    <section class='flex-row scrollable horizontal align-center gap-1'>".join("", $albums)."</section>
                 </section>
             </section>";
         })
