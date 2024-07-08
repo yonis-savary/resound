@@ -9,7 +9,7 @@ body
     --card-bg: rgba(255, 255, 255, 10%);
     --input-background: rgba(128, 128, 128, 30%);
     color: white;
-    margin-bottom: 10em;
+    padding-bottom: 10em;
 
     height: unset !important;
     max-height: unset !important;
