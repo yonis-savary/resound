@@ -372,6 +372,8 @@ async function openGenre(genre)
 
 async function displayGenreGallery()
 {
+    changePageFragment(PAGE_GENRE_MENU);
+
     let genres = await apiFetch("/library/genres-list");
 
     await changePageContentTo(genres);
@@ -429,6 +431,8 @@ async function openYear(year)
 
 async function displayYearsGallery()
 {
+    changePageFragment(PAGE_YEAR_MENU);
+
     let years = await apiFetch("/library/years-list");
 
     await changePageContentTo(years);
