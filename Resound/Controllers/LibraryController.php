@@ -138,7 +138,7 @@ class LibraryController
             LEFT JOIN track ON track.album = album.id
             LEFT JOIN user_listening ON user_listening.track = track.id AND user = {}
             GROUP BY album.id
-            ORDER BY listening_ratio DESC
+            ORDER BY listening_ratio ASC, RANDOM()
             LIMIT 15
         ", [UserID::get()])
         ->map(fn($x) => Album::findId($x))
