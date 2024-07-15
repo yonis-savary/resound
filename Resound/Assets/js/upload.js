@@ -2,6 +2,8 @@ let currentUploadToken = null;
 
 async function displayUploadMenu()
 {
+    changePageFragment(PAGE_ADD_MUSIC)
+
     await changePageContentTo(`
         <h1>Upload new Music</h1>
 

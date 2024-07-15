@@ -1,5 +1,7 @@
 async function displaySettings()
 {
+    changePageFragment(PAGE_SETTINGS)
+
     await changePageContentTo(`
         <h1>Settings</h1>
 

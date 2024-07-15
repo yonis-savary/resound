@@ -103,3 +103,95 @@ function renderAlbumPreview(album)
     </section>
     `
 }
+
+
+
+
+
+
+
+
+
+
+
+
+const PAGE_ALBUM = "album";
+const PAGE_HOME = "home";
+const PAGE_ARTIST = "artist";
+const PAGE_GENRE = "genre";
+const PAGE_YEAR = "year";
+const PAGE_GALLERY = "galley";
+const PAGE_PLAYLIST_MENU = "playlist_menu";
+const PAGE_PLAYLIST = "playlist";
+const PAGE_WEB = "web";
+const PAGE_SETTINGS = "settings";
+const PAGE_ADD_MUSIC = "add_music";
+
+if (!('lasthash' in window.location))
+    window.location.lasthash = [];
+
+
+let ignoreNextChangePageFragment = false;
+
+function interpretFragment(fragment)
+{
+    let [type, dataId] = fragment.split("-", 2);
+    type = type.replace(/^\#/, "");
+
+    ignoreNextChangePageFragment = true;
+    switch (type)
+    {
+        case PAGE_HOME          : displayLibrary(dataId);        break;
+        case PAGE_ALBUM         : openAlbum(dataId);             break;
+        case PAGE_ARTIST        : openArtist(dataId);            break;
+        case PAGE_GENRE         : openGenre(dataId);             break;
+        case PAGE_YEAR          : openYear(dataId);              break;
+        case PAGE_GALLERY       : displayFullGallery(dataId);    break;
+        case PAGE_PLAYLIST      : openPlaylist(dataId);          break;
+        case PAGE_PLAYLIST_MENU : displayPlaylistMenu(dataId);   break;
+        case PAGE_WEB           : displayEmbeddedMedias(dataId); break;
+        case PAGE_SETTINGS      : displaySettings(dataId);       break;
+        case PAGE_ADD_MUSIC     : displayUploadMenu(dataId);     break;
+        default:
+            console.warn("Type not recognized", type, dataId);
+    }
+}
+
+/**
+ * Manually change by page scripts
+ * @param {*} newHash
+ * @param {*} dataId
+ */
+function changePageFragment(newHash, dataId=null)
+{
+    if (ignoreNextChangePageFragment)
+        return ignoreNextChangePageFragment = false;
+    ignoreNextChangePageFragment = false;
+
+    newHash = newHash + (dataId ?  "-" + dataId: "");
+    changePageHash(newHash, true);
+}
+
+function changePageHash(newHash, ignore=false)
+{
+    if (ignore)
+        ignoreNextChangeEvent = true;
+
+    window.location.hash = newHash;
+}
+
+
+
+
+
+let ignoreNextChangeEvent = false;
+
+window.addEventListener("hashchange", event => {
+    event.preventDefault();
+
+    if (ignoreNextChangeEvent)
+        return ignoreNextChangeEvent = false;
+    ignoreNextChangeEvent = false;
+
+    interpretFragment(window.location.hash);
+})

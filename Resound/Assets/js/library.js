@@ -1,4 +1,7 @@
-async function displayLibrary() {
+async function displayLibrary()
+{
+    changePageFragment(PAGE_HOME);
+
     await changePageContentTo(`
     <section class="flex-column gap-7">
 
@@ -73,6 +76,8 @@ document.addEventListener("DOMContentLoaded", _ => displayLibrary())
 
 async function openAlbum(id)
 {
+    changePageFragment(PAGE_ALBUM, id)
+
     let album = (await apiRead("album", { id }))[0];
     await changePageContentTo(`
         <section class="flex-row flex-column-mobile align-start">
@@ -251,6 +256,8 @@ let openedArtistTrackList = [];
 
 async function openArtist(id)
 {
+    changePageFragment(PAGE_ARTIST, id)
+
     let artist = (await apiRead("artist", { id }))[0];
     await changePageContentTo(`
         <section class="flex-column gap-0">
@@ -346,6 +353,8 @@ async function shuffleArtistTrackList()
 
 async function openGenre(genre)
 {
+    changePageFragment(PAGE_GENRE, genre)
+
     await changePageContentTo(html`
         <section class="flex-row align-center justify-between">
             <h1>'${genre}' releases</h1>
@@ -404,6 +413,8 @@ async function shuffleGenre(genre)
 
 async function openYear(year)
 {
+    changePageFragment(PAGE_YEAR, year)
+
     await changePageContentTo(`
         <h1>'${year}' releases</h1>
 
@@ -456,6 +467,8 @@ async function displayYearsGallery()
 
 async function displayFullGallery()
 {
+    changePageFragment(PAGE_GALLERY)
+
     await changePageContentTo(`
         <h1 class="giant">Albums</h1>
         <small>Sorted by artist</small>

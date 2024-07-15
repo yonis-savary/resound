@@ -10,6 +10,8 @@ async function refreshEmbeddedMediaList()
 
 async function displayEmbeddedMedias()
 {
+    changePageContentTo(PAGE_WEB)
+
     await changePageContentTo(`
 
         <section class="flex-row flex-wrap align-start flex-1 gap-5">

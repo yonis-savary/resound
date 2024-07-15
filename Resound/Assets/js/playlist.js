@@ -12,6 +12,8 @@
 
 async function displayPlaylistMenu()
 {
+    changePageFragment(PAGE_PLAYLIST_MENU)
+
     await changePageContentTo(`
         <section class="flex-column gap-10">
 
@@ -116,6 +118,8 @@ let openedPlaylistTracks = []
 
 async function openPlaylist(id)
 {
+    changePageFragment(PAGE_PLAYLIST, id)
+
     selectedPlaylistID = id;
 
     let { tracks, playlist } = await apiFetch(`/playlists/${id}/content`);
