@@ -39,6 +39,7 @@ class LibraryController
 
             Route::get("/last-additions", [self::class, "getLastAdditions"]),
             Route::get("/most-listened",  [self::class, "getMostListened"]),
+            Route::get("/discover",       [self::class, "getLeastListened"]),
             Route::get("/random-all",     [self::class, "getRandomTrackList"]),
             Route::get("/random-from-genre/{genre}",     [self::class, "getRandomTrackListFromGenre"]),
             Route::get("/genres-list",    [self::class, "getGenreHTML"]),
@@ -127,6 +128,24 @@ class LibraryController
         ->collect()
         ;
     }
+
+
+    public static function getLeastListened()
+    {
+        return ObjectArray::fromQuery(
+            "SELECT DISTINCT album, (COUNT(user_listening.id) / COUNT(DISTINCT track.id)) as listening_ratio
+            FROM track
+            JOIN user_listening ON track = track.id AND user = {}
+            GROUP BY track.album
+            ORDER BY listening_ratio DESC
+            LIMIT 15
+        ", [UserID::get()])
+        ->map(fn($x) => Album::findId($x))
+        ->collect()
+        ;
+    }
+
+
 
     public static function getAlbumCoverStorage(): Storage
     {

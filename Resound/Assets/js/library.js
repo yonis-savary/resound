@@ -6,18 +6,29 @@ async function displayLibrary()
     <section class="flex-column gap-7">
 
         <section class="flex-column">
-            <h2 class="svg-text">${svg("plus-lg")} Last Additions</h2>
-            <section class="flex-row scrollable horizontal" id="lastAdditions">
-                <section class="album-folder"></section>
-            </section>
-        </section>
-
-        <section class="flex-column">
             <h2 class="svg-text">${svg("star")} Most listened this month</h2>
             <section class="flex-row scrollable horizontal" id="mostListened">
                 <section class="album-folder"></section>
             </section>
         </section>
+
+
+        <section class="flex-row flex-wrap">
+            <section class="flex-column flex-1">
+                <h2 class="svg-text">${svg("plus-lg")} Last additions</h2>
+                <section class="flex-row scrollable horizontal" id="lastAdditions">
+                    <section class="album-folder"></section>
+                </section>
+            </section>
+
+            <section class="flex-column flex-1">
+                <h2 class="svg-text">${svg("compass")} (re)Discover tracks</h2>
+                <section class="flex-row scrollable horizontal" id="leastListened">
+                    <section class="album-folder"></section>
+                </section>
+            </section>
+        </section>
+
 
 
         <section class="flex-column">
@@ -36,6 +47,11 @@ async function displayLibrary()
     apiFetch(`/library/most-listened`).then(mostListened => {
         let section = pageContent.querySelector("#mostListened")
         section.innerHTML = mostListened.length ? mostListened.map(renderAlbumPreview).join("") : "No title played so far"
+    });
+
+    apiFetch(`/library/discover`).then(leastListened => {
+        let section = pageContent.querySelector("#leastListened")
+        section.innerHTML = leastListened.length ? leastListened.map(renderAlbumPreview).join("") : "No title to (re)discover"
     });
 
     apiFetch(`/likes/genres`).then(likedGenres => {
