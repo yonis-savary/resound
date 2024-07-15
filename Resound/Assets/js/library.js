@@ -13,19 +13,17 @@ async function displayLibrary()
         </section>
 
 
-        <section class="flex-row flex-wrap">
-            <section class="flex-column flex-1">
-                <h2 class="svg-text">${svg("plus-lg")} Last additions</h2>
-                <section class="flex-row scrollable horizontal" id="lastAdditions">
-                    <section class="album-folder"></section>
-                </section>
+        <section class="flex-column">
+            <h2 class="svg-text">${svg("plus-lg")} Last additions</h2>
+            <section class="flex-row scrollable horizontal" id="lastAdditions">
+                <section class="album-folder"></section>
             </section>
+        </section>
 
-            <section class="flex-column flex-1">
-                <h2 class="svg-text">${svg("compass")} (re)Discover tracks</h2>
-                <section class="flex-row scrollable horizontal" id="leastListened">
-                    <section class="album-folder"></section>
-                </section>
+        <section class="flex-column">
+            <h2 class="svg-text">${svg("compass")} (re)Discover tracks</h2>
+            <section class="flex-row scrollable horizontal" id="leastListened">
+                <section class="album-folder"></section>
             </section>
         </section>
 

@@ -133,10 +133,11 @@ class LibraryController
     public static function getLeastListened()
     {
         return ObjectArray::fromQuery(
-            "SELECT DISTINCT album, (COUNT(user_listening.id) / COUNT(DISTINCT track.id)) as listening_ratio
-            FROM track
-            JOIN user_listening ON track = track.id AND user = {}
-            GROUP BY track.album
+            "SELECT DISTINCT album, (IFNULL(COUNT(user_listening.id), 0) / COUNT(DISTINCT track.id)) as listening_ratio
+            FROM album
+            LEFT JOIN track ON track.album = album.id
+            LEFT JOIN user_listening ON user_listening.track = track.id AND user = {}
+            GROUP BY album.id
             ORDER BY listening_ratio DESC
             LIMIT 15
         ", [UserID::get()])
