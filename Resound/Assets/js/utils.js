@@ -190,12 +190,23 @@ function changePageHash(newHash, ignore=false)
 
 let ignoreNextChangeEvent = false;
 
-window.addEventListener("hashchange", event => {
-    event.preventDefault();
+document.addEventListener("DOMContentLoaded", _ => {
+    const navbar = document.querySelector(".navbar");
 
-    if (ignoreNextChangeEvent)
-        return ignoreNextChangeEvent = false;
-    ignoreNextChangeEvent = false;
+    window.addEventListener("hashchange", event => {
+        if (isMobile() && navbar.classList.contains("active"))
+        {
+            navbar.classList.remove("active")
+            const oldURL = new URL(event.oldURL);
+            changePageHash(oldURL.hash, true);
+            return;
+        }
 
-    interpretFragment(window.location.hash);
+        if (ignoreNextChangeEvent)
+            return ignoreNextChangeEvent = false;
+        ignoreNextChangeEvent = false;
+
+        interpretFragment(window.location.hash);
+    })
+
 })
