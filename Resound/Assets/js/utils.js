@@ -194,17 +194,18 @@ document.addEventListener("DOMContentLoaded", _ => {
     const navbar = document.querySelector(".navbar");
 
     window.addEventListener("hashchange", event => {
-        if (isMobile() && navbar.classList.contains("active"))
-        {
-            navbar.classList.remove("active")
-            const oldURL = new URL(event.oldURL);
-            changePageHash(oldURL.hash, true);
-            return;
-        }
+        event.preventDefault();
 
         if (ignoreNextChangeEvent)
             return ignoreNextChangeEvent = false;
         ignoreNextChangeEvent = false;
+
+        if (isMobile() && navbar.classList.contains("active"))
+        {
+            navbar.classList.remove("active")
+            changePageHash((new URL(event.oldURL)).hash, true);
+            return;
+        }
 
         interpretFragment(window.location.hash);
     })
