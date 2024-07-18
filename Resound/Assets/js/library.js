@@ -274,9 +274,9 @@ async function openArtist(id)
 
     let artist = (await apiRead("artist", { id }))[0];
     await changePageContentTo(`
-        <section class="flex-column gap-0">
+        <section class="flex-row align-center gap-6">
+            <img class="artist-picture" src='/api/artist/${artist.data.id}/picture'>
             <h1 class="giant">${artist.data.name}</h1>
-            <span>Artist</span>
         </section>
         <section class="flex-column ">
             <h2>Releases</h2>

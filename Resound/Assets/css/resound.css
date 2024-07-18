@@ -550,3 +550,11 @@ body.is-mobile .navbar
 
 .like-button[liked]       .not-liked-svg { display: none; }
 .like-button:not([liked]) .not-liked-svg {  }
+
+
+
+.artist-picture
+{
+    width: 6em;
+    border-radius: 100%;
+}

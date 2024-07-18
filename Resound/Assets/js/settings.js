@@ -32,6 +32,13 @@ async function displaySettings()
 
         <hr>
 
+        <section class="flex-row align-center justify-between">
+            <span>Artist pictures</span>
+            <button class="button orange secondary" onclick="clearArtistPictureCache()">Delete files</button>
+        </section>
+
+        <hr>
+
         <h2>Tag anomalies</h2>
         <p>While parsing tags, the system may encounter uncommon situations/informations, they are all listed here</p>
         <section class="scrollable max-vh-40" id="anomalyList"></section>
@@ -247,4 +254,15 @@ async function testAndSaveNewPath()
         return alert("Could not register the configuration : " + feedback);
 
     }, _ => librarySave.disabled = false)
+}
+
+
+
+async function clearArtistPictureCache()
+{
+    if (!confirm("Clear all artist pictures ?"))
+        return;
+
+    await apiFetch("/api/artist/clear-picture-cache");
+    notifySuccess("Artists pictures removed");
 }
