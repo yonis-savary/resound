@@ -9,6 +9,7 @@
     <a class="svg-link" onclick="displayLibrary()">Home</a>
     <a class="svg-link" onclick="displayFullGallery()"> Albums</a>
     <a class="svg-link" onclick="displayGenreGallery()"> Genres</a>
+    <a class="svg-link" onclick="displayArtistsLibrary()">Artists</a>
     <a class="svg-link" onclick="displayYearsGallery()"> Years</a>
 
 

@@ -4,6 +4,7 @@ namespace Resound\Controllers;
 
 use Resound\Classes\App\Caches\ArtistPictureCache;
 use Resound\Middlewares\IsLogged;
+use Resound\Models\Album;
 use Resound\Models\Artist;
 use Sharp\Classes\Core\Logger;
 use Sharp\Classes\Env\Cache;
@@ -49,6 +50,10 @@ class ArtistController
 
         info("Added $artistId to artists to fetch");
         self::pushQueueItem(["id" => $artistId]);
+
+        if ($album = Album::find("artist", $artistId))
+            return LibraryController::getAlbumCover($req, $album["data"]["id"]);
+
         return "";
 
     }

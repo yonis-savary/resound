@@ -342,7 +342,23 @@ async function shuffleArtistTrackList()
     setTracklist(shuffleArray(openedArtistTrackList).map(x => x.data.id));
 }
 
+async function displayArtistsLibrary()
+{
+    changePageFragment(PAGE_ARTIST_MENU)
 
+    let artists = await apiRead("artist");
+    await changePageContentTo(`
+        <h1>Artists</h1>
+        <section class="flex-row flex-wrap gap-6">
+            ${artists.sortByKey(x => x.data.name).map(x => `
+                <section class="flex-column align-center gap-2 clickable" onclick="openArtist(${x.data.id})">
+                    <img class="artist-picture" src='/api/artist/${x.data.id}/picture'>
+                    <b>${x.data.name}</b>
+                </section>
+            `).join("")}
+        </section>
+    `);
+}
 
 
 

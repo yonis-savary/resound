@@ -118,6 +118,7 @@ function renderAlbumPreview(album)
 const PAGE_ALBUM = "album";
 const PAGE_HOME = "home";
 const PAGE_ARTIST = "artist";
+const PAGE_ARTIST_MENU = "artist_menu";
 const PAGE_GENRE = "genre";
 const PAGE_GENRE_MENU = "genre_menu";
 const PAGE_YEAR = "year";
@@ -146,6 +147,7 @@ function interpretFragment(fragment)
         case PAGE_HOME          : displayLibrary(dataId);        break;
         case PAGE_ALBUM         : openAlbum(dataId);             break;
         case PAGE_ARTIST        : openArtist(dataId);            break;
+        case PAGE_ARTIST_MENU   : displayArtistsLibrary(dataId);     break;
         case PAGE_GENRE         : openGenre(dataId);             break;
         case PAGE_GENRE_MENU    : displayGenreGallery(dataId);   break;
         case PAGE_YEAR          : openYear(dataId);              break;
