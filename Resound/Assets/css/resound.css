@@ -328,7 +328,7 @@ body.is-mobile #playerControls
     position: absolute;
     width: 120vw;
     height: 120vh;
-    filter: blur(16px) brightness(70%);
+    filter: blur(18px) brightness(50%);
     object-fit: cover;
 }
 
@@ -437,7 +437,7 @@ body:not(.is-mobile) #screenSaverInfo
 
     object-fit: cover;
 
-    filter: blur(16px) brightness(70%);
+    filter: blur(18px) brightness(50%);
 }
 
 
