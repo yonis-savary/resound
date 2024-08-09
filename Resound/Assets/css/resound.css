@@ -27,6 +27,13 @@ body
 }
 
 
+option
+{    
+    font-family: "Inter";
+    background-color: var(--input-background);
+    color: black;
+}
+
 .giant
 {
     font-size: 4em;

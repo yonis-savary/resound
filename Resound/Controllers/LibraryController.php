@@ -41,7 +41,7 @@ class LibraryController
             Route::get("/most-listened",  [self::class, "getMostListened"]),
             Route::get("/discover",       [self::class, "getLeastListened"]),
             Route::get("/random-all",     [self::class, "getRandomTrackList"]),
-            Route::get("/random-from-genre/{genre}",     [self::class, "getRandomTrackListFromGenre"]),
+            Route::get("/shuffle-genre/{genre}",     [self::class, "getRandomTrackListFromGenre"]),
             Route::get("/genres-list",    [self::class, "getGenreHTML"]),
             Route::get("/years-list",     [self::class, "getYearsHTML"]),
 
@@ -171,22 +171,33 @@ class LibraryController
         ]));
     }
 
-    public static function getRandomTrackList()
+    public static function getRandomTrackList(Request $request)
     {
+        debug($request->params("favoritesOnly"));
+        $favoriteExpression = $request->params("favoritesOnly") ? 
+            buildQuery("WHERE track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
+            "";
+
         return ObjectArray::fromQuery(
             "SELECT id
             FROM track
+            $favoriteExpression
             ORDER BY RANDOM()
             LIMIT 100
         ")->collect();
     }
 
-    public static function getRandomTrackListFromGenre($_, string $genre)
+    public static function getRandomTrackListFromGenre(Request $request, string $genre)
     {
+        $favoriteExpression = $request->params("favoritesOnly") ? 
+            buildQuery("WHERE track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
+            "";
+
         return ObjectArray::fromQuery(buildQuery(
             "SELECT track.id
             FROM track
             JOIN album ON album = album.id AND album.genre = {}
+            $favoriteExpression
             ORDER BY RANDOM()
             LIMIT 100
         ", [$genre]))->collect();
@@ -317,12 +328,15 @@ class LibraryController
     }
 
 
-    public static function getArtistTracksAndFeaturing($_, int $artist)
+    public static function getArtistTracksAndFeaturing(Request $request, int $artist)
     {
         $artistName = Artist::findId($artist)["data"]["name"];
+        $favoriteExpression = $request->params("favoritesOnly") ? 
+            buildQuery("AND track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
+            "";
 
         return Track::select()
-        ->whereSQL("(track.artist || ' ' || `track&album&artist`.name) LIKE '%{}%'", [$artistName])
+        ->whereSQL("(track.artist || ' ' || `track&album&artist`.name) LIKE '%{}%'  $favoriteExpression", [$artistName])
         ->fetch();
     }
 
@@ -386,8 +400,18 @@ class LibraryController
         return self::deleteAlbumData($request, $albumId);
     }
 
-    public static function shuffleAlbumTracks($_, int $id)
+    public static function shuffleAlbumTracks(Request $request, int $id)
     {
-        return ObjectArray::fromQuery("SELECT id FROM track WHERE album = {} ORDER BY RANDOM()", [$id])->collect();
+        $favoriteExpression = $request->params("favoritesOnly") ? 
+            buildQuery("AND track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
+            "";
+
+        return ObjectArray::fromQuery(
+            "SELECT id 
+            FROM track 
+            WHERE album = {} 
+            $favoriteExpression
+            ORDER BY RANDOM()
+        ", [$id])->collect();
     }
 }

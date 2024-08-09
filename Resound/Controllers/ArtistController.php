@@ -3,9 +3,11 @@
 namespace Resound\Controllers;
 
 use Resound\Classes\App\Caches\ArtistPictureCache;
+use Resound\Classes\Straws\UserID;
 use Resound\Middlewares\IsLogged;
 use Resound\Models\Album;
 use Resound\Models\Artist;
+use Resound\Models\Track;
 use Sharp\Classes\Core\Logger;
 use Sharp\Classes\Env\Cache;
 use Sharp\Classes\Extras\QueueHandler;
@@ -24,10 +26,35 @@ class ArtistController
         $router->addGroup(
             ["path" => "api/artist", "middlewares" => IsLogged::class],
             Route::get("{int:id}/picture", [self::class, "getPicture"]),
-            Route::get("/clear-picture-cache", [self::class, "clearPictureCache"])
+            Route::get("/clear-picture-cache", [self::class, "clearPictureCache"]),
+            Route::get("/generate-mood/{int:songID}", [self::class, "generateMoodPlaylist"])
         );
     }
 
+    public static function generateMoodPlaylist(Request $request, string $baseSongID)
+    {
+        $song = Track::findId($baseSongID);
+        $artistName = $song["album"]["artist"]["data"]["name"];
+        $genre = $song["album"]["data"]["genre"];
+
+        $favoriteExpression = $request->params("favoritesOnly") ? 
+            buildQuery("AND track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
+            "";
+
+        return query (
+            "SELECT
+                track.id,
+                (track.artist LIKE '%{}%') artist_likeness,
+                (genre LIKE '%{}%') as genre_likeness
+            FROM track
+            JOIN album ON album = album.id
+            JOIN artist ON album.artist = artist.id
+            WHERE track.id <> {}
+            $favoriteExpression
+            ORDER BY artist_likeness DESC, genre_likeness DESC, RANDOM()
+            LIMIT 100
+        ", [$artistName, $genre, $baseSongID]);
+    }
     public static function clearPictureCache()
     {
         $cache = ArtistPictureCache::get();

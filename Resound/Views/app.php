@@ -41,6 +41,7 @@ use Resound\Classes\Straws\UserID;
 
     <?= script("embedded.js") ?>
     <?= script("settings.js") ?>
+    <?= script("actions.js") ?>
 
 
     <script>

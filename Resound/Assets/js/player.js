@@ -123,6 +123,7 @@ async function setTracklist(songs, startIndex = 0, playlistID = null, autoplay =
 }
 
 let playedSongID = null;
+let playedSongData = null;
 async function playSong(id, autoplay = true)
 {
     if (playedSongID === id)
@@ -135,7 +136,7 @@ async function playSong(id, autoplay = true)
     audioPlayer.removeAttribute("src");
     audioPlayer.load();
 
-    let track = (await apiRead("track", { id }))[0];
+    let track = playedSongData = (await apiRead("track", { id }))[0];
     apiFetch("/song/listen", { track: id, playlist: playerPlaylistID });
 
     playerTrackCover.innerHTML = albumCoverImg(track.album, "small");
@@ -576,38 +577,31 @@ $$ | \_/ $$ |$$$$$$$$\    $$ |   $$ |  $$ |$$$$$$$  |$$ |  $$ |  $$ |   $$ |  $$
 \__|     \__|\________|   \__|   \__|  \__|\_______/ \__|  \__|  \__|   \__|  \__|
 */
 
-let handleMoodLauncherTimeout
-let lastHandleMoodLauncher = null
-async function handleMoodLauncher()
+let handleNextButtonActionTimeout;
+async function handleNextButtonAction()
 {
-    if (handleMoodLauncherTimeout) {
-        clearTimeout(handleMoodLauncherTimeout);
-        handleMoodLauncherTimeout = null;
-        enableMoodMode();
-
-        audioPlayer.pause();
-        await playAudioEffect("mode-mode-activation.wav")
-        audioPlayer.play();
-
+    if (handleNextButtonActionTimeout) {
+        clearTimeout(handleNextButtonActionTimeout);
+        handleNextButtonActionTimeout = null;
+        triggerNextButtonAction();
         return;
     }
 
-    handleMoodLauncherTimeout = setTimeout(_ => {
-        clearTimeout(handleMoodLauncherTimeout);
-        handleMoodLauncherTimeout = null;
+    handleNextButtonActionTimeout = setTimeout(_ => {
+        clearTimeout(handleNextButtonActionTimeout);
+        handleNextButtonActionTimeout = null;
         gotoNextSong();
     }, 1000);
 }
 
 
-let handleShuffleLauncherTimeout
-let lastHandleShuffleLauncher = null
+let handleShuffleLauncherTimeout;
 async function handleShuffleLauncher()
 {
     if (handleShuffleLauncherTimeout) {
         clearTimeout(handleShuffleLauncherTimeout);
         handleShuffleLauncherTimeout = null;
-        shuffleAllLibrary()
+        triggerPreviousButtonAction()
         return;
     }
 
@@ -637,7 +631,7 @@ async function setMediaSession(track)
         ['play', _ => audioPlayer.play()],
         ['pause', _ => audioPlayer.pause()],
         ['previoustrack', _ => handleShuffleLauncher()],
-        ['nexttrack', _ => handleMoodLauncher()],
+        ['nexttrack', _ => handleNextButtonAction()],
         ['seekto', (details) => {
             audioPlayer.currentTime = details.seekTime;
         }],
@@ -706,13 +700,8 @@ $$ | \_/ $$ | $$$$$$  | $$$$$$  |$$$$$$$  |
 \__|     \__| \______/  \______/ \_______/
 */
 
-async function enableMoodMode()
+async function animateMoodModeButton()
 {
-    let playlist = await apiFetch("/mood/generate/" + playedSongID);
-    playlist = playlist.map(x => x.id);
-    playlist.unshift(playedSongID);
-    setTracklist(playlist);
-
     [moodModeButton, screenSaverMoodButton].forEach(async button => {
         let vinyl = button.querySelector("svg");
         vinyl.style.transition = "all 300ms";
@@ -724,10 +713,12 @@ async function enableMoodMode()
         ], { duration: 500 });
         vinyl.style.color = "white";
     })
-
 }
 
-moodModeButton.addEventListener("click", enableMoodMode);
+moodModeButton.addEventListener("click", _ => {
+    shuffleCurrentArtist();
+    animateMoodModeButton();
+});
 
 
 

@@ -13,9 +13,13 @@ async function playAudioEffect(filename, duration=1000)
 
     await promise;
 
+    audioPlayer.pause();
+    
+    effect.volume = audioPlayer.volume/2 ;
     effect.play();
-
     await sleep(duration)
+
+    audioPlayer.play();
 }
 
 function albumCoverImg(album, className="")

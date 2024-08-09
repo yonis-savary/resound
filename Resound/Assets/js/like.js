@@ -66,14 +66,3 @@ async function refreshButton(button, cachedResult=null)
     else
         button.removeAttribute("liked");
 }
-
-
-async function shuffleLikedGenre(genre)
-{
-    setTracklist(await apiFetch("/likes/shuffle/genre", {genre}));
-}
-
-async function shuffleAllLikes()
-{
-    setTracklist(await apiFetch("/likes/shuffle/all"));
-}

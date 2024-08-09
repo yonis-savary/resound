@@ -56,12 +56,12 @@ async function displayLibrary()
         likedGenresSection.innerHTML =`
 
         <section class="svg-text">
-            <button onclick="shuffleAllLikes()" class="player-button svg-text">${svg("caret-right-fill")}</button>
+            <button onclick="shuffleAllLibrary(true)" class="player-button svg-text">${svg("caret-right-fill")}</button>
             <span>Shuffle All Likes</span>
         </section>
         ` +  likedGenres.map(x => `
         <section class="svg-text">
-            <button onclick="shuffleLikedGenre('${x.genre}')" class="player-button svg-text">${svg("caret-right-fill")}</button>
+            <button onclick="shuffleGenre('${x.genre}', true)" class="player-button svg-text">${svg("caret-right-fill")}</button>
             <span>${x.genre} (${x.count})</span>
         </section>
         `).join("");
@@ -123,9 +123,10 @@ async function openAlbum(id)
 
         </section>
 
-        <section class="flex-row justify-between">
+        <section class="flex-row">
             <h2 class="margin-top-3">Tracks</h2>
-            <span onclick="shuffleAlbum(${album.data.id})" class="svg-text svg-link">${svg("shuffle")} Shuffle</span>
+            <span onclick="shuffleAlbum(${album.data.id})" class="svg-text svg-link fill-left">${svg("shuffle")} Shuffle</span>
+            <span onclick="shuffleAlbum(${album.data.id}, true)" class="svg-text svg-link">${svg("heart-fill")} Shuffle favorites</span>
         </section>
 
         <table class="track-list">
@@ -237,9 +238,11 @@ async function deleteAlbumFiles(albumId)
     displayLibrary();
 }
 
-async function shuffleAlbum(albumId)
+async function shuffleAlbum(albumId, favoritesOnly=false, keepCurrentTrackFirst=false)
 {
-    let tracklist = await apiFetch(`/library/album/${albumId}/shuffle`);
+    let tracklist = await apiFetch(`/library/album/${albumId}/shuffle`, {favoritesOnly});
+    if (keepCurrentTrackFirst && playedSongID)
+        tracklist.unshift(playedSongID);
 
     setTracklist(tracklist);
 }
@@ -284,9 +287,10 @@ async function openArtist(id)
         </section>
 
         <section class="flex-column">
-            <section class="flex-row justify-between align-center">
+            <section class="flex-row align-center">
                 <h2>Tracks</h2>
-                <span class="svg-link" onclick="shuffleArtistTrackList()">${svg("shuffle")} Shuffle</span>
+                <span class="svg-link fill-left" onclick="shuffleArtistTracks(${id})">${svg("shuffle")} Shuffle</span>
+                <span class="svg-link" onclick="shuffleArtistTracks(${id}, true)">${svg("heart-fill")} Shuffle Favorites</span>
             </section>
             <section class="flex-column scrollable max-vh-50" id="artistTrackList"></section>
         </section>
@@ -337,9 +341,13 @@ async function playArtistTrackList(index = 0)
     setTracklist(openedArtistTrackList.map(x => x.data.id), index);
 }
 
-async function shuffleArtistTrackList()
+async function shuffleArtistTracks(artistId, favoritesOnly=false, keepCurrentTrackFirst=false)
 {
-    setTracklist(shuffleArray(openedArtistTrackList).map(x => x.data.id));
+    let trackList = (await apiFetch(`/library/artist/${artistId}/tracks`, {favoritesOnly})).map(x => x.data.id);
+    if (keepCurrentTrackFirst && playedSongID)
+        trackList.unshift(playedSongID);
+
+    setTracklist(trackList);
 }
 
 async function displayArtistsLibrary()
@@ -386,9 +394,10 @@ async function openGenre(genre)
     changePageFragment(PAGE_GENRE, genre)
 
     await changePageContentTo(html`
-        <section class="flex-row align-center justify-between">
+        <section class="flex-row align-center">
             <h1>'${genre}' releases</h1>
-            <span class="svg-text svg-link" onclick="shuffleGenre('${genre}')">${svg("shuffle")} Shuffle</span>
+            <span class="svg-link fill-left" onclick="shuffleGenre('${genre}')">${svg("shuffle")} Shuffle</span>
+            <span class="svg-link" onclick="shuffleGenre('${genre}')">${svg("heart-fill")} Shuffle Favorites</span>
         </section>
 
         <section class="flex-row flex-wrap" id="albumList">
@@ -418,10 +427,13 @@ async function displayGenreGallery()
 }
 
 
-async function shuffleGenre(genre)
+async function shuffleGenre(genre, favoritesOnly=false, keepCurrentTrackFirst=false)
 {
-    let playlist = await apiFetch(`/library/random-from-genre/` + genre);
-    setTracklist(playlist);
+    let tracklist = await apiFetch(`/library/shuffle-genre/` + genre, {favoritesOnly});
+    if (keepCurrentTrackFirst && playedSongID)
+        tracklist.unshift(playedSongID);
+
+    setTracklist(tracklist);
 }
 
 
@@ -526,10 +538,10 @@ async function displayFullGallery()
     })
 }
 
-async function shuffleAllLibrary()
+async function shuffleAllLibrary(favoritesOnly=false)
 {
     setTracklist(
-        await apiFetch("/library/random-all")
+        await apiFetch("/library/random-all", {favoritesOnly})
     );
 }
 

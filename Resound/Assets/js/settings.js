@@ -39,6 +39,31 @@ async function displaySettings()
 
         <hr>
 
+        <h2>Special actions</h2>
+
+        <p>Some special actions can be triggered when pressing twice the next/previous button on your speaker/bluetooth device</p>
+
+        <section class="flex-row">
+            <section class="flex-column flex-1">
+                <b>When pressing twice the 'previous' button</b>
+                <select id="previousButtonActionSelector">
+                    ${Object.entries(ACTIONS_LABEL).map(([code, label]) => `
+                    <option value="${code}">${label}</option>
+                    `).join("")}
+                </select>
+            </section>
+            <section class="flex-column flex-1">
+                <b>When pressing twice the 'next' button</b>
+                <select id="nextButtonActionSelector">
+                    ${Object.entries(ACTIONS_LABEL).map(([code, label]) => `
+                    <option value="${code}">${label}</option>
+                    `).join("")}
+                </select>
+            </section>
+        </section>
+
+        <hr>
+
         <h2>Tag anomalies</h2>
         <p>While parsing tags, the system may encounter uncommon situations/informations, they are all listed here</p>
         <section class="scrollable max-vh-40" id="anomalyList"></section>
@@ -94,6 +119,12 @@ async function displaySettings()
         </dl>
 
     `)
+
+    previousButtonActionSelector.value = localStorage.getItem(PREVIOUS_BUTTON_ACTION_KEY)
+    nextButtonActionSelector.value = localStorage.getItem(NEXT_BUTTON_ACTION_KEY)
+
+    previousButtonActionSelector.onchange = _ => setPreviousButtonAction(previousButtonActionSelector.value)
+    nextButtonActionSelector.onchange = _ => setNextButtonAction(nextButtonActionSelector.value)
 
     refreshAnomalyList()
     refreshToDiscoverCount();

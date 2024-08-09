@@ -41,8 +41,6 @@ class LikeController
             ["path" => "api", "middlewares" => IsLogged::class],
 
             Route::get("/likes/genres", [self::class, "getLikedGenres"]),
-            Route::get("/likes/shuffle/genre", [self::class, "shuffleGenre"]),
-            Route::get("/likes/shuffle/all", [self::class, "shuffleAll"]),
         );
     }
 
@@ -60,41 +58,6 @@ class LikeController
 
             GROUP BY genre
             ORDER BY count DESC
-            LIMIT 5
         ", [UserID::get()]);
     }
-
-    public static function shuffleGenre(Request $request)
-    {
-        $genre = $request->params("genre");
-
-        return ObjectArray::fromQuery(
-            "SELECT
-                track.id
-            FROM user_like
-            JOIN track ON track = track.id
-            JOIN album ON album = album.id
-
-            WHERE user_like.user = {}
-            AND album.genre = {}
-
-            ORDER BY RANDOM()
-        ", [UserID::get(), $genre])->collect();
-    }
-
-    public static function shuffleAll()
-    {
-        return ObjectArray::fromQuery(
-            "SELECT
-                track.id
-            FROM user_like
-            JOIN track ON track = track.id
-            JOIN album ON album = album.id
-
-            WHERE user_like.user = {}
-
-            ORDER BY RANDOM()
-        ", [UserID::get()])->collect();
-    }
-
 }
