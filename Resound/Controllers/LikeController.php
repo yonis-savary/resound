@@ -40,8 +40,14 @@ class LikeController
         $router->addGroup(
             ["path" => "api", "middlewares" => IsLogged::class],
 
+            Route::get("/likes/list", [self::class, "getAllLikesId"]),
             Route::get("/likes/genres", [self::class, "getLikedGenres"]),
         );
+    }
+
+    public static function getAllLikesId()
+    {
+        return ObjectArray::fromQuery("SELECT track FROM user_like WHERE user = {}", [UserID::get()])->join(",");
     }
 
     public static function getLikedGenres()

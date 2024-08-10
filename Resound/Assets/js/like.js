@@ -1,17 +1,24 @@
-async function trackIsLiked(trackId)
+let userLikes = [];
+
+apiFetch(`/likes/list`).then(likes => {
+    userLikes = likes.split(",").map(x => parseInt(x));
+})
+
+function trackIsLiked(trackId)
 {
-    let row = await apiRead("user_like", {user: userID(), track: trackId});
-    return row.length > 0;
+    return userLikes.includes(parseInt(trackId));
 }
 
-async function likeTrack(trackId)
+function likeTrack(trackId)
 {
-    await apiCreate("user_like", {user: userID(), track: trackId});
+    apiCreate("user_like", {user: userID(), track: trackId});
+    userLikes.push(trackId);
 }
 
-async function unlikeTrack(trackId)
+function unlikeTrack(trackId)
 {
-    await apiDelete("user_like", {user: userID(), track: trackId});
+    apiDelete("user_like", {user: userID(), track: trackId});
+    userLikes = userLikes.filter(x => x != trackId);
 }
 
 function likeButton(trackId, svgSize=24)
@@ -41,7 +48,7 @@ function changeButtonTrackId(button, trackId)
     refreshButton(button);
 }
 
-async function toggleLikeButton(button)
+function toggleLikeButton(button)
 {
     let trackId = button.getAttribute("trackId");
 
@@ -55,11 +62,11 @@ async function toggleLikeButton(button)
     refreshButton(button, newStatusIsLiked);
 }
 
-async function refreshButton(button, cachedResult=null)
+function refreshButton(button, cachedResult=null)
 {
     let trackId = button.getAttribute("trackId");
 
-    let isLiked = cachedResult ?? await trackIsLiked(trackId);
+    let isLiked = cachedResult ?? trackIsLiked(trackId);
 
     if (isLiked)
         button.setAttribute("liked", true);
