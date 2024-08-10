@@ -293,8 +293,8 @@ async function openArtist(id)
         <section class="flex-column">
             <section class="flex-row align-center">
                 <h2>Tracks</h2>
-                <span class="svg-link fill-left" onclick="playArtistTracks(${id})">${svg("shuffle")} Shuffle</span>
-                <span class="svg-link" onclick="playArtistTracks(${id}, true)">${svg("heart-fill")} Shuffle Favorites</span>
+                <span class="svg-link fill-left" onclick="shuffleArtistTracks(${id})">${svg("shuffle")} Shuffle</span>
+                <span class="svg-link" onclick="shuffleArtistTracks(${id}, true)">${svg("heart-fill")} Shuffle Favorites</span>
             </section>
             <section class="flex-column scrollable max-vh-50" id="artistTrackList"></section>
         </section>
