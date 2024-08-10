@@ -281,16 +281,20 @@ async function openArtist(id)
             <img class="artist-picture" src='/api/artist/${artist.data.id}/picture'>
             <h1 class="giant">${artist.data.name}</h1>
         </section>
-        <section class="flex-column ">
+
+        <hr>
+
+        <section class="flex-column">
             <h2>Releases</h2>
             <section class="flex-row flex-wrap" id="albumList"></section>
         </section>
 
+        <hr>
         <section class="flex-column">
             <section class="flex-row align-center">
                 <h2>Tracks</h2>
-                <span class="svg-link fill-left" onclick="shuffleArtistTracks(${id})">${svg("shuffle")} Shuffle</span>
-                <span class="svg-link" onclick="shuffleArtistTracks(${id}, true)">${svg("heart-fill")} Shuffle Favorites</span>
+                <span class="svg-link fill-left" onclick="playArtistTracks(${id})">${svg("shuffle")} Shuffle</span>
+                <span class="svg-link" onclick="playArtistTracks(${id}, true)">${svg("heart-fill")} Shuffle Favorites</span>
             </section>
             <section class="flex-column scrollable max-vh-50" id="artistTrackList"></section>
         </section>
@@ -328,11 +332,15 @@ async function openArtist(id)
                         </section>
                     </td>
                     <td>${prettyDuration(track.data.duration_seconds)}</td>
+                    <td class="like-holder" trackId="${track.data.id}">
                 </tr>
             `).join("")}
             </tbody>
         </table>
         `
+        artistTrackList.querySelectorAll(".like-holder").forEach((element, id) => {
+            element.appendChild(likeButton(element.getAttribute("trackId")));
+        })
     });
 }
 
@@ -341,9 +349,18 @@ async function playArtistTrackList(index = 0)
     setTracklist(openedArtistTrackList.map(x => x.data.id), index);
 }
 
-async function shuffleArtistTracks(artistId, favoritesOnly=false, keepCurrentTrackFirst=false)
+async function playArtistTracks(artistId, favoritesOnly=false, keepCurrentTrackFirst=false)
 {
     let trackList = (await apiFetch(`/library/artist/${artistId}/tracks`, {favoritesOnly})).map(x => x.data.id);
+    if (keepCurrentTrackFirst && playedSongID)
+        trackList.unshift(playedSongID);
+
+    setTracklist(trackList);
+}
+
+async function shuffleArtistTracks(artistId, favoritesOnly=false, keepCurrentTrackFirst=false)
+{
+    let trackList = await apiFetch(`/library/artist/${artistId}/shuffle`, {favoritesOnly});
     if (keepCurrentTrackFirst && playedSongID)
         trackList.unshift(playedSongID);
 

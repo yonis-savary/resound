@@ -52,6 +52,7 @@ class LibraryController
             Route::get ("/player-get-state",       [self::class, "getPlayerState"]),
 
             Route::get("/artist/{int:id}/tracks", [self::class, "getArtistTracksAndFeaturing"]),
+            Route::get("/artist/{int:id}/shuffle", [self::class, "shuffleArtistTracksAndFeaturing"]),
 
             Route::get("/album/{int:id}/shuffle", [self::class, "shuffleAlbumTracks"]),
             Route::get("/album/{int:id}/download", [self::class, "downloadAlbumZIP"]),
@@ -337,10 +338,30 @@ class LibraryController
 
         return Track::select()
         ->whereSQL("(track.artist || ' ' || `track&album&artist`.name) LIKE '%{}%'  $favoriteExpression", [$artistName])
+        ->order("track&album", "release_year", "DESC")
+        ->order("track", "position", "ASC")
         ->fetch();
     }
 
+    public static function shuffleArtistTracksAndFeaturing(Request $request, int $artist)
+    {
+        $artistName = Artist::findId($artist)["data"]["name"];
+        $favoriteExpression = $request->params("favoritesOnly") ? 
+            buildQuery("AND track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
+            "";
 
+        return ObjectArray::fromQuery(
+            "SELECT track.id 
+            FROM track
+            JOIN album ON album = album.id 
+            JOIN artist ON album.artist = artist.id
+            WHERE (track.artist || ' ' || artist.name) LIKE '%{}%'
+            $favoriteExpression
+            ORDER BY RANDOM()
+        ", [$artistName])->collect();
+    }
+
+    
     public static function downloadAlbumZIP(Request $request, int $albumId)
     {
         $album = Album::findId($albumId);
