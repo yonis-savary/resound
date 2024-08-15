@@ -70,12 +70,12 @@ class ArtistController
         $cache = ArtistPictureCache::get();
 
         if ($data = $cache->try($artistId))
-            return new Response($data, 200, [
+            return (new Response($data, 200, [
                 "access-control-allow-origin" => "*",
                 "Content-Type" => "image/png",
                 "Content-Length" => strlen($data),
                 "Cache-Control" => "max-age=". Cache::DAY*31
-            ]);
+            ]))->removeHeaders(["Pragma"]);
 
         if (!Artist::findId($artistId))
             return "Artist not found !";
@@ -133,10 +133,6 @@ class ArtistController
             return false;
         }
 
-
-
-
-
         $artistPage = (new Request(
             "GET",
             $response["results"][0]["artistLinkUrl"]
@@ -161,9 +157,6 @@ class ArtistController
 
         $pictureURL = $matches[1];
         $pictureURL = preg_replace("/\d+x\d+[a-z]{2}(\.[a-z]+)$/", "1024x1024sr$1", $pictureURL);
-
-
-
 
         $pictureResponse = (new Request(
             "GET",
