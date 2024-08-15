@@ -156,7 +156,7 @@ class ArtistController
         }
 
         $pictureURL = $matches[1];
-        $pictureURL = preg_replace("/\d+x\d+[a-z]{2}(\.[a-z]+)$/", "1024x1024sr$1", $pictureURL);
+        $pictureURL = preg_replace("/\d+x\d+[a-z]{2}(\.[a-z]+)$/", "512x512sr$1", $pictureURL);
 
         $pictureResponse = (new Request(
             "GET",
