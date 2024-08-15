@@ -6,7 +6,7 @@ apiFetch(`/likes/list`).then(likes => {
 
 function trackIsLiked(trackId)
 {
-    return userLikes.includes(parseInt(trackId));
+    return userLikes.includes(trackId);
 }
 
 function likeTrack(trackId)
@@ -50,7 +50,7 @@ function changeButtonTrackId(button, trackId)
 
 function toggleLikeButton(button)
 {
-    let trackId = button.getAttribute("trackId");
+    let trackId = parseInt(button.getAttribute("trackId"));
 
     let newStatusIsLiked = !(button.hasAttribute("liked"));
 
@@ -64,7 +64,7 @@ function toggleLikeButton(button)
 
 function refreshButton(button, cachedResult=null)
 {
-    let trackId = button.getAttribute("trackId");
+    let trackId = parseInt(button.getAttribute("trackId"));
 
     let isLiked = cachedResult ?? trackIsLiked(trackId);
 
