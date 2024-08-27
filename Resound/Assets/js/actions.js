@@ -62,9 +62,9 @@ async function shuffleCurrentAlbumFavorite()  { shuffleAlbum(playedSongData.data
 async function shuffleCurrentGenre()          { shuffleGenre(playedSongData.album.data.genre, false, true); }
 async function shuffleCurrentGenreFavorite()  { shuffleGenre(playedSongData.album.data.genre, true, true); }
 
-async function playAlbumFromStart()           
+async function playAlbumFromStart(albumId=null)           
 {
-    let tracks = await apiFetch("track", {album: playedSongData.data.album});
+    let tracks = await apiFetch("track", {album: albumId ?? playedSongData.data.album});
     let groupedTracks = tracks.groupByKey(x => x.data.disc_number);
 
     let allTracks = Object.values(groupedTracks)

@@ -1,3 +1,14 @@
+let discoverTrackList = null;
+
+async function playDiscoverTracklist(index)
+{
+    setTracklist(
+        discoverTrackList.map(x => x.data.id),
+        index 
+    );
+}
+
+
 async function displayLibrary()
 {
     changePageFragment(PAGE_HOME);
@@ -7,7 +18,7 @@ async function displayLibrary()
 
         <section class="flex-column">
             <h2 class="svg-text">${svg("star")} Most listened this month</h2>
-            <section class="flex-row scrollable horizontal" id="mostListened">
+            <section class="flex-column" id="mostListened">
                 <section class="album-folder"></section>
             </section>
         </section>
@@ -22,7 +33,7 @@ async function displayLibrary()
 
         <section class="flex-column">
             <h2 class="svg-text">${svg("compass")} (re)Discover tracks</h2>
-            <section class="flex-row scrollable horizontal" id="leastListened">
+            <section class="flex-column scrollable max-vh-30" id="leastListened">
                 <section class="album-folder"></section>
             </section>
         </section>
@@ -37,19 +48,61 @@ async function displayLibrary()
 
     `)
 
-    apiFetch(`/library/last-additions`).then(additions => {
-        let section = pageContent.querySelector("#lastAdditions")
-        section.innerHTML = additions.map(renderAlbumPreview).join("")
-    })
-
     apiFetch(`/library/most-listened`).then(mostListened => {
         let section = pageContent.querySelector("#mostListened")
-        section.innerHTML = mostListened.length ? mostListened.map(renderAlbumPreview).join("") : "No title played so far"
+        if (!mostListened.length)
+                return section.innerHTML = "No title played so far";
+
+        section.innerHTML = mostListened.chunk(2).map(albums => `
+            <section class="flex-row">
+                ${albums.map(prettyAlbumPlaySection).join("")}
+            </section>
+        `).join("");
     });
+
+    apiFetch(`/library/last-additions`).then(additions => {
+        let section = pageContent.querySelector("#lastAdditions")
+        
+        section.innerHTML = additions.length ? additions.map(renderAlbumPreview).join("") : "No title added"
+    })
 
     apiFetch(`/library/discover`).then(leastListened => {
         let section = pageContent.querySelector("#leastListened")
-        section.innerHTML = leastListened.length ? leastListened.map(renderAlbumPreview).join("") : "No title to (re)discover"
+        if (!leastListened.length)
+                return section.innerHTML = "No title to (re)discover";
+
+        discoverTrackList = leastListened;
+
+        console.log(leastListened);
+
+        section.innerHTML = `
+        <table class="track-list">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+            ${leastListened.map((track, i) => `
+                <tr track="${track.data.id}" onclick="playDiscoverTracklist(${i})">
+                    <td>
+                        <section class="flex-row align-center">
+                            ${albumCoverImg(track.album, "small")}
+                            <section class="flex-column gap-0">
+                                <b>${track.data.name}</b>
+                                <small>${track.data.artist}</small>
+                            </section>
+                        </section>
+                    </td>
+                    <td>${prettyDuration(track.data.duration_seconds)}</td>
+                    <td class="like-holder" trackId="${track.data.id}">
+                </tr>
+            `).join("")}
+            </tbody>
+        </table>
+        `
+
     });
 
     apiFetch(`/likes/genres`).then(likedGenres => {
@@ -214,6 +267,11 @@ async function openAlbum(id)
     })
 }
 
+async function playAlbum(albumId)
+{
+
+}
+
 async function downloadAlbum(albumId)
 {
     notifyInfo("Your download will begin in a few seconds", "A ZIP file containing your album is being generated")
@@ -301,7 +359,10 @@ async function openArtist(id)
     `)
 
     apiRead("album", { artist: id }).then(async albums => {
-        pageContent.querySelector("#albumList").innerHTML = albums.map(renderAlbumPreview).join("");
+        pageContent.querySelector("#albumList").innerHTML = albums
+        .sortByKey(x => x.data.release_year)
+        .reverse()
+        .map(renderAlbumPreview).join("");
     });
 
 

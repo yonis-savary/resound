@@ -123,7 +123,7 @@ class LibraryController
             WHERE user_listening.timestamp > DATE('now', '-1 month')
             GROUP BY track.album
             ORDER BY listening_count DESC
-            LIMIT 10
+            LIMIT 4
         ", [UserID::get()])
         ->map(fn($x) => Album::findId($x))
         ->collect()
@@ -135,16 +135,16 @@ class LibraryController
     {
         return ObjectArray::fromQuery(
             "SELECT DISTINCT
-                album,
-                (COUNT(DISTINCT user_listening.id)*1.0 / COUNT(DISTINCT track.id)) as listening_ratio
-            FROM album
-            LEFT JOIN track ON track.album = album.id
+                track.id as track,
+                COUNT(DISTINCT user_listening.id) as listening_count
+            FROM track
             LEFT JOIN user_listening ON user_listening.track = track.id AND user = {}
-            GROUP BY album.id
-            ORDER BY listening_ratio ASC, RANDOM()
+            GROUP BY track.id
+            ORDER BY listening_count ASC, RANDOM()
             LIMIT 15
         ", [UserID::get()])
-        ->map(fn($x) => Album::findId($x))
+        ->map(fn($x) => Track::findId($x))
+        ->filter()
         ->collect()
         ;
     }

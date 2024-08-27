@@ -34,6 +34,21 @@ function albumCoverImg(album, className="")
     >`
 }
 
+function prettyAlbumPlaySection(album)
+{
+    return html`
+    <section class="album-play-section" onclick="playAlbumFromStart(${album.data.id})">
+        <img 
+        class="cover"
+        src="${albumCover(album.data.id)}"
+        loading="lazy"
+        >
+        <section class="vignette"></section>
+        <span class="title">${album.data.name}</span>
+    </section>
+    `
+}
+
 function prettyDuration(seconds)
 {
     if (seconds === null)
