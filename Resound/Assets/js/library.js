@@ -80,7 +80,7 @@ async function displayLibrary()
             <thead>
                 <tr>
                     <th>Title</th>
-                    <th>Duration</th>
+                    <th>Listenings</th>
                 </tr>
             </thead>
             <tbody>
@@ -95,7 +95,7 @@ async function displayLibrary()
                             </section>
                         </section>
                     </td>
-                    <td>${prettyDuration(track.data.duration_seconds)}</td>
+                    <td>${track._listenings}</td>
                     <td class="like-holder" trackId="${track.data.id}">
                 </tr>
             `).join("")}

@@ -133,17 +133,26 @@ class LibraryController
 
     public static function getLeastListened()
     {
-        return ObjectArray::fromQuery(
-            "SELECT DISTINCT
-                track.id as track,
-                COUNT(DISTINCT user_listening.id) as listening_count
-            FROM track
-            LEFT JOIN user_listening ON user_listening.track = track.id AND user = {}
-            GROUP BY track.id
-            ORDER BY listening_count ASC, RANDOM()
-            LIMIT 15
-        ", [UserID::get()])
-        ->map(fn($x) => Track::findId($x))
+        return ObjectArray::fromArray(
+            query(
+                "SELECT DISTINCT
+                    track.id as track,
+                    COUNT(DISTINCT user_listening.id) as listening_count
+                FROM track
+                LEFT JOIN user_listening ON user_listening.track = track.id AND user = {}
+                GROUP BY track.id
+                ORDER BY listening_count ASC, RANDOM()
+                LIMIT 15
+            ", [UserID::get()]
+        ))
+        ->map(function($row) {
+            $id = $row["track"];
+            $track = Track::findId($id);
+            if (!$track) return null;
+
+            $track["_listenings"] = $row["listening_count"];
+            return $track;
+        })
         ->filter()
         ->collect()
         ;
