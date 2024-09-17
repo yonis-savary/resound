@@ -37,7 +37,7 @@ class ArtistController
         $artistName = $song["album"]["artist"]["data"]["name"];
         $genre = $song["album"]["data"]["genre"];
 
-        $favoriteExpression = $request->params("favoritesOnly") ? 
+        $favoriteExpression = $request->params("favoritesOnly") ?
             buildQuery("AND track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
             "";
 
@@ -156,7 +156,7 @@ class ArtistController
         }
 
         $pictureURL = $matches[1];
-        $pictureURL = preg_replace("/\d+x\d+[a-z]{2}(\.[a-z]+)$/", "512x512sr$1", $pictureURL);
+        $pictureURL = preg_replace("/\d+x\d+[a-z]{2}(\.[a-z]+)$/", "256x256sr$1", $pictureURL);
 
         $pictureResponse = (new Request(
             "GET",
