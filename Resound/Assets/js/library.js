@@ -684,7 +684,7 @@ async function displayFullTrackLibrary()
         let innerHeight = fullTrackListHolder.scrollHeight;
         let scrolled = fullTrackListHolder.scrollTop;
 
-        if (scrolled + outerHeight >= innerHeight)
+        if (scrolled + outerHeight >= (innerHeight*0.9))
             fetchNextBatchOfTracks();
 
     });
