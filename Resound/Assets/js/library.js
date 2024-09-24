@@ -4,7 +4,7 @@ async function playDiscoverTracklist(index)
 {
     setTracklist(
         discoverTrackList.map(x => x.data.id),
-        index 
+        index
     );
 }
 
@@ -62,7 +62,7 @@ async function displayLibrary()
 
     apiFetch(`/library/last-additions`).then(additions => {
         let section = pageContent.querySelector("#lastAdditions")
-        
+
         section.innerHTML = additions.length ? additions.map(renderAlbumPreview).join("") : "No title added"
     })
 
@@ -141,8 +141,11 @@ document.addEventListener("DOMContentLoaded", _ => displayLibrary())
     \__|  \__|\________|\_______/  \______/ \__|     \__|
 */
 
-async function openAlbum(id)
+async function openAlbum(id, event=null)
 {
+    if (event)
+        event.stopImmediatePropagation();
+
     changePageFragment(PAGE_ALBUM, id)
 
     let album = (await apiRead("album", { id }))[0];
@@ -594,7 +597,10 @@ async function displayFullGallery()
     changePageFragment(PAGE_GALLERY)
 
     await changePageContentTo(`
-        <h1 class="giant">Albums</h1>
+        <section class="flex-row align-center justify-between">
+            <h1 class="giant">Albums</h1>
+            <button class="button white secondary" onclick="displayFullTrackLibrary()">Browse Tracks</button>
+        </section>
         <small>Sorted by artist</small>
         <section class="flex-row gap-0 justify-between flex-wrap" id="albumList"></section>
     `)
@@ -624,3 +630,97 @@ async function shuffleAllLibrary(favoritesOnly=false)
 }
 
 
+
+
+
+
+
+
+/*
+88888888888 8888888b.         d8888  .d8888b.  888    d8P
+    888     888   Y88b       d88888 d88P  Y88b 888   d8P
+    888     888    888      d88P888 888    888 888  d8P
+    888     888   d88P     d88P 888 888        888d88K
+    888     8888888P"     d88P  888 888        8888888b
+    888     888 T88b     d88P   888 888    888 888  Y88b
+    888     888  T88b   d8888888888 Y88b  d88P 888   Y88b
+    888     888   T88b d88P     888  "Y8888P"  888    Y88b
+
+ .d8888b.         d8888 888      888      8888888888 8888888b. Y88b   d88P
+d88P  Y88b       d88888 888      888      888        888   Y88b Y88b d88P
+888    888      d88P888 888      888      888        888    888  Y88o88P
+888            d88P 888 888      888      8888888    888   d88P   Y888P
+888  88888    d88P  888 888      888      888        8888888P"     888
+888    888   d88P   888 888      888      888        888 T88b      888
+Y88b  d88P  d8888888888 888      888      888        888  T88b     888
+ "Y8888P88 d88P     888 88888888 88888888 8888888888 888   T88b    888
+*/
+
+let trackListPageCount = 0;
+
+async function displayFullTrackLibrary()
+{
+    changePageFragment(PAGE_FULL_TRACK_GALLERY);
+
+    trackListPageCount = 0
+    await changePageContentTo(`
+    <h1>Full list of tracks</h1>
+    <section id="fullTrackListHolder" class="scrollable max-vh-50">
+        <table id="fullTrackListTable" class="track-list">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Duration</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </section>
+    `);
+
+    fullTrackListHolder.addEventListener("scroll", event => {
+        let outerHeight = fullTrackListHolder.getBoundingClientRect().height;
+        let innerHeight = fullTrackListHolder.scrollHeight;
+        let scrolled = fullTrackListHolder.scrollTop;
+
+        if (scrolled + outerHeight >= innerHeight)
+            fetchNextBatchOfTracks();
+
+    });
+
+    fetchNextBatchOfTracks()
+}
+
+
+async function fetchNextBatchOfTracks()
+{
+    let tracks = await apiFetch(`/track-batch/` + trackListPageCount);
+
+    let newSection = document.createElement("tbody");
+    newSection.innerHTML = tracks.map((track, i) => `
+        <tr track="${track.data.id}" onclick="setTracklist([${track.data.id}]);">
+            <td>${track.data.position}</td>
+            <td>
+                <section class="flex-row align-center">
+                    ${albumCoverImg(track.album, "small")}
+                    <section class="flex-column gap-0">
+                        <b>${track.data.name}</b>
+                        <small>${track.album.data.name}</small>
+                    </section>
+                </section>
+            </td>
+            <td>${prettyDuration(track.data.duration_seconds)}</td>
+            <td class="like-holder" trackId="${track.data.id}">
+        </tr>
+    `).join("")
+
+
+    fullTrackListTable.appendChild(newSection);
+    fullTrackListTable.querySelectorAll(".like-holder").forEach((element, id) => {
+        element.classList.remove("like-holder");
+        element.appendChild(likeButton(element.getAttribute("trackId")));
+    })
+
+    trackListPageCount++;
+}

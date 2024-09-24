@@ -28,7 +28,7 @@ body
 
 
 option
-{    
+{
     font-family: "Inter";
     background-color: var(--input-background);
     color: black;
@@ -569,7 +569,7 @@ body.is-mobile .navbar
 
 
 
-.album-play-section 
+.album-play-section
 {
     position: relative;
     flex: 1 1 0px;
@@ -587,7 +587,7 @@ body.is-mobile .navbar
     box-shadow: 0px 6px 12px #0003;
 }
 
-.album-play-section .cover 
+.album-play-section .cover
 {
     z-index: 1;
     position: absolute;
@@ -597,7 +597,7 @@ body.is-mobile .navbar
     transform: translate(-50%, -50%);
 }
 
-.album-play-section .vignette 
+.album-play-section .vignette
 {
     z-index: 2;
     position: absolute;
@@ -605,10 +605,10 @@ body.is-mobile .navbar
     height: 100%;
     top: 0%;
     left: 0%;
-    background: linear-gradient(to bottom, #0004 40%, #000D);
+    background: linear-gradient(to bottom, #0000 0%, #0004 40%, #000D);
 }
 
-.album-play-section .title 
+.album-play-section .title
 {
     z-index: 3;
     font-size: 1.2em;

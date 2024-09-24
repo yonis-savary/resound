@@ -57,13 +57,18 @@ class LibraryController
             Route::get("/album/{int:id}/shuffle", [self::class, "shuffleAlbumTracks"]),
             Route::get("/album/{int:id}/download", [self::class, "downloadAlbumZIP"]),
             Route::get("/album/{int:id}/delete-data", [self::class, "deleteAlbumData"]),
-            Route::get("/album/{int:id}/delete-files", [self::class, "deleteAlbumFiles"]),
+            Route::get("/album/{int:id}/delete-files", [self::class, "deleteAlbumFiles"])
         );
 
         $router->groupCallback(
             ["path" => "api", "middlewares" => IsLogged::class],
 
-            function(){
+            function(Router $router){
+
+                $router->addRoutes(
+                    Route::get("/track-batch/{int:page}", [self::class, "getTrackBatch"])
+                );
+
                 $autobahn = Autobahn::getInstance();
 
                 $autobahn->read(Album::class);
@@ -184,7 +189,7 @@ class LibraryController
     public static function getRandomTrackList(Request $request)
     {
         debug($request->params("favoritesOnly"));
-        $favoriteExpression = $request->params("favoritesOnly") ? 
+        $favoriteExpression = $request->params("favoritesOnly") ?
             buildQuery("WHERE track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
             "";
 
@@ -199,7 +204,7 @@ class LibraryController
 
     public static function getRandomTrackListFromGenre(Request $request, string $genre)
     {
-        $favoriteExpression = $request->params("favoritesOnly") ? 
+        $favoriteExpression = $request->params("favoritesOnly") ?
             buildQuery("WHERE track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
             "";
 
@@ -341,7 +346,7 @@ class LibraryController
     public static function getArtistTracksAndFeaturing(Request $request, int $artist)
     {
         $artistName = Artist::findId($artist)["data"]["name"];
-        $favoriteExpression = $request->params("favoritesOnly") ? 
+        $favoriteExpression = $request->params("favoritesOnly") ?
             buildQuery("AND track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
             "";
 
@@ -355,14 +360,14 @@ class LibraryController
     public static function shuffleArtistTracksAndFeaturing(Request $request, int $artist)
     {
         $artistName = Artist::findId($artist)["data"]["name"];
-        $favoriteExpression = $request->params("favoritesOnly") ? 
+        $favoriteExpression = $request->params("favoritesOnly") ?
             buildQuery("AND track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
             "";
 
         return ObjectArray::fromQuery(
-            "SELECT track.id 
+            "SELECT track.id
             FROM track
-            JOIN album ON album = album.id 
+            JOIN album ON album = album.id
             JOIN artist ON album.artist = artist.id
             WHERE (track.artist || ' ' || artist.name) LIKE '%{}%'
             $favoriteExpression
@@ -370,7 +375,7 @@ class LibraryController
         ", [$artistName])->collect();
     }
 
-    
+
     public static function downloadAlbumZIP(Request $request, int $albumId)
     {
         $album = Album::findId($albumId);
@@ -432,16 +437,27 @@ class LibraryController
 
     public static function shuffleAlbumTracks(Request $request, int $id)
     {
-        $favoriteExpression = $request->params("favoritesOnly") ? 
+        $favoriteExpression = $request->params("favoritesOnly") ?
             buildQuery("AND track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
             "";
 
         return ObjectArray::fromQuery(
-            "SELECT id 
-            FROM track 
-            WHERE album = {} 
+            "SELECT id
+            FROM track
+            WHERE album = {}
             $favoriteExpression
             ORDER BY RANDOM()
         ", [$id])->collect();
+    }
+
+
+    public static function getTrackBatch($_, int $page)
+    {
+        return Track::select()
+        ->order("track", "album")
+        ->order("track", "disc_number")
+        ->order("track", "position")
+        ->limit(100, $page*100)
+        ->fetch();
     }
 }

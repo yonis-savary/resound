@@ -7,6 +7,10 @@ async function displaySearchPage()
         <section class="flex-column" id="searchResults"></section>
     `);
 
+    let activeNavbar = document.querySelector(".navbar.active");
+    if (activeNavbar)
+        activeNavbar.classList.remove("active");
+
     searchInput.focus();
     searchInput.addEventListener("keyup", async () => {
         let object = searchInput.value;

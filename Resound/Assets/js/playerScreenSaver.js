@@ -9,9 +9,9 @@ SCREEN_SAVER_ELEMENT.innerHTML = `
         <canvas class="frequencyRythmCanvas"></canvas>
         <img id="screenSaverCover" style="box-shadow: var(--track-color) 0px 0px 6px">
     </section>
-    <section class="flex-column">
+    <section class="flex-column gap-7">
         <section class="flex-column align-center gap-0" id="screenSaverInfo"></section>
-        <section class="flex-column gap-8" id="screenSaverControls">
+        <section class="flex-column align-center gap-5" id="screenSaverControls">
             <section class="flex-row gap-8">
                 <button class="player-button" id="screenSaverPreviousButton" title="Go to previous track">
                     ${ svg("chevron-left", 32) }
@@ -157,9 +157,9 @@ document.addEventListener("songStartPlaying", ({ detail }) => {
         albumCover(track.data.album);
 
     screenSaverInfo.innerHTML = `
-        <b class="oneliner">${track.data.name}</b>
-        <small class="oneliner">${track.data.artist}</small>
-        <small class="oneliner">${track.album.data.name}</small>
+        <b class="oneliner margin-bottom-1">${track.data.name}</b>
+        <b class="oneliner opacity-7" style="max-width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap">${track.data.artist}</b>
+        <b class="oneliner opacity-7">${track.album.data.name}</b>
     `
 });
 

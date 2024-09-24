@@ -14,7 +14,7 @@ async function playAudioEffect(filename, duration=1000)
     await promise;
 
     audioPlayer.pause();
-    
+
     effect.volume = audioPlayer.volume/2 ;
     effect.play();
     await sleep(duration)
@@ -30,7 +30,7 @@ function albumCoverImg(album, className="")
         src="${albumCover(album.data.id)}"
         loading="lazy"
         class="album-cover ${className} clickable"
-        onclick="openAlbum('${album.data.id}')"
+        onclick="openAlbum('${album.data.id}', event)"
     >`
 }
 
@@ -38,7 +38,7 @@ function prettyAlbumPlaySection(album)
 {
     return html`
     <section class="album-play-section" onclick="playAlbumFromStart(${album.data.id})">
-        <img 
+        <img
         class="cover"
         src="${albumCover(album.data.id)}"
         loading="lazy"
@@ -135,6 +135,7 @@ function renderAlbumPreview(album)
 
 
 const PAGE_ALBUM = "album";
+const PAGE_FULL_TRACK_GALLERY = "full_track_gallery";
 const PAGE_HOME = "home";
 const PAGE_ARTIST = "artist";
 const PAGE_ARTIST_MENU = "artist_menu";
@@ -177,6 +178,7 @@ function interpretFragment(fragment)
         case PAGE_WEB           : displayEmbeddedMedias(dataId); break;
         case PAGE_SETTINGS      : displaySettings(dataId);       break;
         case PAGE_ADD_MUSIC     : displayUploadMenu(dataId);     break;
+        case PAGE_FULL_TRACK_GALLERY : displayFullTrackLibrary(dataId); break;
         default:
             console.warn("Type not recognized", type, dataId);
     }
