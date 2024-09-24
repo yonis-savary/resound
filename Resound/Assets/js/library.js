@@ -657,12 +657,14 @@ Y88b  d88P  d8888888888 888      888      888        888  T88b     888
 */
 
 let trackListPageCount = 0;
+let fetchNextTrackListIsAllowed = true;
 
 async function displayFullTrackLibrary()
 {
     changePageFragment(PAGE_FULL_TRACK_GALLERY);
 
-    trackListPageCount = 0
+    trackListPageCount = 0;
+    fetchNextTrackListIsAllowed = true
     await changePageContentTo(`
     <h1>Full list of tracks</h1>
     <section id="fullTrackListHolder" class="scrollable max-vh-50">
@@ -680,6 +682,9 @@ async function displayFullTrackLibrary()
     `);
 
     fullTrackListHolder.addEventListener("scroll", event => {
+        if (!fetchNextTrackListIsAllowed)
+            return;
+
         let outerHeight = fullTrackListHolder.getBoundingClientRect().height;
         let innerHeight = fullTrackListHolder.scrollHeight;
         let scrolled = fullTrackListHolder.scrollTop;
@@ -695,6 +700,8 @@ async function displayFullTrackLibrary()
 
 async function fetchNextBatchOfTracks()
 {
+    fetchNextTrackListIsAllowed = false;
+
     let tracks = await apiFetch(`/track-batch/` + trackListPageCount);
 
     let newSection = document.createElement("tbody");
@@ -723,4 +730,5 @@ async function fetchNextBatchOfTracks()
     })
 
     trackListPageCount++;
+    fetchNextTrackListIsAllowed = true
 }
