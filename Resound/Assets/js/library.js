@@ -730,5 +730,5 @@ async function fetchNextBatchOfTracks()
     })
 
     trackListPageCount++;
-    fetchNextTrackListIsAllowed = true
+    fetchNextTrackListIsAllowed = (tracks.length >= 100);
 }
