@@ -117,8 +117,10 @@ async function setTracklist(songs, startIndex = 0, playlistID = null, autoplay =
     tracklistIndex = startIndex;
     tracklistSize = songs.length;
 
-    await apiFetchJSON(`/library/play-list-register`, { songs, playlistID }, "POST");
+    // playSong before register list is important as playSong kill any current song download
+    // registering before "block" the network and wait for full-download before registering
     playSong(tracklistIdList[tracklistIndex], autoplay);
+    apiFetchJSON(`/library/play-list-register`, { songs, playlistID }, "POST");
     refreshTracklistMenu()
 }
 
@@ -130,7 +132,7 @@ async function playSong(id, autoplay = true)
         return;
     playedSongID = id;
 
-    // When downloading a long track, the network is blocked until the file is completely sent
+    // When downloading a long track, the network is blocked until the file is completely received
     // Stop the current media download, useful if skiping a long track
     // https://developer.mozilla.org/en-US/docs/Web/Media/Audio_and_video_delivery#other_tips_for_audiovideo
     audioPlayer.removeAttribute("src");
