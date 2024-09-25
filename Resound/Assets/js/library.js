@@ -449,7 +449,7 @@ async function displayArtistsLibrary()
                             <img class="artist-picture" src='/api/artist/${x.data.id}/picture'>
                             <b style="max-width: 6em; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;" >${x.data.name}</b>
                         </section>
-                    `)}
+                    `).join("")}
                 </section>
             `).join("<hr>")}
         </section>
