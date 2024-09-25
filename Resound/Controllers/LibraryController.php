@@ -249,12 +249,12 @@ class LibraryController
 
     public static function getYearsHTML()
     {
-        return ObjectArray::fromQuery("SELECT DISTINCT release_year FROM album ORDER BY release_year")
+        return ObjectArray::fromQuery("SELECT DISTINCT SUBSTRING(release_year, 1, 4) release_year FROM album ORDER BY release_year")
         ->filter()
         ->map(function($year) {
             return [
                 $year,
-                ObjectArray::fromQuery("SELECT id FROM album WHERE release_year = {}", [$year])
+                ObjectArray::fromQuery("SELECT id FROM album WHERE SUBSTRING(release_year, 1, 4) = {}", [$year])
                 ->map(fn($id) => "<img loading='lazy' src='/api/library/album-cover/$id' class='album-cover small'>")
                 ->collect()
             ];
