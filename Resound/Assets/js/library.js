@@ -436,15 +436,22 @@ async function displayArtistsLibrary()
     changePageFragment(PAGE_ARTIST_MENU)
 
     let artists = await apiRead("artist");
+    let groupedArtists = artists.sortByKey(x => x.data.name).groupByKey(x => x.data.name.substring(0, 1).toUpperCase());
     await changePageContentTo(`
-        <h1>Artists</h1>
-        <section class="flex-row flex-wrap gap-6">
-            ${artists.sortByKey(x => x.data.name).map(x => `
-                <section class="flex-column align-center gap-2 clickable" onclick="openArtist(${x.data.id})">
-                    <img class="artist-picture" src='/api/artist/${x.data.id}/picture'>
-                    <b>${x.data.name}</b>
+        <h1 class="giant">Artists (${artists.length})</h1>
+        <hr>
+        <section class="flex-column">
+            ${Object.entries(groupedArtists).map(([letter, artists]) => `
+                <h2>${letter}</h2>
+                <section class="flex-row flex-wrap gap-6">
+                    ${artists.map(x => `
+                        <section class="flex-column align-center gap-2 clickable" onclick="openArtist(${x.data.id})">
+                            <img class="artist-picture" src='/api/artist/${x.data.id}/picture'>
+                            <b style="max-width: 6em; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;" >${x.data.name}</b>
+                        </section>
+                    `)}
                 </section>
-            `).join("")}
+            `).join("<hr>")}
         </section>
     `);
 }
