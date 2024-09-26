@@ -157,7 +157,7 @@ async function playSong(id, autoplay = true)
     setPageBackground(track.data.album);
 
     document.dispatchEvent(new CustomEvent("songStartPlaying", { detail: { track } }));
-    audioPlayer.src = `/api/song/read/` + id;
+    audioPlayer.src = `/api/song/read?id=` + id;
 
     if (autoplay)
     {

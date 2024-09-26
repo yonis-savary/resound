@@ -22,13 +22,15 @@ class TrackController
         $router->addGroup(
             ["path" => "api", "middlewares" => IsLogged::class],
 
-            Route::get("/song/read/{id}", [self::class, "read"]),
+            Route::get("/song/read", [self::class, "read"]),
             Route::get("/song/listen", [self::class, "registerListening"]),
         );
     }
 
-    public static function read(Request $request, string $id)
+    public static function read(Request $request)
     {
+        $id = $request->params("id");
+
         if (!$track = Track::findId($id))
             return Response::json("Track not found !");
 
