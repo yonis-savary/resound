@@ -156,6 +156,7 @@ class LibraryController
                 JOIN track ON track = track.id
                 JOIN album ON album = album.id AND album.genre = {}
                 WHERE user = {}
+                LIMIT 150
             ", [$genre, UserID::get()]);
 
             $toFetch = $favorites->length() < 25 ? 100 : ceil($favorites->length() * 0.25);
