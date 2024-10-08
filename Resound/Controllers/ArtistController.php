@@ -51,7 +51,7 @@ class ArtistController
             JOIN artist ON album.artist = artist.id
             WHERE track.id <> {}
             $favoriteExpression
-            ORDER BY artist_likeness DESC, genre_likeness DESC, RANDOM()
+            ORDER BY artist_likeness DESC, genre_likeness DESC, RAND()
             LIMIT 100
         ", [$artistName, $genre, $baseSongID]);
     }

@@ -1,5 +1,5 @@
 CREATE TABLE user (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     login VARCHAR(200) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL
 );
@@ -7,7 +7,7 @@ CREATE TABLE user (
 
 
 CREATE TABLE artist (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL UNIQUE
 );
 -- DELIMITER
@@ -15,8 +15,8 @@ CREATE TABLE artist (
 
 
 CREATE TABLE album (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    artist INTEGER NOT NULL REFERENCES artist(id) ON DELETE CASCADE,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    artist INT NOT NULL REFERENCES artist(id) ON DELETE CASCADE,
     name VARCHAR(100) NOT NULL,
     genre VARCHAR(100) NULL,
     release_year INT NULL,
@@ -33,9 +33,9 @@ CREATE TABLE album (
 
 
 CREATE TABLE track (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     edition_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    album INTEGER NOT NULL REFERENCES album(id) ON DELETE CASCADE,
+    album INT NOT NULL REFERENCES album(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     position INT NULL,
     disc_number SMALLINT NULL,
@@ -52,9 +52,9 @@ CREATE TABLE track (
 
 
 CREATE TABLE playlist (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user INTEGER NOT NULL REFERENCES user(id) ON DELETE CASCADE,
+    user INT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
     name VARCHAR(100) NOT NULL,
     private BOOLEAN DEFAULT FALSE
 );
@@ -63,28 +63,28 @@ CREATE TABLE playlist (
 
 
 CREATE TABLE playlist_track (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     position INT NULL,
-    playlist INTEGER REFERENCES playlist(id) ON DELETE CASCADE,
-    track INTEGER REFERENCES track(id) ON DELETE CASCADE
+    playlist INT REFERENCES playlist(id) ON DELETE CASCADE,
+    track INT REFERENCES track(id) ON DELETE CASCADE
 );
 -- DELIMITER
 
 
 
 CREATE TABLE user_listening (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user INTEGER NOT NULL REFERENCES user(id) ON DELETE CASCADE,
-    track INTEGER NOT NULL REFERENCES track(id) ON DELETE CASCADE,
-    playlist INTEGER NULL REFERENCES playlist(id) ON DELETE SET NULL
+    user INT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
+    track INT NOT NULL REFERENCES track(id) ON DELETE CASCADE,
+    playlist INT NULL REFERENCES playlist(id) ON DELETE SET NULL
 );
 -- DELIMITER
 
 
 
 CREATE TABLE embedded_media (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL UNIQUE,
     url VARCHAR(255) NOT NULL
 );
@@ -93,13 +93,14 @@ CREATE TABLE embedded_media (
 
 
 CREATE TABLE tag_anomaly (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     filename VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL
 );
 -- DELIMITER
 
 
+DELIMITER //
 CREATE TRIGGER album_cached_data_update_on_insert
 AFTER insert ON track
 FOR EACH ROW
@@ -109,7 +110,7 @@ BEGIN
             cached_total_duration_seconds = (SELECT SUM(duration_seconds) FROM track WHERE album = new.album),
             cached_track_number = (SELECT COUNT(id) FROM track WHERE album = new.album)
         WHERE id = new.album;
-END;
+END//
 -- DELIMITER
 
 CREATE TRIGGER album_cached_data_update_on_update
@@ -121,7 +122,7 @@ BEGIN
             cached_total_duration_seconds = (SELECT SUM(duration_seconds) FROM track WHERE album = album.id),
             cached_track_number = (SELECT COUNT(id) FROM track WHERE album = album.id)
         WHERE id IN (old.album, new.album);
-END;
+END//
 -- DELIMITER
 
 CREATE TRIGGER album_cached_data_update_on_delete
@@ -133,14 +134,31 @@ BEGIN
             cached_total_duration_seconds = (SELECT SUM(duration_seconds) FROM track WHERE album = old.album),
             cached_track_number = (SELECT COUNT(id) FROM track WHERE album = old.album)
         WHERE id = old.album;
-END;
+END//
+-- DELIMITER
+
+DELIMITER ;
+
+
+CREATE TABLE user_like (
+    user INT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
+    track INT NOT NULL REFERENCES track(id) ON DELETE CASCADE,
+    UNIQUE(user, track)
+);
 -- DELIMITER
 
 
 
-CREATE TABLE user_like (
-    user INTEGER NOT NULL REFERENCES user(id) ON DELETE CASCADE,
-    track INTEGER NOT NULL REFERENCES track(id) ON DELETE CASCADE,
-    UNIQUE(user, track)
-);
+
+
+ALTER TABLE album ADD COLUMN user_author INT;
+-- DELIMITER
+
+ALTER TABLE album ADD CONSTRAINT FOREIGN KEY (user_author) REFERENCES user(id);
+-- DELIMITER
+
+UPDATE album SET user_author = 1;
+-- DELIMITER
+
+ALTER TABLE album MODIFY COLUMN user_author INT NOT NULL;
 -- DELIMITER

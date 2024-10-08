@@ -58,7 +58,6 @@ option
 
 .album-folder, .album-cover
 {
-
     border: solid 1px var(--stealth);
 }
 
@@ -135,6 +134,22 @@ option
     border-radius: 10px;
 }
 
+.album-cover.stretch,
+.album-folder.stretch
+{
+
+    min-width: none;
+    width: 100%;
+    max-width: none;
+
+    min-height: none;
+    height: 100%;
+    max-height: none;
+
+    aspect-ratio: 1/1;
+}
+
+
 @media only screen and (max-width: 1000px) {
 
     .album-cover.big,
@@ -193,7 +208,6 @@ option
     min-width: 3em !important;
     max-width: 3em !important;
 }
-
 
 
 
@@ -377,6 +391,26 @@ body:not(.is-mobile) #screenSaverInfo
     animation-play-state: paused;
 }
 
+
+#screenSaverPowerSaveCover
+{
+    width: 75%;
+    height: 75%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
+
+body.power-save-mode #screenSaverContent #vinylSection
+{
+    display: none;
+}
+
+body:not(.power-save-mode) #screenSaverContent #powerSaveVinylSection
+{
+    display: none;
+}
+
+
 #vinylSection
 {
     --size : 50vw;
@@ -426,6 +460,16 @@ body:not(.is-mobile) #screenSaverInfo
         --size : 90vw;
     }
 
+}
+
+@media only screen and (max-width: 1500px) {
+
+    #vinylSection,
+    #vinylSection .frequencyRythmCanvas
+    {
+        max-width: 750px;
+        max-height: 750px;
+    }
 }
 
 
@@ -614,6 +658,59 @@ body.is-mobile .navbar
     font-size: 1.2em;
     font-weight: bolder;
     text-shadow: 0px 2px 4px #0007;
+    max-width: 100%;
+    text-overflow:ellipsis;
+    overflow: hidden;
+    word-break: break-all;
+}
+
+.full-gallery-list
+{
+    width: 16.5%;
+    aspect-ratio: 1/1;
+}
+
+
+
+
+
+
+.instant-playlist-section
+{
+    position: relative;
+    flex: 1 1 0px;
+    min-height: 6em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1em;
+    overflow: hidden;
+
+    cursor: pointer;
+
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0px 6px 12px #0003;
+}
+
+.instant-playlist-section .vignette
+{
+    z-index: 2;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0%;
+    left: 0%;
+    background: linear-gradient(to bottom, #0000 0%, #0001 40%, #0008);
+}
+
+.instant-playlist-section .title
+{
+    z-index: 3;
+    font-size: 1.5em;
+    font-weight: bolder;
+    text-shadow: 0px 2px 4px #0004;
     max-width: 100%;
     text-overflow:ellipsis;
     overflow: hidden;

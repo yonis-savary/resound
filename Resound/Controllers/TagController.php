@@ -3,6 +3,7 @@
 namespace Resound\Controllers;
 
 use getID3;
+use Resound\Classes\Straws\UserID;
 use Sharp\Classes\Core\Logger;
 use Sharp\Classes\Data\Database;
 use Sharp\Classes\Data\ObjectArray;
@@ -67,7 +68,7 @@ class TagController
             if (!count($missing))
                 continue;
 
-            self::pushQueueItem(["files" => $missing]);
+            self::pushQueueItem(["files" => $missing, "userAuthor" => UserID::get()]);
 
             $logger->info("Added item of ".count($missing)." files");
         }
@@ -83,6 +84,7 @@ class TagController
          * "files" is an array of files to fetch and parse
          */
         $files = $data["files"];
+        $userAuthor = $data["userAuthor"];
 
         if (!count($files))
             return false;
@@ -114,7 +116,7 @@ class TagController
 
             try
             {
-                self::extractTags($fileToProcess, $missingFile, $position);
+                self::extractTags($fileToProcess, $missingFile, $position, $userAuthor);
             }
             catch (Throwable $err)
             {
@@ -130,8 +132,14 @@ class TagController
         return true;
     }
 
-    public static function extractTags(string $file, string $distPath, int $position=0)
+    public static function extractTags(
+        string $file,
+        string $distPath,
+        int $position=0,
+        int $userAuthor=1
+    )
     {
+        $userId = $userAuthor;
         $logger = self::getTagLogger();
         $db = Database::getInstance();
 
@@ -191,8 +199,8 @@ class TagController
                 $var = $var[0] ?? null;
         }
 
-        if ($year)
-            $year = preg_replace("/\-.+/", "", $year); // transform timestamps to year
+        if ($year && (!preg_match("/^\d{4}$/", $year)))
+            $year = substr($year, 0, 4);
 
         // Transform "5/12" into "5"
         $track = preg_replace("/\/.+$/", "", $track);
@@ -211,17 +219,17 @@ class TagController
 
         $sizeKb = (int)(filesize($file) / 1024);
 
-        $db->query("INSERT OR IGNORE INTO artist(name) VALUES ({})", [$band]);
-        $artistID = Artist::select()->where("name", $band)->first()["data"]["id"];
+        $db->query("INSERT IGNORE INTO artist(name) VALUES ({})", [$band]);
+        $artistID = Artist::findWhere(["name" => $band])["data"]["id"];
 
-        $db->query("INSERT OR IGNORE INTO album(artist, name, genre, release_year) VALUES ({}, {}, {}, {})", [$artistID, $album, $genre, $year]);
-        $albumID = Album::select()->where("artist", $artistID)->where("name", $album)->first()["data"]["id"];
+        $db->query("INSERT IGNORE INTO album(artist, name, genre, release_year, user_author) VALUES ({}, {}, {}, {}, {})", [$artistID, $album, $genre, $year, $userId]);
+        $albumID = Album::findWhere(["artist" => $artistID, "name" => $album])["data"]["id"];
 
         if ($cover)
             Storage::getInstance()->write("Resound/Covers/$albumID", $cover);
 
         $db->query(
-            "INSERT OR IGNORE INTO track (album, name, position, disc_number, artist, producer, duration_seconds, path, edition_date, size_kb)
+            "INSERT IGNORE INTO track (album, name, position, disc_number, artist, producer, duration_seconds, path, edition_date, size_kb)
             VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})
         ", [
             $albumID,

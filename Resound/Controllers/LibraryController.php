@@ -39,7 +39,7 @@ class LibraryController
 
             Route::get("/last-additions", [self::class, "getLastAdditions"]),
             Route::get("/most-listened",  [self::class, "getMostListened"]),
-            Route::get("/discover",       [self::class, "getLeastListened"]),
+            Route::get("/instant-playlists", [self::class, "getInstantPlayslists"]),
             Route::get("/random-all",     [self::class, "getRandomTrackList"]),
             Route::get("/shuffle-genre/{genre}",     [self::class, "getRandomTrackListFromGenre"]),
             Route::get("/genres-list",    [self::class, "getGenreHTML"]),
@@ -125,7 +125,7 @@ class LibraryController
             "SELECT DISTINCT album, COUNT(user_listening.id) as listening_count
             FROM track
             JOIN user_listening ON track = track.id AND user = {}
-            WHERE user_listening.timestamp > DATE('now', '-1 month')
+            WHERE user_listening.timestamp > DATE_SUB(NOW(), INTERVAL 1 MONTH)
             GROUP BY track.album
             ORDER BY listening_count DESC
             LIMIT 4
@@ -136,31 +136,45 @@ class LibraryController
     }
 
 
-    public static function getLeastListened()
+    public static function getInstantPlayslists()
     {
-        return ObjectArray::fromArray(
-            query(
-                "SELECT DISTINCT
-                    track.id as track,
-                    COUNT(DISTINCT user_listening.id) as listening_count
-                FROM track
-                LEFT JOIN user_listening ON user_listening.track = track.id AND user = {}
-                GROUP BY track.id
-                ORDER BY listening_count ASC, RANDOM()
-                LIMIT 15
-            ", [UserID::get()]
-        ))
-        ->map(function($row) {
-            $id = $row["track"];
-            $track = Track::findId($id);
-            if (!$track) return null;
+        return ObjectArray::fromQuery(
+            "SELECT genre, COUNT(*) counting
+            FROM user_listening
+            JOIN track ON track = track.id
+            JOIN album ON album = album.id
+            WHERE user_listening.user = {}
+            GROUP BY album.genre
+            ORDER BY counting
+            LIMIT 4
+        ", [UserID::get()])
+        ->map(function($genre)
+        {
+            $favorites = ObjectArray::fromQuery(
+                "SELECT track
+                FROM user_like
+                JOIN track ON track = track.id
+                JOIN album ON album = album.id AND album.genre = {}
+                WHERE user = {}
+            ", [$genre, UserID::get()]);
 
-            $track["_listenings"] = $row["listening_count"];
-            return $track;
+            $toFetch = $favorites->length() < 25 ? 100 : ceil($favorites->length() * 0.25);
+
+            $otherTitles = ObjectArray::fromQuery(
+                "SELECT track.id
+                FROM track
+                JOIN album ON album = album.id AND genre = {}
+                WHERE track.id NOT IN (SELECT track FROM user_like WHERE user = {})
+                ORDER BY RAND()
+                LIMIT $toFetch
+            ", [$genre, UserID::get()]);
+
+            $tracksToPlay = [ ...$favorites->collect(),  ...$otherTitles->collect() ];
+            shuffle($tracksToPlay);
+
+            return ["genre" => $genre, "tracks" => $tracksToPlay];
         })
-        ->filter()
-        ->collect()
-        ;
+        ->collect();
     }
 
 
@@ -197,7 +211,7 @@ class LibraryController
             "SELECT id
             FROM track
             $favoriteExpression
-            ORDER BY RANDOM()
+            ORDER BY RAND()
             LIMIT 100
         ")->collect();
     }
@@ -213,7 +227,7 @@ class LibraryController
             FROM track
             JOIN album ON album = album.id AND album.genre = {}
             $favoriteExpression
-            ORDER BY RANDOM()
+            ORDER BY RAND()
             LIMIT 100
         ", [$genre]))->collect();
     }
@@ -351,8 +365,9 @@ class LibraryController
             "";
 
         return Track::select()
-        ->whereSQL("(track.artist || ' ' || `track&album&artist`.name) LIKE '%{}%'  $favoriteExpression", [$artistName])
+        ->whereSQL("CONCAT(track.artist, ' ', `track&album&artist`.name) LIKE '%{}%'  $favoriteExpression", [$artistName])
         ->order("track&album", "release_year", "DESC")
+        ->order("track&album", "name", "DESC")
         ->order("track", "position", "ASC")
         ->fetch();
     }
@@ -369,9 +384,9 @@ class LibraryController
             FROM track
             JOIN album ON album = album.id
             JOIN artist ON album.artist = artist.id
-            WHERE (track.artist || ' ' || artist.name) LIKE '%{}%'
+            WHERE CONCAT(track.artist, ' ', artist.name) LIKE '%{}%'
             $favoriteExpression
-            ORDER BY RANDOM()
+            ORDER BY RAND()
         ", [$artistName])->collect();
     }
 
@@ -446,7 +461,7 @@ class LibraryController
             FROM track
             WHERE album = {}
             $favoriteExpression
-            ORDER BY RANDOM()
+            ORDER BY RAND()
         ", [$id])->collect();
     }
 

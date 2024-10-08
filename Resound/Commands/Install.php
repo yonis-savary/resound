@@ -70,8 +70,8 @@ class Install extends Command
         Database::setInstance($db);
 
         $config->set("database", [
-            "driver" => "sqlite",
-            "database" => "resound.db"
+            "driver" => "mysql",
+            "database" => "resound"
         ]);
 
         $resoundPath = Utils::relativePath("Resound");

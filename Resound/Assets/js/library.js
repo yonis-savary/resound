@@ -1,12 +1,24 @@
-let discoverTrackList = null;
+let instantUserPlaylistDatabase = null;
 
-async function playDiscoverTracklist(index)
+
+async function playInstantUserPlaylistDatabaseGenre(genre)
 {
     setTracklist(
-        discoverTrackList.map(x => x.data.id),
-        index
+        instantUserPlaylistDatabase.find(x => x.genre == genre)["tracks"]
     );
 }
+
+function stringToColor (string, saturation = 80, lightness = 35)
+{
+    let hash = 0;
+    for (let i = 0; i < string.length; i++)
+    {
+        hash = string.charCodeAt(i) + ((hash << 5) - hash);
+        hash = hash & hash;
+    }
+    return `hsl(${(hash % 360)}, ${saturation}%, ${lightness}%)`;
+}
+
 
 
 async function displayLibrary()
@@ -16,13 +28,23 @@ async function displayLibrary()
     await changePageContentTo(`
     <section class="flex-column gap-7">
 
-        <section class="flex-column">
-            <h2 class="svg-text">${svg("star")} Most listened this month</h2>
-            <section class="flex-column" id="mostListened">
-                <section class="album-folder"></section>
+        <section class="flex-row flex-wrap flex-column-mobile">
+
+            <section class="flex-column flex-1">
+                <h2 class="svg-text">${svg("house")} For you</h2>
+                <section class="flex-row flex-wrap justify-start" id="instantUserPlaylist">
+                    <section class="album-folder"></section>
+                </section>
+            </section>
+
+
+            <section class="flex-column flex-1">
+                <h2 class="svg-text">${svg("star")} Most listened this month</h2>
+                <section class="flex-column" id="mostListened">
+                    <section class="album-folder"></section>
+                </section>
             </section>
         </section>
-
 
         <section class="flex-column">
             <h2 class="svg-text">${svg("plus-lg")} Last additions</h2>
@@ -30,14 +52,6 @@ async function displayLibrary()
                 <section class="album-folder"></section>
             </section>
         </section>
-
-        <section class="flex-column">
-            <h2 class="svg-text">${svg("compass")} (re)Discover tracks</h2>
-            <section class="flex-column scrollable max-vh-30" id="leastListened">
-                <section class="album-folder"></section>
-            </section>
-        </section>
-
 
 
         <section class="flex-column">
@@ -66,42 +80,21 @@ async function displayLibrary()
         section.innerHTML = additions.length ? additions.map(renderAlbumPreview).join("") : "No title added"
     })
 
-    apiFetch(`/library/discover`).then(leastListened => {
-        let section = pageContent.querySelector("#leastListened")
-        if (!leastListened.length)
+    apiFetch(`/library/instant-playlists`).then(instantUserPlaylist => {
+        let section = pageContent.querySelector("#instantUserPlaylist")
+        if (!instantUserPlaylist.length)
                 return section.innerHTML = "No title to (re)discover";
 
-        discoverTrackList = leastListened;
+        instantUserPlaylistDatabase = instantUserPlaylist;
 
-        console.log(leastListened);
+        console.log(instantUserPlaylist);
 
-        section.innerHTML = `
-        <table class="track-list">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Listenings</th>
-                </tr>
-            </thead>
-            <tbody>
-            ${leastListened.map((track, i) => `
-                <tr track="${track.data.id}" onclick="playDiscoverTracklist(${i})">
-                    <td>
-                        <section class="flex-row align-center">
-                            ${albumCoverImg(track.album, "small")}
-                            <section class="flex-column gap-0">
-                                <b>${track.data.name}</b>
-                                <small>${track.data.artist}</small>
-                            </section>
-                        </section>
-                    </td>
-                    <td>${track._listenings}</td>
-                    <td class="like-holder" trackId="${track.data.id}">
-                </tr>
-            `).join("")}
-            </tbody>
-        </table>
-        `
+        section.innerHTML = instantUserPlaylist.map(({genre, tracks}) => `
+        <section class="instant-playlist-section" style="background: ${stringToColor(genre)}" onclick="playInstantUserPlaylistDatabaseGenre('${genre}')">
+            <section class="title">${genre}</section>
+            <section class="vignette"></section>
+        </section>
+        `).join("")
 
     });
 
@@ -609,7 +602,7 @@ async function displayFullGallery()
             <button class="button white secondary" onclick="displayFullTrackLibrary()">Browse Tracks</button>
         </section>
         <small>Sorted by artist</small>
-        <section class="flex-row gap-0 justify-between flex-wrap" id="albumList"></section>
+        <section class="flex-row gap-0 justify-center flex-wrap" id="albumList"></section>
     `)
 
     apiRead("album").then(albums => {
@@ -622,8 +615,8 @@ async function displayFullGallery()
         let sortedKeys = Object.keys(groupedByArtist).sort();
 
         albumList.innerHTML = sortedKeys.map(artist => groupedByArtist[artist].map(album => `
-        <section album="${album.data.id}">
-            ${albumCoverImg(album, "no-radius")}
+        <section album="${album.data.id}" class="full-gallery-list">
+            ${albumCoverImg(album, "stretch no-radius")}
         </section>
         `).join("")).join("")
     })

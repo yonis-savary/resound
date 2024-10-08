@@ -9,6 +9,9 @@ SCREEN_SAVER_ELEMENT.innerHTML = `
         <canvas class="frequencyRythmCanvas"></canvas>
         <img id="screenSaverCover" style="box-shadow: var(--track-color) 0px 0px 6px">
     </section>
+    <section id="powerSaveVinylSection">
+        <img id="screenSaverPowerSaveCover" style="box-shadow: var(--track-color) 0px 0px 6px">
+    </section>
     <section class="flex-column gap-7">
         <section class="flex-column align-center gap-0" id="screenSaverInfo"></section>
         <section class="flex-column align-center gap-5" id="screenSaverControls">
@@ -154,6 +157,7 @@ document.addEventListener("songStartPlaying", ({ detail }) => {
 
     screenSaverBackground.src =
         screenSaverCover.src =
+        screenSaverPowerSaveCover.src =
         albumCover(track.data.album);
 
     screenSaverInfo.innerHTML = `
