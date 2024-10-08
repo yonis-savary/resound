@@ -615,7 +615,7 @@ async function displayFullGallery()
         let sortedKeys = Object.keys(groupedByArtist).sort();
 
         albumList.innerHTML = sortedKeys.map(artist => groupedByArtist[artist].map(album => `
-        <section album="${album.data.id}" class="full-gallery-list">
+        <section album="${album.data.id}" class="full-gallery-album">
             ${albumCoverImg(album, "stretch no-radius")}
         </section>
         `).join("")).join("")
