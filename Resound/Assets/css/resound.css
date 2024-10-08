@@ -667,9 +667,12 @@ body.is-mobile .navbar
 .full-gallery-list
 {
     width: 16.5%;
-    aspect-ratio: 1/1;
 }
 
+.full-gallery-list .album-cover
+{
+    border: none !important
+}
 
 
 
