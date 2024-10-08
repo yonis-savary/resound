@@ -145,7 +145,7 @@ class LibraryController
             JOIN album ON album = album.id
             WHERE user_listening.user = {}
             GROUP BY album.genre
-            ORDER BY counting
+            ORDER BY counting DESC
             LIMIT 4
         ", [UserID::get()])
         ->map(function($genre)

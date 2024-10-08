@@ -16,7 +16,7 @@ CREATE TABLE artist (
 
 CREATE TABLE album (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    artist INT NOT NULL REFERENCES artist(id) ON DELETE CASCADE,
+    artist INT NOT NULL,
     name VARCHAR(100) NOT NULL,
     genre VARCHAR(100) NULL,
     release_year INT NULL,
@@ -26,7 +26,8 @@ CREATE TABLE album (
     cached_total_duration_seconds INT NULL,
     cached_track_number INT NULL,
 
-    UNIQUE(artist, name)
+    UNIQUE(artist, name),
+    FOREIGN KEY (artist) REFERENCES artist(id) ON DELETE CASCADE
 );
 -- DELIMITER
 
@@ -35,7 +36,7 @@ CREATE TABLE album (
 CREATE TABLE track (
     id INT PRIMARY KEY AUTO_INCREMENT,
     edition_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    album INT NOT NULL REFERENCES album(id) ON DELETE CASCADE,
+    album INT NOT NULL,
     name VARCHAR(255) NOT NULL,
     position INT NULL,
     disc_number SMALLINT NULL,
@@ -45,7 +46,8 @@ CREATE TABLE track (
     path VARCHAR(1024) NOT NULL,
     size_kb INT DEFAULT NULL,
 
-    UNIQUE(album, name)
+    UNIQUE(album, name),
+    FOREIGN KEY (album) REFERENCES album(id) ON DELETE CASCADE
 );
 -- DELIMITER
 
@@ -54,9 +56,10 @@ CREATE TABLE track (
 CREATE TABLE playlist (
     id INT PRIMARY KEY AUTO_INCREMENT,
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user INT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
+    user INT NOT NULL,
     name VARCHAR(100) NOT NULL,
-    private BOOLEAN DEFAULT FALSE
+    private BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE
 );
 -- DELIMITER
 
@@ -65,8 +68,10 @@ CREATE TABLE playlist (
 CREATE TABLE playlist_track (
     id INT PRIMARY KEY AUTO_INCREMENT,
     position INT NULL,
-    playlist INT REFERENCES playlist(id) ON DELETE CASCADE,
-    track INT REFERENCES track(id) ON DELETE CASCADE
+    playlist INT,
+    track INT,
+    FOREIGN KEY (playlist) REFERENCES playlist(id) ON DELETE CASCADE,
+    FOREIGN KEY (track) REFERENCES track(id) ON DELETE CASCADE
 );
 -- DELIMITER
 
@@ -75,9 +80,12 @@ CREATE TABLE playlist_track (
 CREATE TABLE user_listening (
     id INT PRIMARY KEY AUTO_INCREMENT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user INT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
-    track INT NOT NULL REFERENCES track(id) ON DELETE CASCADE,
-    playlist INT NULL REFERENCES playlist(id) ON DELETE SET NULL
+    user INT NOT NULL,
+    track INT NOT NULL,
+    playlist INT NULL,
+    FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE ,
+    FOREIGN KEY (track) REFERENCES track(id) ON DELETE CASCADE ,
+    FOREIGN KEY (playlist) REFERENCES playlist(id) ON DELETE SET NULL
 );
 -- DELIMITER
 
@@ -141,8 +149,10 @@ DELIMITER ;
 
 
 CREATE TABLE user_like (
-    user INT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
-    track INT NOT NULL REFERENCES track(id) ON DELETE CASCADE,
+    user INT NOT NULL ,
+    track INT NOT NULL ,
+    FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE,
+    FOREIGN KEY (track) REFERENCES track(id) ON DELETE CASCADE,
     UNIQUE(user, track)
 );
 -- DELIMITER
