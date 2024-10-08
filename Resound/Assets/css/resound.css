@@ -680,6 +680,7 @@ body.is-mobile .navbar
     position: relative;
     flex: 1 1 0px;
     min-height: 6em;
+    min-width: 40%;
     display: flex;
     flex-direction: column;
     justify-content: center;
