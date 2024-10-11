@@ -1,17 +1,17 @@
 <?php
 
-namespace Resound\Controllers;
+namespace YonisSavary\Resound\Controllers;
 
-use Sharp\Classes\Data\ObjectArray;
-use Sharp\Classes\Http\Request;
-use Sharp\Classes\Http\Response;
-use Sharp\Classes\Web\Controller;
-use Sharp\Classes\Web\Route;
-use Sharp\Classes\Web\Router;
-use Resound\Middlewares\IsLogged;
-use Resound\Models\Album;
-use Resound\Models\Artist;
-use Resound\Models\Track;
+use YonisSavary\Sharp\Classes\Data\ObjectArray;
+use YonisSavary\Sharp\Classes\Http\Request;
+use YonisSavary\Sharp\Classes\Http\Response;
+use YonisSavary\Sharp\Classes\Web\Controller;
+use YonisSavary\Sharp\Classes\Web\Route;
+use YonisSavary\Sharp\Classes\Web\Router;
+use YonisSavary\Resound\Middlewares\IsLogged;
+use YonisSavary\Resound\Models\Album;
+use YonisSavary\Resound\Models\Artist;
+use YonisSavary\Resound\Models\Track;
 
 class SearchController
 {

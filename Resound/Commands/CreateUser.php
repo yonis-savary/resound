@@ -1,10 +1,10 @@
 <?php
 
-namespace Resound\Commands;
+namespace YonisSavary\Resound\Commands;
 
-use Sharp\Classes\CLI\Args;
-use Sharp\Classes\CLI\Command;
-use Resound\Models\User;
+use YonisSavary\Sharp\Classes\CLI\Args;
+use YonisSavary\Sharp\Classes\CLI\Command;
+use YonisSavary\Resound\Models\User;
 
 class CreateUser extends Command
 {

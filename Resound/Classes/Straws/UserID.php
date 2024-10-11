@@ -1,8 +1,8 @@
 <?php
 
-namespace Resound\Classes\Straws;
+namespace YonisSavary\Resound\Classes\Straws;
 
 class UserID
 {
-    use \Sharp\Classes\Extras\SessionStraw;
+    use \YonisSavary\Sharp\Classes\Extras\SessionStraw;
 }

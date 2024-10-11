@@ -1,7 +1,7 @@
 <?php
 
-    use Sharp\Classes\Http\Response;
-    use Sharp\Classes\Security\Authentication;
+    use YonisSavary\Sharp\Classes\Http\Response;
+    use YonisSavary\Sharp\Classes\Security\Authentication;
 
     if (Authentication::getInstance()->isLogged())
     {

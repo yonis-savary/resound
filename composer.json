@@ -1,0 +1,22 @@
+{
+    "name": "yonis-savary/resound",
+    "description": "Resound project",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "YonisSavary\\Resound\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "yonis-savary",
+            "email": "yonissavary@outlook.fr"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "yonis-savary/sharp": "dev-main",
+        "yonis-savary/sharp-extensions": "dev-main"
+    }
+}

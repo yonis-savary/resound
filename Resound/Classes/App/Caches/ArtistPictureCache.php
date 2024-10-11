@@ -1,8 +1,8 @@
 <?php
 
-namespace Resound\Classes\App\Caches;
+namespace YonisSavary\Resound\Classes\App\Caches;
 
-use Sharp\Classes\Utils\AppCache;
+use YonisSavary\Sharp\Classes\Utils\AppCache;
 
 class ArtistPictureCache 
 {

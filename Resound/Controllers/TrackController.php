@@ -1,17 +1,17 @@
 <?php
 
-namespace Resound\Controllers;
+namespace YonisSavary\Resound\Controllers;
 
-use Sharp\Classes\Env\Storage;
-use Sharp\Classes\Http\Request;
-use Sharp\Classes\Http\Response;
-use Sharp\Classes\Web\Controller;
-use Sharp\Classes\Web\Route;
-use Sharp\Classes\Web\Router;
-use Resound\Classes\Straws\UserID;
-use Resound\Middlewares\IsLogged;
-use Resound\Models\Track;
-use Resound\Models\UserListening;
+use YonisSavary\Sharp\Classes\Env\Storage;
+use YonisSavary\Sharp\Classes\Http\Request;
+use YonisSavary\Sharp\Classes\Http\Response;
+use YonisSavary\Sharp\Classes\Web\Controller;
+use YonisSavary\Sharp\Classes\Web\Route;
+use YonisSavary\Sharp\Classes\Web\Router;
+use YonisSavary\Resound\Classes\Straws\UserID;
+use YonisSavary\Resound\Middlewares\IsLogged;
+use YonisSavary\Resound\Models\Track;
+use YonisSavary\Resound\Models\UserListening;
 
 class TrackController
 {

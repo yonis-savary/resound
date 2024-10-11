@@ -1,19 +1,19 @@
 <?php
 
-namespace Resound\Controllers;
+namespace YonisSavary\Resound\Controllers;
 
-use Sharp\Classes\Env\Configuration;
-use Sharp\Classes\Env\Drivers\FTPDriver;
-use Sharp\Classes\Http\Request;
-use Sharp\Classes\Http\Response;
-use Sharp\Classes\Web\Controller;
-use Sharp\Classes\Web\Route;
-use Sharp\Classes\Web\Router;
-use Sharp\Core\Autoloader;
+use YonisSavary\Sharp\Classes\Env\Configuration;
+use YonisSavary\Sharp\Classes\Env\Drivers\FTPDriver;
+use YonisSavary\Sharp\Classes\Http\Request;
+use YonisSavary\Sharp\Classes\Http\Response;
+use YonisSavary\Sharp\Classes\Web\Controller;
+use YonisSavary\Sharp\Classes\Web\Route;
+use YonisSavary\Sharp\Classes\Web\Router;
+use YonisSavary\Sharp\Core\Autoloader;
 use Throwable;
-use Resound\Middlewares\IsLogged;
-use Resound\Models\Artist;
-use Resound\Models\TagAnomaly;
+use YonisSavary\Resound\Middlewares\IsLogged;
+use YonisSavary\Resound\Models\Artist;
+use YonisSavary\Resound\Models\TagAnomaly;
 
 class SettingsController
 {

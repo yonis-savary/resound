@@ -1,12 +1,12 @@
 <?php
 
-namespace Resound\Middlewares;
+namespace YonisSavary\Resound\Middlewares;
 
-use Resound\Classes\Straws\UserID;
-use Sharp\Classes\Http\Request;
-use Sharp\Classes\Http\Response;
-use Sharp\Classes\Security\Authentication;
-use Sharp\Classes\Web\MiddlewareInterface;
+use YonisSavary\Resound\Classes\Straws\UserID;
+use YonisSavary\Sharp\Classes\Http\Request;
+use YonisSavary\Sharp\Classes\Http\Response;
+use YonisSavary\Sharp\Classes\Security\Authentication;
+use YonisSavary\Sharp\Classes\Web\MiddlewareInterface;
 
 class IsLogged implements MiddlewareInterface
 {

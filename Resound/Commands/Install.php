@@ -1,14 +1,14 @@
 <?php
 
-namespace Resound\Commands;
+namespace YonisSavary\Resound\Commands;
 
-use Sharp\Classes\CLI\Args;
-use Sharp\Classes\CLI\Command;
-use Sharp\Classes\Data\Database;
-use Sharp\Classes\Data\ModelGenerator\ModelGenerator;
-use Sharp\Classes\Env\Configuration;
-use Sharp\Core\Autoloader;
-use Sharp\Core\Utils;
+use YonisSavary\Sharp\Classes\CLI\Args;
+use YonisSavary\Sharp\Classes\CLI\Command;
+use YonisSavary\Sharp\Classes\Data\Database;
+use YonisSavary\Sharp\Classes\Data\ModelGenerator\ModelGenerator;
+use YonisSavary\Sharp\Classes\Env\Configuration;
+use YonisSavary\Sharp\Core\Autoloader;
+use YonisSavary\Sharp\Core\Utils;
 
 class Install extends Command
 {

@@ -1,16 +1,16 @@
 <?php
 
-namespace Resound\Controllers;
+namespace YonisSavary\Resound\Controllers;
 
-use Sharp\Classes\Http\Request;
-use Sharp\Classes\Http\Response;
-use Sharp\Classes\Security\Authentication;
-use Sharp\Classes\Web\Controller;
-use Sharp\Classes\Web\Route;
-use Sharp\Classes\Web\Router;
-use Resound\Classes\Straws\UserID;
-use SharpExtensions\RemindMe\Components\RemindMe;
-use SharpExtensions\RemindMe\Middlewares\RememberUser;
+use YonisSavary\Sharp\Classes\Http\Request;
+use YonisSavary\Sharp\Classes\Http\Response;
+use YonisSavary\Sharp\Classes\Security\Authentication;
+use YonisSavary\Sharp\Classes\Web\Controller;
+use YonisSavary\Sharp\Classes\Web\Route;
+use YonisSavary\Sharp\Classes\Web\Router;
+use YonisSavary\Resound\Classes\Straws\UserID;
+use YonisSavary\Sharp\Extensions\RemindMe\Components\RemindMe;
+use YonisSavary\Sharp\Extensions\RemindMe\Middlewares\RememberUser;
 
 class AuthenticationController
 {

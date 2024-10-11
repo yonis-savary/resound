@@ -1,20 +1,20 @@
 <?php
 
-namespace Resound\Controllers;
+namespace YonisSavary\Resound\Controllers;
 
 use getID3;
-use Resound\Classes\Straws\UserID;
-use Sharp\Classes\Core\Logger;
-use Sharp\Classes\Data\Database;
-use Sharp\Classes\Data\ObjectArray;
-use Sharp\Classes\Env\Storage;
-use Sharp\Classes\Extras\QueueHandler;
-use Sharp\Classes\Web\Controller;
-use Sharp\Core\Utils;
+use YonisSavary\Resound\Classes\Straws\UserID;
+use YonisSavary\Sharp\Classes\Core\Logger;
+use YonisSavary\Sharp\Classes\Data\Database;
+use YonisSavary\Sharp\Classes\Data\ObjectArray;
+use YonisSavary\Sharp\Classes\Env\Storage;
+use YonisSavary\Sharp\Classes\Extras\QueueHandler;
+use YonisSavary\Sharp\Classes\Web\Controller;
+use YonisSavary\Sharp\Core\Utils;
 use Throwable;
-use Resound\Models\Album;
-use Resound\Models\Artist;
-use Resound\Models\TagAnomaly;
+use YonisSavary\Resound\Models\Album;
+use YonisSavary\Resound\Models\Artist;
+use YonisSavary\Resound\Models\TagAnomaly;
 
 class TagController
 {

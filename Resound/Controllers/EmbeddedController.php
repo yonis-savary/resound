@@ -1,12 +1,12 @@
 <?php
 
-namespace Resound\Controllers;
+namespace YonisSavary\Resound\Controllers;
 
-use Sharp\Classes\Extras\Autobahn;
-use Sharp\Classes\Web\Controller;
-use Sharp\Classes\Web\Router;
-use Resound\Middlewares\IsLogged;
-use Resound\Models\EmbeddedMedia;
+use YonisSavary\Sharp\Classes\Extras\Autobahn;
+use YonisSavary\Sharp\Classes\Web\Controller;
+use YonisSavary\Sharp\Classes\Web\Router;
+use YonisSavary\Resound\Middlewares\IsLogged;
+use YonisSavary\Resound\Models\EmbeddedMedia;
 
 class EmbeddedController
 {

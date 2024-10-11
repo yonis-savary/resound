@@ -1,11 +1,11 @@
 <?php
 
-namespace Resound\Commands;
+namespace YonisSavary\Resound\Commands;
 
-use Sharp\Classes\CLI\Args;
-use Sharp\Classes\CLI\Command;
-use Resound\Controllers\TagController;
-use Sharp\Classes\Data\ObjectArray;
+use YonisSavary\Sharp\Classes\CLI\Args;
+use YonisSavary\Sharp\Classes\CLI\Command;
+use YonisSavary\Resound\Controllers\TagController;
+use YonisSavary\Sharp\Classes\Data\ObjectArray;
 
 class ExtractAllTags extends Command
 {
