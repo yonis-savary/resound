@@ -17,6 +17,8 @@
     "minimum-stability": "dev",
     "require": {
         "yonis-savary/sharp": "dev-main",
-        "yonis-savary/sharp-extensions": "dev-main"
+        "yonis-savary/sharp-extensions": "dev-main",
+        "league/color-extractor": "^0.4.0",
+        "james-heinrich/getid3": "^1.9"
     }
 }
