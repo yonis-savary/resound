@@ -49,6 +49,7 @@ use YonisSavary\Resound\Classes\Straws\UserID;
             document.write(`${error}`);
             apiFetch(`/`+error);
         }
+
     </script>
 </body>
 </html>

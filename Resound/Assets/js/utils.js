@@ -234,3 +234,27 @@ document.addEventListener("DOMContentLoaded", _ => {
     })
 
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function powerSaveModeIsEnabled()
+{
+    return localStorage.getItem("power-save-mode") == "1"
+}
+
+document.addEventListener("DOMContentLoaded", _ => {
+    if (powerSaveModeIsEnabled())
+        document.body.classList.add("power-save-mode");
+})

@@ -62,6 +62,15 @@ async function displaySettings()
             </section>
         </section>
 
+        <label class="svg-text">
+            <input
+                type="checkbox"
+                id="powerSaveModeToggler"
+                ${(localStorage.getItem("power-save-mode") ?? "0") == "1" ? "checked": ""}
+            >
+            Power saving mode
+        </label>
+
         <hr>
 
         <h2>Tag anomalies</h2>
@@ -125,6 +134,14 @@ async function displaySettings()
 
     previousButtonActionSelector.onchange = _ => setPreviousButtonAction(previousButtonActionSelector.value)
     nextButtonActionSelector.onchange = _ => setNextButtonAction(nextButtonActionSelector.value)
+
+    powerSaveModeToggler.onchange = _ => {
+        localStorage.setItem("power-save-mode", powerSaveModeToggler.checked ? "1": "0");
+        if (powerSaveModeToggler.checked)
+            document.body.classList.add("power-save-mode");
+        else
+            document.body.classList.remove("power-save-mode");
+    }
 
     refreshAnomalyList()
     refreshToDiscoverCount();

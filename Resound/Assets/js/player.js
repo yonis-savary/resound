@@ -852,7 +852,9 @@ if ('getBattery' in navigator)
     }, 1000*120);
 }
 
-audioPlayer.addEventListener("play", drawFrequencyCircles);
+if (!powerSaveModeIsEnabled())
+    audioPlayer.addEventListener("play", drawFrequencyCircles);
+
 
 
 
