@@ -220,10 +220,10 @@ class TagController
         $sizeKb = (int)(filesize($file) / 1024);
 
         $db->query("INSERT IGNORE INTO artist(name) VALUES ({})", [$band]);
-        $artistID = Artist::findWhere(["name" => $band])["data"]["id"];
+        $artistID = Artist::findWhere(["name" => $band])->id;
 
         $db->query("INSERT IGNORE INTO album(artist, name, genre, release_year, user_author) VALUES ({}, {}, {}, {}, {})", [$artistID, $album, $genre, $year, $userId]);
-        $albumID = Album::findWhere(["artist" => $artistID, "name" => $album])["data"]["id"];
+        $albumID = Album::findWhere(["artist" => $artistID, "name" => $album])->id;
 
         if ($cover)
             Storage::getInstance()->write("Resound/Covers/$albumID", $cover);

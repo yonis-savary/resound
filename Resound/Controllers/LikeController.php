@@ -6,6 +6,7 @@ use Resound\Classes\Straws\UserID;
 use Resound\Middlewares\IsLogged;
 use Resound\Models\UserLike;
 use YonisSavary\Sharp\Classes\Data\DatabaseQuery;
+use YonisSavary\Sharp\Classes\Data\ModelQuery;
 use YonisSavary\Sharp\Classes\Data\ObjectArray;
 use YonisSavary\Sharp\Classes\Extras\Autobahn;
 use YonisSavary\Sharp\Classes\Http\Request;
@@ -19,21 +20,17 @@ class LikeController
 
     public static function declareRoutes(Router $router)
     {
-        $router->groupCallback(
+        $autobahn = Autobahn::getInstance();
+        $router->addGroup(
             ["path" => "api", "middlewares" => IsLogged::class],
-            function(Router $router)
-            {
-                $autobahn = Autobahn::getInstance();
-
-                $autobahn->all(
-                    UserLike::class,
-                    [fn(&$data) => $data["user"] = UserID::get()],
-                    [fn(&$data) => $data["user"] = UserID::get()],
-                    [fn(DatabaseQuery $query) => $query->where("user", UserID::get())],
-                    [fn(DatabaseQuery $query) => $query->where("user", UserID::get())],
-                    [fn(DatabaseQuery $query) => $query->where("user", UserID::get())]
-                );
-            }
+            ...$autobahn->all(
+                UserLike::class,
+                [fn(&$data) => $data["user"] = UserID::get()],
+                [fn(&$data) => $data["user"] = UserID::get()],
+                [fn(ModelQuery $query) => $query->where("user", UserID::get())],
+                [fn(ModelQuery $query) => $query->where("user", UserID::get())],
+                [fn(ModelQuery $query) => $query->where("user", UserID::get())]
+            )
         );
 
 

@@ -22,9 +22,9 @@ class UploadController
         $router->addGroup(
             ["path" => "api/upload", "middlewares" => IsLogged::class],
 
-            Route::get("/start-upload", [self::class, "startUpload"]),
+            Route::get ("/start-upload", [self::class, "startUpload"]),
             Route::post("/upload-chunk/{token}/{int:chunk}", [self::class, "uploadChunk"]),
-            Route::get("/process-upload/{token}", [self::class, "processUpload"]),
+            Route::get ("/process-upload/{token}", [self::class, "processUpload"]),
             Route::post("/move-upload/{token}", [self::class, "moveUpload"]),
 
             Route::get("/cancel-upload/{token}", [self::class, "cancelUpload"]),

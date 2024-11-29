@@ -34,7 +34,7 @@ class TrackController
         if (!$track = Track::findId($id))
             return Response::json("Track not found !");
 
-        $content = LibraryController::getLibraryStorage()->read($track["data"]["path"]);
+        $content = LibraryController::getLibraryStorage()->read($track->path);
 
         $size = strlen($content);
 

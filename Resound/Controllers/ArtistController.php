@@ -34,8 +34,8 @@ class ArtistController
     public static function generateMoodPlaylist(Request $request, string $baseSongID)
     {
         $song = Track::findId($baseSongID);
-        $artistName = $song["album"]["artist"]["data"]["name"];
-        $genre = $song["album"]["data"]["genre"];
+        $artistName = $song->album->artist->name;
+        $genre = $song->album->genre;
 
         $favoriteExpression = $request->params("favoritesOnly") ?
             buildQuery("AND track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
@@ -84,7 +84,7 @@ class ArtistController
         self::pushQueueItem(["id" => $artistId]);
 
         if ($album = Album::find("artist", $artistId))
-            return LibraryController::getAlbumCover($req, $album["data"]["id"]);
+            return LibraryController::getAlbumCover($req, $album->id);
 
         return "";
 
@@ -100,7 +100,7 @@ class ArtistController
             return false;
 
         $artist = Artist::findId($artistId);
-        $artistName = $artist["data"]["name"];
+        $artistName = $artist->name;
 
         info("Fetching '$artistName''s picture !");
 

@@ -14,12 +14,9 @@ class EmbeddedController
 
     public static function declareRoutes(Router $router)
     {
-        $router->groupCallback(
+        $router->addGroup(
             ["path" => "api", "middlewares" => IsLogged::class],
-
-            function() {
-                Autobahn::getInstance()->all(EmbeddedMedia::class);
-            }
+            ...Autobahn::getInstance()->all(EmbeddedMedia::class)
         );
     }
 }

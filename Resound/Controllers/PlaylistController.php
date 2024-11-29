@@ -15,6 +15,7 @@ use Resound\Classes\Straws\UserID;
 use Resound\Middlewares\IsLogged;
 use Resound\Models\Playlist;
 use Resound\Models\PlaylistTrack;
+use YonisSavary\Sharp\Classes\Data\ModelQuery;
 
 class PlaylistController
 {
@@ -22,20 +23,16 @@ class PlaylistController
 
     public static function declareRoutes(Router $router)
     {
-        $router->groupCallback(
+        $router->addGroup(
             ["path" => "api", "middlewares" => IsLogged::class],
-
-            function(){
-
-                // Allow users to edit only their playlists
-                Autobahn::getInstance()->all(Playlist::class,
-                    [fn(array &$params) => $params["user"] = UserID::get()],
-                    [fn(array $object) => $object["user"] === UserID::get()],
-                    [],
-                    [fn(DatabaseQuery &$query) => $query->where("user", UserID::get()) ],
-                    [fn(DatabaseQuery &$query) => $query->where("user", UserID::get()) ]
-                );
-            }
+            // Allow users to edit only their playlists
+            ...Autobahn::getInstance()->all(Playlist::class,
+                [fn(array &$params) => $params["user"] = UserID::get()],
+                [fn(array $object) => $object["user"] === UserID::get()],
+                [],
+                [fn(ModelQuery &$query) => $query->where("user", UserID::get()) ],
+                [fn(ModelQuery &$query) => $query->where("user", UserID::get()) ]
+            )
         );
 
         $router->addGroup(
@@ -120,7 +117,7 @@ class PlaylistController
         ->where("id", $playlist)
         ->first();
 
-        if ($private && $private["data"]["user"] !== UserID::get())
+        if ($private && $private->user !== UserID::get())
             return "Private playlist !";
 
         return [
