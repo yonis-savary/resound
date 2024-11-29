@@ -64,19 +64,16 @@ class LibraryController
             ["path" => "api", "middlewares" => IsLogged::class],
 
             function(Router $router){
-
-                $router->addRoutes(
-                    Route::get("/track-batch/{int:page}", [self::class, "getTrackBatch"])
-                );
-
                 $autobahn = Autobahn::getInstance();
 
-                $autobahn->read(Album::class);
-                $autobahn->update(Album::class);
-                $autobahn->read(Artist::class);
-                $autobahn->read(Track::class);
-
-                $autobahn->read(TagAnomaly::class);
+                $router->addRoutes(
+                    Route::get("/track-batch/{int:page}", [self::class, "getTrackBatch"]),
+                    $autobahn->read(Album::class),
+                    $autobahn->update(Album::class),
+                    $autobahn->read(Artist::class),
+                    $autobahn->read(Track::class),
+                    $autobahn->read(TagAnomaly::class),
+                );
             }
         );
     }
@@ -360,7 +357,7 @@ class LibraryController
 
     public static function getArtistTracksAndFeaturing(Request $request, int $artist)
     {
-        $artistName = Artist::findId($artist)["data"]["name"];
+        $artistName = Artist::findId($artist)->name;
         $favoriteExpression = $request->params("favoritesOnly") ?
             buildQuery("AND track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
             "";
@@ -375,7 +372,7 @@ class LibraryController
 
     public static function shuffleArtistTracksAndFeaturing(Request $request, int $artist)
     {
-        $artistName = Artist::findId($artist)["data"]["name"];
+        $artistName = Artist::findId($artist)->name;
         $favoriteExpression = $request->params("favoritesOnly") ?
             buildQuery("AND track.id IN (SELECT track FROM user_like WHERE user = {})", [UserID::get()]):
             "";
@@ -395,7 +392,7 @@ class LibraryController
     public static function downloadAlbumZIP(Request $request, int $albumId)
     {
         $album = Album::findId($albumId);
-        $albumLabel = $album["artist"]["data"]["name"] . "-". $album["data"]["name"];
+        $albumLabel = $album->artist->name . "-". $album->name;
 
         $tracks = Track::select()->where("album", $albumId)->fetch();
         $libary = self::getLibraryStorage();
@@ -409,7 +406,7 @@ class LibraryController
 
         foreach ($tracks as $track)
         {
-            $path = $track["data"]["path"];
+            $path = $track->path;
             $entryName = str_replace($libary->getRoot(), "", $path);
             $entryName = preg_replace("/^\\//", "", $entryName);
 
@@ -444,7 +441,7 @@ class LibraryController
 
         foreach ($tracks as $track)
         {
-            $path = $track["data"]["path"];
+            $path = $track->path;
             $libary->unlink($path);
         }
 
