@@ -1,6 +1,6 @@
 <?php
 
-namespace YonisSavary\Resound\Classes\App\Caches;
+namespace Resound\Classes\App\Caches;
 
 use YonisSavary\Sharp\Classes\Utils\AppCache;
 

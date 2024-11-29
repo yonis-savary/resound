@@ -1,6 +1,6 @@
 <?php
 
-use YonisSavary\Resound\Classes\Straws\UserID;
+use Resound\Classes\Straws\UserID;
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -1,13 +1,13 @@
 <?php
 
-namespace YonisSavary\Resound\Controllers;
+namespace Resound\Controllers;
 
-use YonisSavary\Resound\Classes\App\Caches\ArtistPictureCache;
-use YonisSavary\Resound\Classes\Straws\UserID;
-use YonisSavary\Resound\Middlewares\IsLogged;
-use YonisSavary\Resound\Models\Album;
-use YonisSavary\Resound\Models\Artist;
-use YonisSavary\Resound\Models\Track;
+use Resound\Classes\App\Caches\ArtistPictureCache;
+use Resound\Classes\Straws\UserID;
+use Resound\Middlewares\IsLogged;
+use Resound\Models\Album;
+use Resound\Models\Artist;
+use Resound\Models\Track;
 use YonisSavary\Sharp\Classes\Core\Logger;
 use YonisSavary\Sharp\Classes\Env\Cache;
 use YonisSavary\Sharp\Classes\Extras\QueueHandler;

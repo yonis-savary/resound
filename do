@@ -2,15 +2,11 @@
 <?php
 
 use YonisSavary\Sharp\Classes\CLI\Console;
-use YonisSavary\Sharp\Classes\Core\EventListener;
-use YonisSavary\Sharp\Classes\Events\LoadedFramework;
-use YonisSavary\Sharp\Classes\Events\LoadingFramework;
+use YonisSavary\Sharp\Core\Autoloader;
 
-require_once "vendor/autoload.php";
+require_once 'vendor/autoload.php';
 
-EventListener::getInstance()->dispatch(new LoadingFramework());
-EventListener::getInstance()->dispatch(new LoadedFramework());
+Autoloader::$ignoreRequireErrors = true;
+Autoloader::initialize();
 
-Console::getInstance()->handleArgv($argv);
-
-die;
+exit(Console::getInstance()->handleArgv($argv));

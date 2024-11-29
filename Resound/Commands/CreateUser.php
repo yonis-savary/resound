@@ -1,14 +1,15 @@
 <?php
 
-namespace YonisSavary\Resound\Commands;
+namespace Resound\Commands;
 
 use YonisSavary\Sharp\Classes\CLI\Args;
 use YonisSavary\Sharp\Classes\CLI\Command;
-use YonisSavary\Resound\Models\User;
+use Resound\Models\User;
+use YonisSavary\Sharp\Classes\CLI\AbstractCommand;
 
-class CreateUser extends Command
+class CreateUser extends AbstractCommand
 {
-    public function __invoke(Args $args)
+    public function execute(Args $args): int
     {
         if (!($login = readline("login ? ")))
             die("A login is needed to create a user\n");
@@ -20,5 +21,7 @@ class CreateUser extends Command
 
         User::insertArray(["login" => $login , "password" => $password]);
         echo "User created !\n";
+
+        return 0;
     }
 }

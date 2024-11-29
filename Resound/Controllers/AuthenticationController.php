@@ -1,6 +1,6 @@
 <?php
 
-namespace YonisSavary\Resound\Controllers;
+namespace Resound\Controllers;
 
 use YonisSavary\Sharp\Classes\Http\Request;
 use YonisSavary\Sharp\Classes\Http\Response;
@@ -8,7 +8,7 @@ use YonisSavary\Sharp\Classes\Security\Authentication;
 use YonisSavary\Sharp\Classes\Web\Controller;
 use YonisSavary\Sharp\Classes\Web\Route;
 use YonisSavary\Sharp\Classes\Web\Router;
-use YonisSavary\Resound\Classes\Straws\UserID;
+use Resound\Classes\Straws\UserID;
 use YonisSavary\Sharp\Extensions\RemindMe\Components\RemindMe;
 use YonisSavary\Sharp\Extensions\RemindMe\Middlewares\RememberUser;
 

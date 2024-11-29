@@ -1,6 +1,6 @@
 <?php
 
-namespace YonisSavary\Resound\Classes\Straws;
+namespace Resound\Classes\Straws;
 
 class UserID
 {

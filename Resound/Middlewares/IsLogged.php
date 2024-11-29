@@ -1,8 +1,8 @@
 <?php
 
-namespace YonisSavary\Resound\Middlewares;
+namespace Resound\Middlewares;
 
-use YonisSavary\Resound\Classes\Straws\UserID;
+use Resound\Classes\Straws\UserID;
 use YonisSavary\Sharp\Classes\Http\Request;
 use YonisSavary\Sharp\Classes\Http\Response;
 use YonisSavary\Sharp\Classes\Security\Authentication;

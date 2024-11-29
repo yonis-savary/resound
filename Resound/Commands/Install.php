@@ -1,7 +1,8 @@
 <?php
 
-namespace YonisSavary\Resound\Commands;
+namespace Resound\Commands;
 
+use YonisSavary\Sharp\Classes\CLI\AbstractCommand;
 use YonisSavary\Sharp\Classes\CLI\Args;
 use YonisSavary\Sharp\Classes\CLI\Command;
 use YonisSavary\Sharp\Classes\Data\Database;
@@ -10,7 +11,7 @@ use YonisSavary\Sharp\Classes\Env\Configuration;
 use YonisSavary\Sharp\Core\Autoloader;
 use YonisSavary\Sharp\Core\Utils;
 
-class Install extends Command
+class Install extends AbstractCommand
 {
     private function ftpMusicSetup(Configuration $config)
     {
@@ -50,7 +51,7 @@ class Install extends Command
         ]);
     }
 
-    public function __invoke(Args $args)
+    public function execute(Args $args): int
     {
         $dbPath = Utils::relativePath("Storage/resound.db");
         if (is_file($dbPath)) unlink($dbPath);
@@ -111,5 +112,7 @@ class Install extends Command
 
         $createUser = new CreateUser();
         $createUser(new Args());
+
+        return 0;
     }
 }

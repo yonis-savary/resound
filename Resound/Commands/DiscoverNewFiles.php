@@ -1,14 +1,14 @@
 <?php
 
-namespace YonisSavary\Resound\Commands;
+namespace Resound\Commands;
 
 use YonisSavary\Sharp\Classes\CLI\Args;
-use YonisSavary\Sharp\Classes\CLI\Command;
-use YonisSavary\Resound\Controllers\TagController;
+use Resound\Controllers\TagController;
+use YonisSavary\Sharp\Classes\CLI\AbstractCommand;
 
-class DiscoverNewFiles extends Command
+class DiscoverNewFiles extends AbstractCommand
 {
-    public function __invoke(Args $args)
+    public function execute(Args $args): int
     {
         TagController::extractLibraryTags();
         TagController::processQueue();

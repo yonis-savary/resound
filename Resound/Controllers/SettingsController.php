@@ -1,6 +1,6 @@
 <?php
 
-namespace YonisSavary\Resound\Controllers;
+namespace Resound\Controllers;
 
 use YonisSavary\Sharp\Classes\Env\Configuration;
 use YonisSavary\Sharp\Classes\Env\Drivers\FTPDriver;
@@ -11,9 +11,9 @@ use YonisSavary\Sharp\Classes\Web\Route;
 use YonisSavary\Sharp\Classes\Web\Router;
 use YonisSavary\Sharp\Core\Autoloader;
 use Throwable;
-use YonisSavary\Resound\Middlewares\IsLogged;
-use YonisSavary\Resound\Models\Artist;
-use YonisSavary\Resound\Models\TagAnomaly;
+use Resound\Middlewares\IsLogged;
+use Resound\Models\Artist;
+use Resound\Models\TagAnomaly;
 
 class SettingsController
 {

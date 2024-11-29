@@ -1,10 +1,10 @@
 <?php
 
-namespace YonisSavary\Resound\Controllers;
+namespace Resound\Controllers;
 
-use YonisSavary\Resound\Classes\Straws\UserID;
-use YonisSavary\Resound\Middlewares\IsLogged;
-use YonisSavary\Resound\Models\UserLike;
+use Resound\Classes\Straws\UserID;
+use Resound\Middlewares\IsLogged;
+use Resound\Models\UserLike;
 use YonisSavary\Sharp\Classes\Data\DatabaseQuery;
 use YonisSavary\Sharp\Classes\Data\ObjectArray;
 use YonisSavary\Sharp\Classes\Extras\Autobahn;

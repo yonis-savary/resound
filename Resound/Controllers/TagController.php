@@ -1,9 +1,9 @@
 <?php
 
-namespace YonisSavary\Resound\Controllers;
+namespace Resound\Controllers;
 
 use getID3;
-use YonisSavary\Resound\Classes\Straws\UserID;
+use Resound\Classes\Straws\UserID;
 use YonisSavary\Sharp\Classes\Core\Logger;
 use YonisSavary\Sharp\Classes\Data\Database;
 use YonisSavary\Sharp\Classes\Data\ObjectArray;
@@ -12,9 +12,9 @@ use YonisSavary\Sharp\Classes\Extras\QueueHandler;
 use YonisSavary\Sharp\Classes\Web\Controller;
 use YonisSavary\Sharp\Core\Utils;
 use Throwable;
-use YonisSavary\Resound\Models\Album;
-use YonisSavary\Resound\Models\Artist;
-use YonisSavary\Resound\Models\TagAnomaly;
+use Resound\Models\Album;
+use Resound\Models\Artist;
+use Resound\Models\TagAnomaly;
 
 class TagController
 {

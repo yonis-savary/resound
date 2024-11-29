@@ -1,6 +1,6 @@
 <?php
 
-namespace YonisSavary\Resound\Controllers;
+namespace Resound\Controllers;
 
 use YonisSavary\Sharp\Classes\Data\Database;
 use YonisSavary\Sharp\Classes\Data\DatabaseQuery;
@@ -11,10 +11,10 @@ use YonisSavary\Sharp\Classes\Http\Response;
 use YonisSavary\Sharp\Classes\Web\Controller;
 use YonisSavary\Sharp\Classes\Web\Route;
 use YonisSavary\Sharp\Classes\Web\Router;
-use YonisSavary\Resound\Classes\Straws\UserID;
-use YonisSavary\Resound\Middlewares\IsLogged;
-use YonisSavary\Resound\Models\Playlist;
-use YonisSavary\Resound\Models\PlaylistTrack;
+use Resound\Classes\Straws\UserID;
+use Resound\Middlewares\IsLogged;
+use Resound\Models\Playlist;
+use Resound\Models\PlaylistTrack;
 
 class PlaylistController
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace YonisSavary\Resound\Controllers;
+namespace Resound\Controllers;
 
 use YonisSavary\Sharp\Classes\Data\Database;
 use YonisSavary\Sharp\Classes\Data\ObjectArray;
@@ -14,12 +14,12 @@ use YonisSavary\Sharp\Classes\Http\Response;
 use YonisSavary\Sharp\Classes\Web\Controller;
 use YonisSavary\Sharp\Classes\Web\Route;
 use YonisSavary\Sharp\Classes\Web\Router;
-use YonisSavary\Resound\Classes\Straws\UserID;
-use YonisSavary\Resound\Middlewares\IsLogged;
-use YonisSavary\Resound\Models\Album;
-use YonisSavary\Resound\Models\Artist;
-use YonisSavary\Resound\Models\TagAnomaly;
-use YonisSavary\Resound\Models\Track;
+use Resound\Classes\Straws\UserID;
+use Resound\Middlewares\IsLogged;
+use Resound\Models\Album;
+use Resound\Models\Artist;
+use Resound\Models\TagAnomaly;
+use Resound\Models\Track;
 use ZipArchive;
 
 class LibraryController

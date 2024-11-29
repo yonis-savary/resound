@@ -1,6 +1,6 @@
 <?php
 
-namespace YonisSavary\Resound\Controllers;
+namespace Resound\Controllers;
 
 use YonisSavary\Sharp\Classes\Env\Storage;
 use YonisSavary\Sharp\Classes\Http\Request;
@@ -8,10 +8,10 @@ use YonisSavary\Sharp\Classes\Http\Response;
 use YonisSavary\Sharp\Classes\Web\Controller;
 use YonisSavary\Sharp\Classes\Web\Route;
 use YonisSavary\Sharp\Classes\Web\Router;
-use YonisSavary\Resound\Classes\Straws\UserID;
-use YonisSavary\Resound\Middlewares\IsLogged;
-use YonisSavary\Resound\Models\Track;
-use YonisSavary\Resound\Models\UserListening;
+use Resound\Classes\Straws\UserID;
+use Resound\Middlewares\IsLogged;
+use Resound\Models\Track;
+use Resound\Models\UserListening;
 
 class TrackController
 {

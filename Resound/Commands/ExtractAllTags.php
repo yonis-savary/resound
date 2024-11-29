@@ -1,15 +1,16 @@
 <?php
 
-namespace YonisSavary\Resound\Commands;
+namespace Resound\Commands;
 
 use YonisSavary\Sharp\Classes\CLI\Args;
 use YonisSavary\Sharp\Classes\CLI\Command;
-use YonisSavary\Resound\Controllers\TagController;
+use Resound\Controllers\TagController;
+use YonisSavary\Sharp\Classes\CLI\AbstractCommand;
 use YonisSavary\Sharp\Classes\Data\ObjectArray;
 
-class ExtractAllTags extends Command
+class ExtractAllTags extends AbstractCommand
 {
-    public function __invoke(Args $args)
+    public function execute(Args $args): int
     {
         set_time_limit(600);
 
@@ -24,5 +25,7 @@ class ExtractAllTags extends Command
             ->collect();
         }
         while (count($remains));
+
+        return 0;
     }
 }

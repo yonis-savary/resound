@@ -1,8 +1,8 @@
 <?php
 
-namespace YonisSavary\Resound\Controllers;
+namespace Resound\Controllers;
 
-use YonisSavary\Resound\Middlewares\IsLogged;
+use Resound\Middlewares\IsLogged;
 use YonisSavary\Sharp\Classes\Data\ObjectArray;
 use YonisSavary\Sharp\Classes\Env\Storage;
 use YonisSavary\Sharp\Classes\Http\Request;
