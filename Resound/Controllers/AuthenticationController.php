@@ -36,7 +36,7 @@ class AuthenticationController
             $request->params("password")
         )) return Response::redirect("/login");
 
-        if ($request->params("remember-me") === "on")
+        if ($request->params("remember-me"))
             RemindMe::getInstance()->rememberLoggedUser();
 
         $user = Authentication::getInstance()->getUser();

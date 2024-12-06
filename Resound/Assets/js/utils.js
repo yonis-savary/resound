@@ -5,7 +5,7 @@ const userID = _ => userIDInput.value;
 
 async function playAudioEffect(filename, duration=1000)
 {
-    let effect = new Audio(`/assets?file=${filename}`);
+    let effect = new Audio(`/assets/${filename}`);
 
     let promise = new Promise((res, rej) => {
         effect.addEventListener("canplaythrough", res);
