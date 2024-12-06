@@ -3,31 +3,31 @@
     "name": "Resound: Listen to your music everywhere !",
     "icons": [
         {
-            "src": "/resound/resound.svg",
+            "src": "/assets/resound/resound.svg",
             "type": "image/svg+xml",
             "purpose": "any",
             "sizes": "1024x1024"
         },
         {
-            "src": "/resound/resound72.png",
+            "src": "/assets/resound/resound72.png",
             "type": "image/svg+xml",
             "purpose": "any",
             "sizes": "72x72"
         },
         {
-            "src": "/resound/resound96.png",
+            "src": "/assets/resound/resound96.png",
             "type": "image/svg+xml",
             "purpose": "any",
             "sizes": "96x96"
         },
         {
-            "src": "/resound/resound192.png",
+            "src": "/assets/resound/resound192.png",
             "type": "image/svg+xml",
             "purpose": "any",
             "sizes": "192x192"
         },
         {
-            "src": "/resound/resound512.png",
+            "src": "/assets/resound/resound512.png",
             "type": "image/svg+xml",
             "purpose": "any",
             "sizes": "512x512"

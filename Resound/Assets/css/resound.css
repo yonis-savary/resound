@@ -339,6 +339,7 @@ body.is-mobile #playerControls
     height: 100vh;
 }
 
+
 #screenSaverContent
 {
     position: relative;
@@ -349,6 +350,11 @@ body.is-mobile #playerControls
     flex-direction: row;
 }
 
+.portrait-mode #screenSaverContent
+{
+    flex-direction: column;
+}
+
 #screenSaverContent > *
 {
     flex-grow: 1;
@@ -357,6 +363,7 @@ body.is-mobile #playerControls
     align-items: center;
     justify-content: center;
 }
+
 
 #screenSaver #screenSaverBackground
 {
@@ -386,6 +393,7 @@ body:not(.is-mobile) #screenSaverInfo
 {
     width: 50%;
     height: 50%;
+    height: auto;
     aspect-ratio: 1/1;
     border-radius: 100%;
     animation: spinning infinite 12s linear;
@@ -419,6 +427,12 @@ body:not(.is-mobile) #screenSaverInfo
         width: auto !important;
         height: 60vh !important;
     }
+
+    .portrait-mode #screenSaverPowerSaveCover
+    {
+        width: 75vw !important;
+        height: auto !important;
+    }
 }
 
 body.power-save-mode #screenSaverContent #vinylSection
@@ -445,9 +459,22 @@ body:not(.power-save-mode) #screenSaverContent #powerSaveVinylSection
 
     width: var(--size);
     height: var(--size);
-    max-width: 500px;
-    max-height: 500px;
+    aspect-ratio: 1/1;
 }
+
+
+.portrait-mode #vinylSection
+{
+    width: 100vw !important;
+    height: auto !important;
+}
+
+.landscape-mode #vinylSection
+{
+    width: auto !important;
+    height: 100vh !important;
+}
+
 
 #vinylSection::after
 {

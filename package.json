@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@yonis-savary/frontend-utils": "^0.0.8"
+  }
+}

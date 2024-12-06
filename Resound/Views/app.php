@@ -8,8 +8,8 @@ use Resound\Classes\Straws\UserID;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="<?= asset("resound.png") ?>" type="image/x-icon">
-    <link rel="manifest" href="/manifest.json">
-    <?= style("assets-kit/style.css") ?>
+    <link rel="manifest" href="/assets/manifest.json">
+    <?= style("frontend-utils.css") ?>
     <?= style("resound.css") ?>
     <title>Resound</title>
 </head>
