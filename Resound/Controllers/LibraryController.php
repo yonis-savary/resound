@@ -26,6 +26,8 @@ class LibraryController
 {
     use Controller;
 
+    protected static ?Cache $stateCache = null;
+
     public static function declareRoutes(Router $router)
     {
         # Making getAlbumCover public makes it accessible to mediaSession softwares/extensions
@@ -289,7 +291,9 @@ class LibraryController
 
     protected static function getUserPlaylistCache(): Cache
     {
-        return new Cache(Storage::getInstance()->getSubStorage("Resound/user-playlists"));
+	if (!self::$stateCache)
+		self::$stateCache = new Cache(Storage::getInstance()->getSubStorage("Resound/user-playlists"));
+	return self::$stateCache;
     }
 
     public static function registerPlayList(Request $request)
