@@ -44,13 +44,14 @@
 
 
 <section class="menu" id="playerTracklistMenu">
-    <table class="track-list" id="playerTracklistTable"></table>
+    <section>
+        <table class="track-list" id="playerTracklistTable"></table>
+    </section>
 </section>
 
 <section class="menu" id="playerVolumeMenu">
     <section class="flex-column">
         <input type="range" id="playerVolumeInput" min="0" max="100" value="100" orient="vertical">
-
     </section>
 </section>
 
