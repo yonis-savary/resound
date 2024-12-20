@@ -1,6 +1,6 @@
 const albumCover = id => `/api/library/album-cover/${id}`;
 
-const userID = _ => userIDInput.value;
+const userID = _ => parseInt(userIDInput.value);
 
 
 async function playAudioEffect(filename, duration=1000)
