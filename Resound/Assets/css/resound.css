@@ -777,3 +777,10 @@ body.is-mobile .navbar
     overflow: hidden;
     word-break: break-all;
 }
+
+
+.menu > *:not(.menu-tolerance-section) {
+    max-width: 100%;
+    max-height: 100%;
+    overflow: auto;
+}
