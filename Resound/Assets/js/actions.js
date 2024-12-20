@@ -40,9 +40,9 @@ const ACTIONS_HANDLERS = {
     PLAY_ALBUM_FROM_CURRENT: playAlbumFromCurrent,
 }
 
-async function shuffleAllLibraryFavorites() 
-{ 
-    shuffleAllLibrary(true) 
+async function shuffleAllLibraryFavorites()
+{
+    shuffleAllLibrary(true)
 }
 
 async function launchMoodMode(favoritesOnly=false)
@@ -62,7 +62,7 @@ async function shuffleCurrentAlbumFavorite()  { shuffleAlbum(playedSongData.data
 async function shuffleCurrentGenre()          { shuffleGenre(playedSongData.album.data.genre, false, true); }
 async function shuffleCurrentGenreFavorite()  { shuffleGenre(playedSongData.album.data.genre, true, true); }
 
-async function playAlbumFromStart(albumId=null)           
+async function playAlbumFromStart(albumId=null)
 {
     let tracks = await apiFetch("track", {album: albumId ?? playedSongData.data.album});
     let groupedTracks = tracks.groupByKey(x => x.data.disc_number);
@@ -75,7 +75,7 @@ async function playAlbumFromStart(albumId=null)
     setTracklist(allTracks);
 }
 
-async function playAlbumFromCurrent()         
+async function playAlbumFromCurrent()
 {
     let tracks = await apiFetch("track", {album: playedSongData.data.album});
     let groupedTracks = tracks.groupByKey(x => x.data.disc_number);
@@ -128,7 +128,7 @@ function triggerPreviousButtonAction()
 }
 
 if (localStorage.getItem(PREVIOUS_BUTTON_ACTION_KEY) == null)
-    setPreviousButtonAction(ACTIONS.SHUFFLE_ALL);
+    setPreviousButtonAction(ACTIONS.SHUFFLE_ALL_FAVORITE);
 
 if (localStorage.getItem(NEXT_BUTTON_ACTION_KEY) == null)
-    setNextButtonAction(ACTIONS.SHUFFLE_ARTIST);
+    setNextButtonAction(ACTIONS.SHUFFLE_ARTIST_FAVORITE);
