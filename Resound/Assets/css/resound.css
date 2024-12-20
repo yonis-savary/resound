@@ -344,7 +344,7 @@ body.is-mobile #playerControls
 {
     position: relative;
     width: 80vw;
-    height: 100vh;
+    height: 80vh;
 
     display: flex;
     flex-direction: row;
@@ -353,6 +353,12 @@ body.is-mobile #playerControls
 .portrait-mode #screenSaverContent
 {
     flex-direction: column;
+    width: 100vw !important;
+}
+.landscape-mode #screenSaverContent
+{
+    flex-direction: row;
+    height: 100vw !important;
 }
 
 #screenSaverContent > *

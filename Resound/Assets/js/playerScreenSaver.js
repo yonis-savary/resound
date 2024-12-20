@@ -162,7 +162,7 @@ document.addEventListener("songStartPlaying", ({ detail }) => {
 
     screenSaverInfo.innerHTML = `
         <b class="oneliner margin-bottom-1">${track.data.name}</b>
-        <b class="oneliner opacity-7" style="max-width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap">${track.data.artist}</b>
+        <b class="oneliner opacity-7" style="max-width: 25ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap">${track.data.artist}</b>
         <b class="oneliner opacity-7">${track.album.data.name}</b>
     `
 });
