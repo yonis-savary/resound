@@ -56,7 +56,7 @@ async function displayLibrary()
 
         <section class="flex-column">
             <h2 class="svg-text">${svg("heart")} Liked tracks & genres</h2>
-            <section class="flex-column flex-wrap max-vh-20" id="likedGenresSection"></section>
+            <section class="flex-row flex-wrap" id="likedGenresSection"></section>
         </section>
     </section>
 
