@@ -307,6 +307,7 @@ option
 #playerVolumeInput
 {
     appearance: slider-vertical;
+    accent-color: var(--track-color);
 }
 
 #playerVolumeInput:focus
