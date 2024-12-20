@@ -1,7 +1,7 @@
 async function refreshEmbeddedMediaList()
 {
     let medias = await apiRead("embedded_media");
-    webEmbeddedMediaList.innerHTML = medias.map(x => `
+    webEmbeddedMediaList.innerHTML = medias.sortByKey(x => x.data.name).map(x => `
     <section class="" onclick="openWebEmbeddedMedia(${x.data.id})">
         <b>${x.data.name}</b>
     </section>
