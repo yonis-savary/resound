@@ -1,0 +1,47 @@
+{
+  "name": "resound",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "models": "server/tasks/generate.js"
+  },
+  "dependencies": {
+    "@intlify/unplugin-vue-i18n": "^6.0.8",
+    "@nuxt/eslint": "^1.4.0",
+    "@nuxt/icon": "^1.13.0",
+    "@nuxt/image": "^1.10.0",
+    "@nuxt/ui": "^3.1.2",
+    "@pinia/nuxt": "^0.11.0",
+    "@vueuse/core": "^13.2.0",
+    "bcrypt": "^6.0.0",
+    "eslint": "^9.27.0",
+    "glob": "^11.0.2",
+    "mime-to-extensions": "^1.0.2",
+    "music-metadata": "^11.2.3",
+    "node-vibrant": "^4.0.3",
+    "nuxt": "^3.17.3",
+    "nuxt-auth-utils": "^0.5.20",
+    "nuxt-socket-io": "^3.0.13",
+    "pg": "^8.16.0",
+    "pinia": "^3.0.2",
+    "sequelize": "^6.37.7",
+    "vue": "^3.5.14",
+    "vue-i18n": "^11.1.3",
+    "vue-router": "^4.5.1",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@iconify-json/ic": "^1.2.2",
+    "@types/bcrypt": "^5.0.2",
+    "@types/socket.io": "^3.0.2",
+    "dotenv": "^16.5.0",
+    "sequelize-auto": "^0.8.8",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
