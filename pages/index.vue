@@ -59,6 +59,8 @@ import type { Track } from '~/models/Track';
 
 const player = usePlayerStore();
 
+useHead({ title: 'Resound Home' })
+
 definePageMeta({middleware: ['authenticated']})
 
 const mostListenedAlbums = ref<Album[]>([]);

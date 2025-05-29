@@ -1,10 +1,24 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
-  devtools: { enabled: true },
+  //devtools: { enabled: true },
+
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/assets/resound.svg' }
+      ]
+    }
+  },
 
   nitro: {
-    logLevel: 'debug'
+    logLevel: 'debug',
+    storage: {
+      cache: {
+        driver: 'fs',
+        base: './.cache'
+      }
+    }
   },
 
   image: {
@@ -20,14 +34,8 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     'nuxt-auth-utils',
     'nuxt-socket-io',
-    '@pinia/nuxt',
+    '@pinia/nuxt'
   ],
+
   css: ['public/assets/style.css'],
-  io: {
-    // module options
-    sockets: [{
-      name: 'main',
-      url: 'http://localhost:3001'
-    }]
-  }
 })

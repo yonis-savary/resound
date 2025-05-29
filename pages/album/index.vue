@@ -17,6 +17,7 @@ import type { Album } from '~/models/Album';
 
 definePageMeta({middleware: ['authenticated']})
 
+useHead({ title: 'Albums' })
 
 const albums = ref<Album[]>([]);
 

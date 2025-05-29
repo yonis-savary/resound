@@ -1,25 +1,37 @@
 import { z } from "zod"
 import bcrypt from "bcrypt"
-
+import {v4 as uuidV4 } from 'uuid'
 import models from "../db/models"
 
 const bodySchema = z.object({
     username: z.string(),
-    password: z.string()
+    password: z.string(),
+    rememberMe: z.boolean().nullable()
 })
 
 export default defineEventHandler(async (event) => {
-    const {username, password} = await readValidatedBody(event, bodySchema.parse)
+    const {username, password, rememberMe} = await readValidatedBody(event, bodySchema.parse)
 
     const user = await models.User.findOne({where: {username: username}})
     if (!user)
-        return createError({statusCode: 401, statusMessage: '/login?error=bad_login'})
+        return {redirect: '/login?error=bad_login', token: null}
 
     const isValid = await bcrypt.compare(password, user.dataValues.password)
-    console.info(password, user.dataValues.password, isValid , bcrypt.hashSync(password, 10))
     if (!isValid)
-        return createError({statusCode: 401, statusMessage: '/login?error=bad_login'})
+        return {redirect: '/login?error=bad_login', token: null}
+
+    let token: string|null = null;
+    if (rememberMe)
+    {
+        const cache = useStorage('cache');
+
+        token = uuidV4()
+        cache.setItem(token, user.id, { ttl: 3600*24*31 });
+
+        // CACHE SET TOKEN;
+        setCookie(event, 'remember_token', token, {maxAge: 3600 * 24 * 31, httpOnly: true, path: '/'});
+    }
 
     await setUserSession(event, {user});
-    return {redirect:'/'};
+    return {redirect:'/', token};
 })

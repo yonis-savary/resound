@@ -1,0 +1,44 @@
+{
+    "short_name": "Resound",
+    "name": "Resound: Listen to your music everywhere !",
+    "icons": [
+        {
+            "src": "/assets/resound.svg",
+            "type": "image/svg+xml",
+            "purpose": "any",
+            "sizes": "1024x1024"
+        },
+        {
+            "src": "/assets/resound72.png",
+            "type": "image/png",
+            "purpose": "any",
+            "sizes": "72x72"
+        },
+        {
+            "src": "/assets/resound96.png",
+            "type": "image/png",
+            "purpose": "any",
+            "sizes": "96x96"
+        },
+        {
+            "src": "/assets/resound192.png",
+            "type": "image/png",
+            "purpose": "any",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/assets/resound512.png",
+            "type": "image/png",
+            "purpose": "any",
+            "sizes": "512x512"
+        }
+    ],
+    "id": "/",
+    "start_url": "/",
+    "background_color": "#23c09c",
+    "display": "minimal-ui",
+    "scope": "/",
+    "theme_color": "#23c09c",
+    "description": "Listen to your music libary on any device",
+    "shortcuts": []
+},

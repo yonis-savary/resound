@@ -48,6 +48,8 @@ const route = useRoute()
 const loadAlbum = async () => {
     album.value = await $fetch<Album>('/api/album/' + route.params.album  + "/");
 
+    useHead({ title: album.value.name })
+
     album.value.tracks.forEach(track => {
         if (album.value)
             track.album_album = album.value
@@ -60,6 +62,8 @@ const loadAlbum = async () => {
 
             return (a.position ?? 0) > (b.position ?? 0) ? 1 : -1
         })
+
+
 }
 
 onMounted(loadAlbum)

@@ -16,6 +16,8 @@
 const filesToUpload: Ref<File[]> = ref([]);
 const locked = ref(false);
 
+useHead({ title: 'Add music' })
+
 const handleFileUpload = (files: File[]) =>{
     files = files.filter(toAdd =>
         filesToUpload.value.find(f => f.name === toAdd.name) === undefined

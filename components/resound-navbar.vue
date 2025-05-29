@@ -14,7 +14,7 @@ const items = ref([
     { label: "Wishlist", to: "/wishlist" },
     { label: "Settings", to: "/settings" },
     { label: "Add Music", to: "/add-music" },
-    { label: "Logout", to: "/logout" },
+    { label: "Logout", to: "/api/logout" },
     // { href: "/playlist", name: "Playlists" },
     // { href: "/web", name: "Web" },
 ]);

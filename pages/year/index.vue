@@ -12,6 +12,7 @@
 import { onMounted, ref, watch } from 'vue';
 import type { Album } from '~/models/Album';
 
+useHead({ title: 'Years' })
 definePageMeta({middleware: ['authenticated']})
 
 const albums = ref<Album[]>([])

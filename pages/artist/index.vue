@@ -13,7 +13,12 @@ import type { Artist } from '~/models/Artist';
 
 definePageMeta({middleware: ['authenticated']})
 
+useHead({ title: 'Artists' })
 
-const artists = ref<Artist[]>(await $fetch<Artist[]>('/api/artist', {params: {exists_locally: true}}))
+const artists = ref<Artist[]>([])
+
+;(async () => {
+    artists.value = await $fetch<Artist[]>('/api/artist', {params: {exists_locally: true}})
+})();
 
 </script>

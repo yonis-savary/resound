@@ -56,7 +56,7 @@ const playerStore = usePlayerStore();
 const { currentTrack, currentTime, currentColor }= storeToRefs(playerStore);
 const screenSaver = ref<HTMLElement>();
 
-const screenSaverDisplayDelaySeconds = 2;
+const screenSaverDisplayDelaySeconds = 10;
 
 const isEnabled = true;// || navigator.userAgent.toLowerCase().includes('mobile');
 let displayTimeout : null|NodeJS.Timeout = null;

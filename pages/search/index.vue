@@ -91,6 +91,8 @@ import type { Artist } from '~/models/Artist';
 import type { Track } from '~/models/Track';
 import type { SearchResponse, Artist as SpotifyArtist, AlbumsItem as SpotifyAlbum } from '~/server/integrations/spotify/responses/SearchResponse';
 
+useHead({ title: 'Search' })
+
 definePageMeta({middleware: ['authenticated']})
 
 const player = usePlayerStore();

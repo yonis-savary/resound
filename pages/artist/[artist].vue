@@ -70,6 +70,8 @@ const handleTrackListClick = (index: number, tracks:Track[]) => {
 const loadArtist = async () => {
     artist.value = (await $fetch<Artist>('/api/artist/' + route.params.artist + "/"));
 
+    useHead({ title: artist.value.name })
+
     artist.value?.album_artists?.forEach(album => {
         album.album_album.tracks?.forEach(track => {
             track.album_album = album.album_album;

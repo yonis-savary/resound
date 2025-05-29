@@ -43,6 +43,8 @@ const settings = useMySettingsStore()
 
 const syncIsLoading = ref(false);
 
+useHead({ title: 'Settings' })
+
 const launchSynchronization = async ()=>{
     syncIsLoading.value = true;
     toast.add({

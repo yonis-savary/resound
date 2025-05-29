@@ -1,6 +1,6 @@
 <template>
   <div ref="pageRoot" class="dark">
-    <NuxtRouteAnnouncer />
+    <NuxtRouteAnnouncer/>
     <ResoundBackground/>
     <div ref="pageContent" class="page-content" >
       <UApp>
@@ -21,6 +21,13 @@ import Player from './components/tracks/player.vue';
 const playerStore = usePlayerStore();
 const settings = useMySettingsStore();
 const pageRoot = useTemplateRef('pageRoot');
+
+useHead({ 
+  link: [{
+    rel: 'manifest',
+    href: '/manifest.json'
+  }]
+})
 
 watch(()=> playerStore.currentTrack, (currentTrack)=>{
   const color = currentTrack?.album_album.color

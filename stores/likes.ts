@@ -1,7 +1,11 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-const likedTracks = ref<number[]>(await $fetch('/api/likes'))
+const likedTracks = ref<number[]>([])
+
+;(async () => {
+    likedTracks.value = await $fetch<number[]>('/api/likes');
+})();
 
 const like = (track: number) => {
     $fetch(`/api/likes/${track}`, {method: 'POST'});

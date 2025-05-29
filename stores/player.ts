@@ -171,6 +171,9 @@ export const usePlayerStore = defineStore('player', () => {
     })
 
     callOnce(() => {
+        if (!import.meta.client)
+            return;
+        
         setInterval(() => {
             if (!isPlaying.value)
                 return;

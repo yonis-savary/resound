@@ -26,6 +26,8 @@ const player = usePlayerStore();
 
 const genre = ref<Genre>(await $fetch<Genre>('/api/genre/' + route.params.genre + "/"));
 
+useHead({ title: genre.value.name })
+
 const handleTrackListClick = (index: number, tracks: Track[]) => {
     if (!genreTracks.value)
         return;

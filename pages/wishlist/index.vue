@@ -14,8 +14,14 @@
 import AlbumCoverLink from '~/components/albums/album-cover-link.vue';
 import type { UserWishlist } from '~/models/UserWishlist';
 
+useHead({ title: 'Wishlist' })
+
 definePageMeta({middleware: ['authenticated']})
 
-const wishlist = ref<UserWishlist[]>(await $fetch<UserWishlist[]>('/api/wishlist/details'))
+const wishlist = ref<UserWishlist[]>([])
+
+;(async () => {
+    wishlist.value = await $fetch<UserWishlist[]>('/api/wishlist/details')
+})();
 
 </script>

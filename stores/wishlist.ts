@@ -1,7 +1,11 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-const wishedAlbums = ref<number[]>(await $fetch<number[]>('/api/wishlist'))
+const wishedAlbums = ref<number[]>([]);
+
+;(async () => {
+    wishedAlbums.value = await $fetch<number[]>('/api/wishlist')
+})();
 
 const wish = (album: number) => {
     $fetch(`/api/wishlist/${album}`, {method: 'POST'});

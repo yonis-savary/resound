@@ -8,9 +8,11 @@
 <script lang="ts" setup>
 import type { Album } from '~/models/Album';
 
-  const route = useRoute()
-  const year = route.params.year
-  const yearAlbums = await $fetch<Album[]>('/api/year/' + year)
+const route = useRoute()
+const year = route.params.year
+const yearAlbums = await $fetch<Album[]>('/api/year/' + year)
+
+useHead({ title: year + ' year' })
 </script>
 
 <style>

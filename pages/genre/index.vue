@@ -26,6 +26,8 @@ definePageMeta({middleware: ['authenticated']})
 
 const genres = ref<Genre[]>(await $fetch('/api/genre'))
 
+useHead({ title: 'Genres' })
+
 const formatedGenreName = (name: string) =>
     name.replace(/(?:^| |-)(\w)/, (match) => match.toUpperCase())
 
