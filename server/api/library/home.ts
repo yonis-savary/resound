@@ -11,7 +11,7 @@ export default defineEventHandler(async event => {
 
     const lastAdditions = await models.Album.findAll({
         include: albumBaseIncludes,
-        where: { addition_date: { [Op.not]: Sequelize.literal('NULL') } },
+        where: { addition_date: { [Op.ne]: null } },
         order: [['addition_date', 'DESC']],
         limit: 10
     })
