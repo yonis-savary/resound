@@ -9,6 +9,7 @@ import { artistSlug } from "~/helpers/slug";
 import type { Album } from "~/models/Album";
 import type { Artist } from "~/models/Artist";
 import { Track } from "~/models/Track";
+import sharp from "sharp"
 
 const getArtist = async (metadata: IAudioMetadata): Promise<Artist> => {
 
@@ -23,6 +24,9 @@ const getArtist = async (metadata: IAudioMetadata): Promise<Artist> => {
     return artist;
 }
 
+async function convertWebPtoPNG(imageData: Buffer<ArrayBuffer>): Promise<Buffer<ArrayBuffer>> {
+  return Buffer.from(await sharp(imageData).png().toBuffer());
+}
 
 const getPicturePath = async (album: Album, metadata: IAudioMetadata) => {
 
@@ -38,8 +42,14 @@ const getPicturePath = async (album: Album, metadata: IAudioMetadata) => {
         useStorage('data').setItemRaw(pictureName, picture.data)
 
 
+        let imageBufferData = Buffer.from(picture.data);
+        if (format === 'webp') {
+            console.log('Convert webp to png')
+            imageBufferData = await convertWebPtoPNG(Buffer.from(picture.data));
+        }
+
         // Extrait les couleurs avec Vibrant
-        const palette = await Vibrant.from(Buffer.from(picture.data)).getPalette()
+        const palette = await Vibrant.from(imageBufferData).getPalette()
 
         // Utilise la couleur Vibrant ou DarkVibrant comme couleur d'accentuation
         const accentColor = palette.Vibrant || palette.DarkVibrant
