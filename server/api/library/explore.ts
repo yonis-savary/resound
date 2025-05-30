@@ -18,7 +18,7 @@ async function exploreLibrary()
     if (!libraryPath)
         throw new Error('Cannot resolve library path from .env');
 
-    const files = globSync('**/*', {cwd: libraryPath, nodir: true});
+    let files = globSync('**/*', {cwd: libraryPath, nodir: true});
 
     console.info(`Exploring a library of ${files.length} files`);
 
@@ -28,50 +28,24 @@ async function exploreLibrary()
 
     const supportedMimeTypes = getSupportedMimeTypes();
 
+    files = files.filter(file => {
+        const fileMime = mime.lookup(file);
+        return supportedMimeTypes.includes(fileMime);
+    });
+
+    let fileCount = 1;
     for (const file of files)
     {
-        const fileMime = mime.lookup(file);
-        if (!supportedMimeTypes.includes(fileMime))
+        try
         {
-            console.info("Unsupported mime type for " + file);
-            continue;
+            console.log(`[F${fileCount}/${files.length}}] ${file}`)
+            await parseFileTags(path.join(libraryPath, file), null, null);
         }
-
-        const thisDirectory = dirname(file)
-        if (currentDirectory != thisDirectory)
+        catch (err)
         {
-            if (currentWorkerQueue.length)
-                workers.push(currentWorkerQueue);
-            currentWorkerQueue = [file];
-            currentDirectory = thisDirectory;
+            console.error(err);
         }
-        else
-        {
-            currentWorkerQueue.push(file);
-        }
-    }
-    if (currentWorkerQueue.length)
-        workers.push(currentWorkerQueue);
-
-
-    let workerCount = 1;
-    for (const worker of workers)
-    {
-        let fileCount = 1;
-        for (const file of worker)
-        {
-            try
-            {
-                console.log(`[C${workerCount}/${workers.length}][F${fileCount}/${worker.length}] ${file}`)
-                await parseFileTags(path.join(libraryPath, file), null, null);
-            }
-            catch (err)
-            {
-                console.error(err);
-            }
-            fileCount++
-        }
-        workerCount++;
+        fileCount++
     }
 
     /*

@@ -11,21 +11,31 @@ import type { Artist } from "~/models/Artist";
 import type { Track } from "~/models/Track";
 import sharp from "sharp"
 
+let lastAlbumName: string | undefined = undefined;
+let lastAlbumObject: Album | undefined = undefined;
+let lastArtistName: string | undefined = undefined;
+let lastArtistObject: Artist | undefined = undefined;
+
 const getArtist = async (metadata: IAudioMetadata): Promise<Artist> => {
 
     const artistName = metadata.common.albumartist ?? metadata.common.artist ?? null
+
+    if (lastArtistName === artistName && lastArtistObject)
+        return lastArtistObject;
 
     if (!artistName)
         throw new Error('This function needs a valid metadata object (common.albumartist is missing)');
 
     const artist = await createArtist(artistName);
-    artist.update({exists_locally: true});
+    artist.update({ exists_locally: true });
 
+    lastArtistName = artistName
+    lastArtistObject = artist;
     return artist;
 }
 
 async function convertWebPtoPNG(imageData: Buffer<ArrayBuffer>): Promise<Buffer<ArrayBuffer>> {
-  return Buffer.from(await sharp(imageData).png().toBuffer());
+    return Buffer.from(await sharp(imageData).png().toBuffer());
 }
 
 const getPicturePath = async (album: Album, metadata: IAudioMetadata) => {
@@ -65,12 +75,17 @@ const getPicturePath = async (album: Album, metadata: IAudioMetadata) => {
 
 
 const getAlbum = async (artist: Artist, metadata: IAudioMetadata): Promise<Album> => {
-    if (!metadata.common.album)
+    const albumName = metadata.common.album ?? undefined
+
+    if (!albumName)
         throw new Error('This function needs a valid metadata object (common.album is missing)');
+
+    if (lastAlbumName === albumName && lastAlbumObject)
+        return lastAlbumObject;
 
     const album = await createAlbum(
         artist.name,
-        metadata.common.album
+        albumName
     );
 
     album.update({
@@ -90,18 +105,18 @@ const getAlbum = async (artist: Artist, metadata: IAudioMetadata): Promise<Album
 
     await getPicturePath(album, metadata);
 
+    lastAlbumName = albumName
+    lastAlbumObject = album;
     return album;
 }
 
 export default async function parseFileTags(
-    file: string, 
-    album: Album|null, 
-    artist: Artist|null
-): Promise<{track: Track, album: Album, artist: Artist}> {
+    file: string,
+    album: Album | null,
+    artist: Artist | null
+): Promise<{ track: Track, album: Album, artist: Artist }> {
     if (!existsSync(file))
         throw new Error(`Given file ${file} does not exists`);
-
-    console.log(file);
 
     const metadata = await parseFile(file);
 
@@ -126,7 +141,7 @@ export default async function parseFileTags(
         discovery_date: new Date,
         position: metadata.common.track.no ?? undefined,
         disc_number: metadata.common.disk.no ?? 1,
-        duration_milliseconds: Math.floor((metadata.format.duration ?? 0) *1000),
+        duration_milliseconds: Math.floor((metadata.format.duration ?? 0) * 1000),
         name: metadata.common.title,
         path: file
     }, { conflictFields: ['slug'] });
