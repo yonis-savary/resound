@@ -8,7 +8,7 @@ import { createAlbum, createArtist } from "~/helpers/factory";
 import { artistSlug } from "~/helpers/slug";
 import type { Album } from "~/models/Album";
 import type { Artist } from "~/models/Artist";
-import { Track } from "~/models/Track";
+import type { Track } from "~/models/Track";
 import sharp from "sharp"
 
 const getArtist = async (metadata: IAudioMetadata): Promise<Artist> => {

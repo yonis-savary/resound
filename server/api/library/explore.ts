@@ -54,6 +54,27 @@ async function exploreLibrary()
         workers.push(currentWorkerQueue);
 
 
+    let workerCount = 1;
+    for (const worker of workers)
+    {
+        let fileCount = 1;
+        for (const file of worker)
+        {
+            try
+            {
+                console.log(`[C${workerCount}/${workers.length}][F${fileCount}/${worker.length}] ${file}`)
+                await parseFileTags(path.join(libraryPath, file), null, null);
+            }
+            catch (err)
+            {
+                console.error(err);
+            }
+            fileCount++
+        }
+        workerCount++;
+    }
+
+    /*
     await Promise.all(
         workers.map(async files => {
             let album : Album|null = null;
@@ -72,4 +93,5 @@ async function exploreLibrary()
             }
         })
     )
+        */
 }
