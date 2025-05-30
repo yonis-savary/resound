@@ -4,7 +4,7 @@ import { Vibrant } from 'node-vibrant/node'
 import { spotifyApi } from "../api";
 import { albumSlug } from '~/helpers/slug'
 import { createAlbum, createArtist } from "~/helpers/factory";
-import { Album, AlbumAttributes } from "~/models/Album";
+import type { Album, AlbumAttributes } from "~/models/Album";
 
 async function syncAlbumGenres(albumId: number, genres: string[]) {
   if (!genres.length)
@@ -78,7 +78,6 @@ async function indexTrack(albumId: number, trackData: Item, albumSlugString: str
       disc_number: trackData.disc_number,
       duration_milliseconds: trackData.duration_ms,
       explicit: trackData.explicit,
-      url: trackData.external_urls.spotify,
       position: trackData.track_number
     })
 
@@ -107,9 +106,9 @@ export async function indexAlbum(albumId: string, forceUpdate = false): Promise<
 
   await syncAlbumGenres(album.id, spotifyAlbum.genres)
 
-  const data: AlbumAttributes = {
+  const data: Partial<AlbumAttributes> = {
     last_update: new Date(),
-    release_date: spotifyAlbum.release_date ? new Date(spotifyAlbum.release_date) : undefined,
+    release_date: spotifyAlbum.release_date ? spotifyAlbum.release_date.toString() : undefined,
     name: spotifyAlbum.name,
     url: spotifyAlbum.external_urls.spotify
   }

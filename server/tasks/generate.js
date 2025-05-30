@@ -45,6 +45,13 @@ auto.run().then(() => {
         let preClass = content.substring(0, classStart);
         let postClass = content.substring(classStart);
     
+        
+        if (!preClass.indexOf('Sequelize.Sequelize'))
+            preClass = preClass.replace("import * as Sequelize", "import type Sequelize")
+
+        preClass = preClass.replace('DataTypes, Model, Optional', 'DataTypes, Model, type Optional');
+        
+
         postClass = postClass
             .replace(/\w+[!]:/gm, m => `declare ${m.substring(0,m.length-2)} :`)
             .replace(/\w+[?]:/gm, m => `declare ${m.substring(0,m.length-2)} : undefined |`)

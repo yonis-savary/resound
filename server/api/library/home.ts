@@ -1,7 +1,6 @@
 import { Op, Sequelize } from "sequelize";
 import { albumBaseIncludes } from "~/helpers/includes"
 import type { Album } from "~/models/Album";
-import { Artist } from "~/models/Artist";
 import type { Track } from "~/models/Track";
 import models from "~/server/db/models"
 import sequelize from "~/server/db/sequelize";
@@ -12,7 +11,7 @@ export default defineEventHandler(async event => {
 
     const lastAdditions = await models.Album.findAll({
         include: albumBaseIncludes,
-        where: { addition_date: { [Op.ne]: null } },
+        where: { addition_date: { [Op.not]: Sequelize.literal('NULL') } },
         order: [['addition_date', 'DESC']],
         limit: 10
     })

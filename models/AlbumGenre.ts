@@ -1,5 +1,5 @@
-import * as Sequelize from 'sequelize';
-import { DataTypes, Model, Optional } from 'sequelize';
+import type Sequelize from 'sequelize';
+import { DataTypes, Model, type Optional } from 'sequelize';
 import type { Album, AlbumId } from './Album';
 import type { Genre, GenreId } from './Genre';
 

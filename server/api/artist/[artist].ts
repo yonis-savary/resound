@@ -15,11 +15,11 @@ export default defineEventHandler(async event => {
         include: {
             model: models.AlbumArtist,
             as: 'album_artists',
-            include: {
+            include: [{
                 model: models.Album,
                 as: 'album_album',
                 include: albumTracksIncludes
-            }
+            }]
         }
     });
     if (!artist)

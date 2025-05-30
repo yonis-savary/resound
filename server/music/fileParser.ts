@@ -74,7 +74,7 @@ const getAlbum = async (artist: Artist, metadata: IAudioMetadata): Promise<Album
     );
 
     album.update({
-        release_date: new Date(metadata.common.year + "-01-01"),
+        release_date: metadata.common.year + "-01-01",
         type: 'album',
         exists_locally: true,
         addition_date: new Date

@@ -42,7 +42,7 @@ export async function indexDiscography(
           api_id: release.id,
           type: release.album_type,
           url: release.external_urls?.spotify,
-          release_date: release.release_date ?? undefined,
+          release_date: release.release_date ? release.release_date.toString() : undefined,
         })
 
         // Crée l'association artiste-album

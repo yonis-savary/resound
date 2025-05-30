@@ -5,8 +5,8 @@ import { createArtist } from '~/helpers/factory'
 import { artistSlug } from '~/helpers/slug'
 import { Artist } from '~/models/Artist'
 
-async function downloadBestImage(artistAPIId: string, images: Image[]): Promise<string | null> {
-  if (!images.length) return null
+async function downloadBestImage(artistAPIId: string, images: Image[]): Promise<string | undefined> {
+  if (!images.length) return undefined
 
   try {
     const bestImage = images.reduce((best, current) => {
@@ -26,7 +26,7 @@ async function downloadBestImage(artistAPIId: string, images: Image[]): Promise<
 
   } catch (err) {
     console.error('Error downloading image:', err)
-    return null
+    return undefined
   }
 }
 
@@ -65,7 +65,7 @@ export async function indexArtist(
     // Télécharge la nouvelle image si disponible
     const newPicturePath = spotifyArtist.images?.length
       ? await downloadBestImage(artistAPIId, spotifyArtist.images)
-      : null
+      : undefined
 
     // Met à jour l'artiste
     await artist.update({

@@ -1,4 +1,2 @@
 
-type AlbumCoverSize = 'small' | 'medium' | 'big';
-
-export default AlbumCoverSize;
+export type AlbumCoverSize = 'small' | 'medium' | 'big';

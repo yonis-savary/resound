@@ -1,5 +1,4 @@
-import { Op, Sequelize } from "sequelize";
-import { albumBaseIncludes, albumTracksIncludes } from "~/helpers/includes";
+import { albumBaseIncludes } from "~/helpers/includes";
 import models from "~/server/db/models";
 
 export default defineEventHandler(async (event) => {
@@ -13,14 +12,14 @@ export default defineEventHandler(async (event) => {
 
     return await models.Genre.findOne({
         where: { id: slug },
-        include: {
+        include: [{
             model: models.AlbumGenre,
             as: "album_genres",
-            include: {
+            include: [{
                 model: models.Album,
                 as: 'album_album',
-                include: albumTracksIncludes
-            }
-        }
+                include: albumBaseIncludes
+            }]
+        }]
     });
 })

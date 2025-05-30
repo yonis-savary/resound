@@ -1,6 +1,6 @@
 import { spotifyApi } from '../api'
 import models from '~/server/db/models'
-import { Op } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 import { artistSlug } from '~/helpers/slug'
 
 export async function discoverArtist(artistName: string): Promise<string | null> {
@@ -9,7 +9,7 @@ export async function discoverArtist(artistName: string): Promise<string | null>
   const slug = artistSlug(artistName)
 
   const existingArtist = await models.Artist.findOne({
-    where: { slug, api_id: { [Op.not]: null } }
+    where: { slug, api_id: { [Op.not]: Sequelize.literal('NULL') } }
   })
 
 
