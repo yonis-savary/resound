@@ -19,16 +19,16 @@ export default defineEventHandler(async event => {
                 as: 'album_album',
                 include: [{
                     model: models.AlbumArtist,
-                    as: 'album_artists',
-                    where: { artist }
+                    as: 'album_artists'
                 }]
             },
             {
                 model: models.TrackArtist,
                 as: 'track_artists',
+                where: { artist },
                 include: [{
                     model: models.Artist,
-                    as: 'artist_artist'
+                    as: 'artist_artist',
                 }]
             },
         ],
