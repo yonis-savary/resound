@@ -35,10 +35,10 @@
     ],
     "id": "/",
     "start_url": "/",
-    "background_color": "#23c09c",
+    "background_color": "#000000",
     "display": "minimal-ui",
     "scope": "/",
-    "theme_color": "#23c09c",
+    "theme_color": "#000000",
     "description": "Listen to your music libary on any device",
     "shortcuts": []
 }

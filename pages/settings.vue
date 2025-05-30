@@ -14,11 +14,11 @@
         <div v-if="settings.settings.enableSpecialButtons" class="flex flex-row w-full gap-3">
             <div class="flex flex-col gap-1 flex-1">
                 <span>Previous button special action</span>
-                <USelect v-model="settings.settings.specialActions.next" :items="UserSpecialActionsLabels"/>
+                <USelect v-model="settings.settings.specialActions.previous" :items="UserSpecialActionsLabels"/>
             </div>
             <div class="flex flex-col gap-1 flex-1">
                 <span>Next button special action</span>
-                <USelect v-model="settings.settings.specialActions.previous" :items="UserSpecialActionsLabels"/>
+                <USelect v-model="settings.settings.specialActions.next" :items="UserSpecialActionsLabels"/>
             </div>
         </div>
 
