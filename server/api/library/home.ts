@@ -13,7 +13,8 @@ export default defineEventHandler(async event => {
     const lastAdditions = await models.Album.findAll({
         include: albumBaseIncludes,
         where: { addition_date: { [Op.ne]: null } },
-        order: [['addition_date', 'DESC']]
+        order: [['addition_date', 'DESC']],
+        limit: 10
     })
 
     const user = await getUserSession(event);
