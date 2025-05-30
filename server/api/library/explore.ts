@@ -7,7 +7,7 @@ import { getSupportedMimeTypes } from "music-metadata";
 import mime from "mime-to-extensions"
 
 export default defineEventHandler(async () => {
-    await exploreLibrary();
+    exploreLibrary();
     return { status: "OK" }
 })
 

@@ -12,10 +12,10 @@ import { Track } from "~/models/Track";
 
 const getArtist = async (metadata: IAudioMetadata): Promise<Artist> => {
 
-    if (!metadata.common.albumartist)
-        throw new Error('This function needs a valid metadata object (common.albumartist is missing)');
+    const artistName = metadata.common.albumartist ?? metadata.common.artist ?? null
 
-    const artistName = metadata.common.albumartist;
+    if (!artistName)
+        throw new Error('This function needs a valid metadata object (common.albumartist is missing)');
 
     const artist = await createArtist(artistName);
     artist.update({exists_locally: true});
@@ -95,14 +95,16 @@ export default async function parseFileTags(
 
     const metadata = await parseFile(file);
 
-    if (!metadata.common.albumartist)
+    const artistName = metadata.common.albumartist ?? metadata.common.artist ?? null;
+
+    if (!artistName)
         throw new Error('Could not parse file albumartist missing');
     if (!metadata.common.album)
         throw new Error('Could not parse file album missing');
     if (!metadata.common.title)
         throw new Error('Could not parse file album missing');
 
-    if (!(artist && artist.name === metadata.common.albumartist))
+    if (!(artist && artist.name === artistName))
         artist = await getArtist(metadata);
 
     if (!(album && album.name === metadata.common.album))
