@@ -136,7 +136,7 @@ export default async function parseFileTags(
         album = await getAlbum(artist, metadata)
 
     const [track, ___] = await models.Track.upsert({
-        slug: artist.slug + artistSlug(metadata.common.title),
+        slug: album.slug + artistSlug(metadata.common.title),
         album: album.id,
         discovery_date: new Date,
         position: metadata.common.track.no ?? undefined,
