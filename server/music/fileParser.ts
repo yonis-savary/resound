@@ -1,32 +1,30 @@
 #!/usr/bin/env ndoe
 import { existsSync } from "fs";
-import { parseFile } from "music-metadata"
+import { type IAudioMetadata, parseFile } from "music-metadata"
 import models from "../db/models";
 import mime from "mime-to-extensions"
 import { Vibrant } from 'node-vibrant/node'
 import { createAlbum, createArtist } from "~/helpers/factory";
-import { albumSlug, artistSlug } from "~/helpers/slug";
+import { artistSlug } from "~/helpers/slug";
+import type { Album } from "~/models/Album";
+import type { Artist } from "~/models/Artist";
+import { Track } from "~/models/Track";
 
-export default async function parseFileTags(file: string) {
-    if (!existsSync(file))
-        throw new Error(`Given file ${file} does not exists`);
-
-    console.log(file);
-
-    const metadata = await parseFile(file);
+const getArtist = async (metadata: IAudioMetadata): Promise<Artist> => {
 
     if (!metadata.common.albumartist)
-        return console.log('Could not parse file albumartist missing');
-    if (!metadata.common.album)
-        return console.log('Could not parse file album missing');
-    if (!metadata.common.title)
-        return console.log('Could not parse file album missing');
+        throw new Error('This function needs a valid metadata object (common.albumartist is missing)');
 
-    const artist = await createArtist(metadata.common.albumartist);
+    const artistName = metadata.common.albumartist;
+
+    const artist = await createArtist(artistName);
     artist.update({exists_locally: true});
 
-    const albumSlugString: string = artistSlug(metadata.common.albumartist) + albumSlug(metadata.common.album);
+    return artist;
+}
 
+
+const getPicturePath = async (album: Album, metadata: IAudioMetadata) => {
 
     let pictureName: string | undefined = undefined;
     const picture = metadata.common.picture?.at(0) ?? null;
@@ -36,7 +34,7 @@ export default async function parseFileTags(file: string) {
         if (!format)
             format = 'jpg'
 
-        pictureName = albumSlugString + '.' + format
+        pictureName = album.slug + '.' + format
         useStorage('data').setItemRaw(pictureName, picture.data)
 
 
@@ -49,17 +47,26 @@ export default async function parseFileTags(file: string) {
 
     }
 
+    album.update({
+        color: albumColor,
+        picture_path: pictureName,
+    });
+}
+
+
+const getAlbum = async (artist: Artist, metadata: IAudioMetadata): Promise<Album> => {
+    if (!metadata.common.album)
+        throw new Error('This function needs a valid metadata object (common.album is missing)');
+
     const album = await createAlbum(
-        metadata.common.albumartist,
+        artist.name,
         metadata.common.album
     );
 
     album.update({
         release_date: new Date(metadata.common.year + "-01-01"),
         type: 'album',
-        color: albumColor,
         exists_locally: true,
-        picture_path: pictureName,
         addition_date: new Date
     });
 
@@ -68,8 +75,38 @@ export default async function parseFileTags(file: string) {
         const [genre, ____] = await models.Genre.upsert({ name: genreName })
         models.AlbumGenre.upsert({ album: album.id, genre: genre.id })
     }
-    
+
     models.AlbumArtist.upsert({ album: album.id, artist: artist.id })
+
+    await getPicturePath(album, metadata);
+
+    return album;
+}
+
+export default async function parseFileTags(
+    file: string, 
+    album: Album|null, 
+    artist: Artist|null
+): Promise<{track: Track, album: Album, artist: Artist}> {
+    if (!existsSync(file))
+        throw new Error(`Given file ${file} does not exists`);
+
+    console.log(file);
+
+    const metadata = await parseFile(file);
+
+    if (!metadata.common.albumartist)
+        throw new Error('Could not parse file albumartist missing');
+    if (!metadata.common.album)
+        throw new Error('Could not parse file album missing');
+    if (!metadata.common.title)
+        throw new Error('Could not parse file album missing');
+
+    if (!(artist && artist.name === metadata.common.albumartist))
+        artist = await getArtist(metadata);
+
+    if (!(album && album.name === metadata.common.album))
+        album = await getAlbum(artist, metadata)
 
     const [track, ___] = await models.Track.upsert({
         slug: artistSlug(metadata.common.title),
@@ -84,5 +121,5 @@ export default async function parseFileTags(file: string) {
 
     models.TrackArtist.upsert({ track: track.id, artist: artist.id })
 
-    return { status: "OK" };
+    return { track, album, artist };
 }

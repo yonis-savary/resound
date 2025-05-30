@@ -1,11 +1,19 @@
 #!/usr/bin/env ndoe
 import { existsSync, mkdirSync, writeFileSync } from "fs";
-import { parseBlob } from "music-metadata"
+import { getSupportedMimeTypes, parseBlob } from "music-metadata"
 import parseFileTags from "./fileParser";
 import path from "path";
+import mime from "mime-to-extensions"
 
 export default async function handleUpload(filename: string, blob: Blob) {
+    const supportedMimeTypes = getSupportedMimeTypes();
 
+    const fileMime = mime.lookup(filename);
+    if (!supportedMimeTypes.includes(fileMime))
+    {
+        console.info("Unsupported mime type for " + filename);
+        return;
+    }
     const metadata = await parseBlob(blob);
 
     if (!metadata.common.albumartist)
@@ -28,5 +36,5 @@ export default async function handleUpload(filename: string, blob: Blob) {
 
     writeFileSync(filePath, Buffer.from(await blob.arrayBuffer()));
 
-    parseFileTags(filePath)
+    parseFileTags(filePath, null, null)
 }

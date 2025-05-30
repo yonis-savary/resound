@@ -1,6 +1,10 @@
 import { globSync } from "glob";
 import parseFileTags from "~/server/music/fileParser";
 import path, { dirname } from 'path'
+import type { Album } from "~/models/Album";
+import type { Artist } from "~/models/Artist";
+import { getSupportedMimeTypes } from "music-metadata";
+import mime from "mime-to-extensions"
 
 export default defineEventHandler(async () => {
     await exploreLibrary();
@@ -16,12 +20,23 @@ async function exploreLibrary()
 
     const files = globSync('**/*', {cwd: libraryPath, nodir: true});
 
+    console.info(`Exploring a library of ${files.length} files`);
+
     const workers: string[][] = [];
     let currentWorkerQueue: string[] = [];
     let currentDirectory: string|null = null
 
+    const supportedMimeTypes = getSupportedMimeTypes();
+
     for (const file of files)
     {
+        const fileMime = mime.lookup(file);
+        if (!supportedMimeTypes.includes(fileMime))
+        {
+            console.info("Unsupported mime type for " + file);
+            continue;
+        }
+
         const thisDirectory = dirname(file)
         if (currentDirectory != thisDirectory)
         {
@@ -38,10 +53,23 @@ async function exploreLibrary()
     if (currentWorkerQueue.length)
         workers.push(currentWorkerQueue);
 
+
     await Promise.all(
         workers.map(async files => {
+            let album : Album|null = null;
+            let artist : Artist|null = null;
+
             for (const file of files)
-                await parseFileTags(path.join(libraryPath, file));
+            {
+                try
+                {
+                    ({album, artist} = await parseFileTags(path.join(libraryPath, file), album, artist));
+                }
+                catch (err)
+                {
+                    console.error(err);
+                }
+            }
         })
     )
 }
