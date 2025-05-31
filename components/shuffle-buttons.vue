@@ -8,8 +8,8 @@
         <UButton class="justify-center" @click="shuffleLibrary(true)">Shuffle Likes</UButton>
     </div>
     <div v-if="type == 'genre'" class="flex flex-row gap-3">
-        <UButton class="justify-center" @click="shuffleGenre(false)">Shuffle</UButton>
-        <UButton class="justify-center" @click="shuffleGenre(true)">Shuffle Likes</UButton>
+        <UButton class="justify-center" @click="shuffleGenre(genre.name, false)">Shuffle</UButton>
+        <UButton class="justify-center" @click="shuffleGenre(genre.name, true)">Shuffle Likes</UButton>
     </div>
 </template>
 
@@ -17,22 +17,21 @@
 <script setup lang="ts">
 import { computed, type PropType } from 'vue';
 import { usePlayerStore } from '../stores/player';
-import {startShuffle, shuffleLibrary} from '~/stores/shuffle';
 import type { Track } from '~/models/Track';
+import { useSuffleStore } from '~/stores/shuffle';
+import type { Genre } from '~/models/Genre';
 
 type ShuffleButtonType = 'tracks' | 'all' | 'genre';
 
 const player = usePlayerStore();
 const currentColor = computed(() => player.currentColor)
 
-const likesOnlyOptions = (likesOnly: boolean = false) => (
-    likesOnly ? {params: {likesOnly: true}}: {}
-);
+const {
+    startShuffle,
+    shuffleLibrary,
+    shuffleGenre,
+} = useSuffleStore();
 
-const shuffleGenre =  async (likesOnly: boolean = false) => {
-    const data = await $fetch<Track[]>(`/api/shuffle/genre/` + genre, likesOnlyOptions(likesOnly));
-    player.changeTracklist(data);
-}
 
 const { type, elements, genre } = defineProps({
     type: {
@@ -45,9 +44,9 @@ const { type, elements, genre } = defineProps({
         default : () => []
     },
     genre: {
-        type: Number,
+        type: Object as PropType<Genre>,
         required: false,
-        default: 0
+        default: ()=>{}
     }
 })
 

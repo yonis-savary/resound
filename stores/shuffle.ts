@@ -1,75 +1,90 @@
 import type { Track } from "~/models/Track";
-import type { UserSpecialActions } from "~/types/LocalUserSettings";
+import { defineStore } from "pinia"
 
-const startShuffle = async function(tracks: Track[], likesOnly: boolean = false){
-    const player = usePlayerStore();
-    const likes = useLikesStore();
+export const useSuffleStore = defineStore('shuffle', () => {
+    const startShuffle = async function (tracks: Track[], likesOnly: boolean = false) {
+        const player = usePlayerStore();
+        const likes = useLikesStore();
 
-    let tracksId = tracks.map(track => track.id);
+        let tracksId = tracks.map(track => track.id);
 
-    if (likesOnly)
-        tracksId = tracksId.filter(track => likes.isLiked(track));
+        if (likesOnly)
+            tracksId = tracksId.filter(track => likes.isLiked(track));
 
-    const data = await $fetch<Track[]>(`/api/shuffle/tracks`, {
-        params: { tracks: tracksId }
-    })
-    player.changeTracklist(data);
-};
-
-
-export const userSpecialActionsCallbacks: Record<UserSpecialActions,()=>void> = {
-    'shuffleArtist': ()=>{ shuffleCurrentArtist(false) },
-    'shuffleArtistLikes': ()=>{ shuffleCurrentArtist(true) },
-    'shuffleAlbum': ()=>{ shuffleCurrentAlbum(false) },
-    'shuffleAlbumLikes': ()=>{ shuffleCurrentAlbum(true) },
-    'shuffleLibrary': ()=>{ shuffleLibrary(false) },
-    'shuffleLibraryLikes': ()=>{ shuffleLibrary(true) },
-    'shuffleGenre': ()=>{ shuffleCurrentGenre(false) },
-    'shuffleGenreLikes': ()=>{ shuffleCurrentGenre(true) },
-}
+        const data = await $fetch<Track[]>(`/api/shuffle/tracks`, {
+            params: { tracks: tracksId }
+        })
+        player.changeTracklist(data);
+    }
 
 
-const likesOnlyOptions = (likesOnly: boolean = false) => (
-    likesOnly ? {params: {likesOnly: true}}: {}
-);
+    const likesOnlyOptions = (likesOnly: boolean = false) => (
+        likesOnly ? { params: { likesOnly: true } } : {}
+    );
 
-const shuffleCurrentArtist = async (likesOnly:boolean=false) => {
-    const { currentTrack } = usePlayerStore();
-    const player = usePlayerStore();
+    const shuffleCurrentArtist = async (likesOnly: boolean = false) => {
+        const { currentTrack } = usePlayerStore();
+        const player = usePlayerStore();
+        const likes = useLikesStore();
 
-    const artist = currentTrack?.track_artists.at(0) ?? undefined;
-    if (!artist)
-        return;
+        const artist = currentTrack?.track_artists.at(0) ?? undefined;
+        if (!artist)
+            return;
 
-    const data = await $fetch<Track[]>(`/api/shuffle/artist/` + artist.artist, likesOnlyOptions(likesOnly));
-    player.changeTracklist(data);
-};
+        const data = await $fetch<Track[]>(`/api/shuffle/artist/` + artist.artist, likesOnlyOptions(likesOnly));
+        if (currentTrack && ((!likesOnly) || (likes.isLiked(currentTrack.id) && likesOnly))) 
+            data.unshift(currentTrack);
+        player.changeTracklist(data);
+    };
 
-const shuffleCurrentAlbum = async (likesOnly:boolean=false) => {
-    const player = usePlayerStore();
-    const { currentTrack } = usePlayerStore();
+    const shuffleCurrentAlbum = async (likesOnly: boolean = false) => {
+        const player = usePlayerStore();
+        const { currentTrack } = usePlayerStore();
+        const likes = useLikesStore();
 
-    const data = await $fetch<Track[]>(`/api/shuffle/album/` + currentTrack?.album, likesOnlyOptions(likesOnly));
-    player.changeTracklist(data);
-};
+        const data = await $fetch<Track[]>(`/api/shuffle/album/` + currentTrack?.album, likesOnlyOptions(likesOnly));
+        if (currentTrack && ((!likesOnly) || (likes.isLiked(currentTrack.id) && likesOnly))) 
+            data.unshift(currentTrack);
+        player.changeTracklist(data);
+    };
 
-const shuffleLibrary = async (likesOnly:boolean=false) => {
-    const player = usePlayerStore();
-    const data = await $fetch<Track[]>(`/api/shuffle/all`, likesOnlyOptions(likesOnly));
-    player.changeTracklist(data);
-};
+    const shuffleLibrary = async (likesOnly: boolean = false) => {
+        const player = usePlayerStore();
+        const data = await $fetch<Track[]>(`/api/shuffle/all`, likesOnlyOptions(likesOnly));
+        player.changeTracklist(data);
+    };
 
-const shuffleCurrentGenre = async (likesOnly:boolean=false) => {
-    const player = usePlayerStore();
-    const { currentTrack } = usePlayerStore();
+    const shuffleCurrentGenre = async (likesOnly: boolean = false) => {
+        const player = usePlayerStore();
+        const { currentTrack } = usePlayerStore();
+        const likes = useLikesStore();
 
-    const genre = currentTrack?.album_album.album_genres.at(0) ?? undefined;
-    if (!genre)
-        return;
+        const genre = currentTrack?.album_album.album_genres.at(0) ?? undefined;
+        if (!genre)
+            return;
 
-    const data = await $fetch<Track[]>(`/api/shuffle/genre/` + genre.id, likesOnlyOptions(likesOnly));
-    player.changeTracklist(data);
+        const data = await $fetch<Track[]>(`/api/shuffle/genre/` + genre.id, likesOnlyOptions(likesOnly));
+        if (currentTrack && ((!likesOnly) || (likes.isLiked(currentTrack.id) && likesOnly))) 
+            data.unshift(currentTrack);
 
-};
+        player.changeTracklist(data);
 
-export {startShuffle, shuffleLibrary}
+    };
+
+    const shuffleGenre = async (genre: string, likesOnly: boolean = false) => {
+        const player = usePlayerStore();
+
+        const data = await $fetch<Track[]>(`/api/shuffle/genre/` + genre, likesOnlyOptions(likesOnly));
+        player.changeTracklist(data);
+    }
+
+    return {
+        startShuffle,
+        shuffleCurrentArtist,
+        shuffleCurrentAlbum,
+        shuffleLibrary,
+        shuffleCurrentGenre,
+        shuffleGenre
+    };
+})
+

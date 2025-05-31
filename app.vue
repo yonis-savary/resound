@@ -17,10 +17,12 @@
 
 <script setup lang="ts">
 import Player from './components/tracks/player.vue';
+import { UserSpecialActionsConfigs } from './types/LocalUserSettings';
 
 const playerStore = usePlayerStore();
-const settings = useMySettingsStore();
+const settings = useSettingsStore();
 const pageRoot = useTemplateRef('pageRoot');
+const specialActionsSettings = UserSpecialActionsConfigs
 
 useHead({ 
   link: [{
@@ -38,17 +40,24 @@ watch(()=> playerStore.currentTrack, (currentTrack)=>{
 })
 
 const triggerPreviousButtonAction = ()=>{
-  (userSpecialActionsCallbacks[settings.settings.specialActions.previous])();
+  (specialActionsSettings[settings.settings.specialActions.previous].callback)();
+
+  const effect = specialActionsSettings[settings.settings.specialActions.previous].effect;
+  if (effect) playerStore.playEffect(effect);
 }
 const triggerNextButtonAction = ()=>{
-  (userSpecialActionsCallbacks[settings.settings.specialActions.next])();
+  (specialActionsSettings[settings.settings.specialActions.next].callback)();
+
+  const effect = specialActionsSettings[settings.settings.specialActions.next].effect;
+  if (effect) playerStore.playEffect(effect);
 }
 
 let handleShuffleLauncherTimeout: ReturnType<typeof setTimeout>|null = null;
 async function handleShuffleLauncher()
 {
-  if (!settings.settings.enableSpecialButtons)
+  if (!settings.settings.enableSpecialButtons){
     return playerStore.goToPrevious();
+  }
 
   if (handleShuffleLauncherTimeout) {
       clearTimeout(handleShuffleLauncherTimeout);

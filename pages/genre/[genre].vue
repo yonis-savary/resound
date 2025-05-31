@@ -1,7 +1,7 @@
 <template>
     <div v-if="genre" class="container flex flex-col gap-3">
         <div class="ml-auto">
-            <ShuffleButtons type="genre" :genre="genre.id"/>
+            <ShuffleButtons type="genre" :genre="genre"/>
         </div>
         <AlbumList v-if="genre.album_genres?.length" :albums="genre.album_genres.map(x => x.album_album)" >
             <template #title>

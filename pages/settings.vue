@@ -14,11 +14,11 @@
         <div v-if="settings.settings.enableSpecialButtons" class="flex flex-row w-full gap-3">
             <div class="flex flex-col gap-1 flex-1">
                 <span>Previous button special action</span>
-                <USelect v-model="settings.settings.specialActions.previous" :items="UserSpecialActionsLabels"/>
+                <USelect v-model="settings.settings.specialActions.previous" :items="actionsItems"/>
             </div>
             <div class="flex flex-col gap-1 flex-1">
                 <span>Next button special action</span>
-                <USelect v-model="settings.settings.specialActions.next" :items="UserSpecialActionsLabels"/>
+                <USelect v-model="settings.settings.specialActions.next" :items="actionsItems"/>
             </div>
         </div>
 
@@ -27,7 +27,7 @@
         <div class="flex">
             <UButton class="justify-center flex flex-col" @click="launchSynchronization">
                 <Icon class="spinning-arrows" :class="{'spinning': syncIsLoading }" name="ic:baseline-sync" size="110"/>
-                Lancer la synchronisation
+                Launch synchronization
             </UButton>
         </div>
     </div>
@@ -35,15 +35,19 @@
 
 
 <script setup lang="ts">
-import { UserSpecialActionsLabels } from '~/types/LocalUserSettings';
-
+import { UserSpecialActionsConfigs } from '~/types/LocalUserSettings';
 
 const toast = useToast();
-const settings = useMySettingsStore()
+const settings = useSettingsStore()
 
 const syncIsLoading = ref(false);
 
 useHead({ title: 'Settings' })
+
+const actionsItems = Object.entries(UserSpecialActionsConfigs).map(([key, config]) => ({
+    label: config.label,
+    value: key
+}));
 
 const launchSynchronization = async ()=>{
     syncIsLoading.value = true;

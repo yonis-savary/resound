@@ -26,7 +26,6 @@ export default defineNuxtConfig({
       artist: '/api/artist'
     }
   },
-
   modules: [
     '@nuxt/eslint',
     '@nuxt/icon',
