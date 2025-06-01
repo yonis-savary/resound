@@ -1,4 +1,4 @@
-import { useDebounceFn, useStorageAsync } from "@vueuse/core";
+import { useDebounceFn, useStorageAsync, useWakeLock } from "@vueuse/core";
 import { defineStore } from "pinia";
 import type { Track } from "~/models/Track";
 
@@ -56,6 +56,8 @@ export const usePlayerStore = defineStore('player', () => {
     const currentDuration = computed(() => player.duration);
     const volume = useStorageAsync<number>('player-volume', 0.5);
 
+    const { request: wakeLockRequest, release: wakeLockRelease } = useWakeLock();
+
     const isPlaying = ref(false);
     const currentTime = ref(0.0);
 
@@ -99,8 +101,16 @@ export const usePlayerStore = defineStore('player', () => {
 
     if (player)
     {
-        player.onpause = ()=>{ isPlaying.value = false; }
-        player.onplay = ()=> { isPlaying.value = true; }
+        player.onplay = ()=> { 
+            isPlaying.value = true; 
+            wakeLockRequest('screen')
+        }
+        player.onpause = ()=> { 
+            isPlaying.value = false; 
+            wakeLockRelease()
+        }
+
+
     }
     const resetTime = () => goToTime(0);
     const goToNext = () => gotoIndex(currentIndex.value + 1, true);
