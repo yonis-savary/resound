@@ -57,13 +57,11 @@ async function indexTrack(albumId: number, trackData: Item, albumSlugString: str
   try {
 
     const trackSlug = albumSlugString + albumSlug(trackData.name) 
-    const [track] = await models.Track.findOrCreate({
-      where: {
-        album: albumId,
-        name: trackData.name,
-        slug: trackSlug
-      }
-    })
+    const [track] = await models.Track.upsert({
+      album: albumId,
+      name: trackData.name,
+      slug: trackSlug
+    }, { conflictFields: ['slug'] })
 
     if (trackData.artists.length)
       await models.TrackArtist.destroy({ where: { track: track.id } })
