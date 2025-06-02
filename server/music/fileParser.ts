@@ -1,5 +1,5 @@
 #!/usr/bin/env ndoe
-import { existsSync, statSync } from "fs";
+import { existsSync, Stats, statSync } from "fs";
 import { type IAudioMetadata, parseFile } from "music-metadata"
 import models from "../db/models";
 import mime from "mime-to-extensions"
@@ -74,7 +74,7 @@ const getPicturePath = async (album: Album, metadata: IAudioMetadata) => {
 }
 
 
-const getAlbum = async (artist: Artist, metadata: IAudioMetadata): Promise<Album> => {
+const getAlbum = async (stats: Stats, artist: Artist, metadata: IAudioMetadata): Promise<Album> => {
     const albumName = metadata.common.album ?? undefined
 
     if (!albumName)
@@ -92,7 +92,7 @@ const getAlbum = async (artist: Artist, metadata: IAudioMetadata): Promise<Album
         release_date: metadata.common.year + "-01-01",
         type: 'album',
         exists_locally: true,
-        addition_date: new Date
+        addition_date: stats.mtime
     });
 
     for (let genreName of (metadata.common.genre ?? [])) {
@@ -135,7 +135,7 @@ export default async function parseFileTags(
         artist = await getArtist(metadata);
 
     if (!(album && album.name === metadata.common.album))
-        album = await getAlbum(artist, metadata)
+        album = await getAlbum(stat, artist, metadata)
 
     const [track, ___] = await models.Track.upsert({
         slug: album.slug + artistSlug(metadata.common.title),

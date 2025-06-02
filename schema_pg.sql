@@ -75,7 +75,6 @@ CREATE TABLE track (
     path VARCHAR(255),
     duration_milliseconds INT,
     explicit BOOLEAN DEFAULT FALSE,
-    UNIQUE(album, name),
     FOREIGN KEY (album) REFERENCES album(id) ON DELETE CASCADE
 );
 
