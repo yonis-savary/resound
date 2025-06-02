@@ -21,7 +21,7 @@ class SpotifyAPI {
     }
 
     private async getAccessToken(): Promise<string> {
-        const storage = useStorage('cache')
+        const storage = useStorage('memory')
         const cachedToken = await storage.getItem('spotify-access-token')
 
         if (cachedToken) {

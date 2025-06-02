@@ -17,6 +17,9 @@ export default defineNuxtConfig({
       cache: {
         driver: 'fs',
         base: './.cache'
+      },
+      memory: {
+        driver: 'memory'
       }
     }
   },
