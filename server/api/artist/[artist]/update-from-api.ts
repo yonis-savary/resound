@@ -47,7 +47,7 @@ export default defineEventHandler(async event => {
 
         await Promise.all(albumsToUpdate.map(album => {
             console.log('Indexing album : ' + album.api_id)
-            return album.api_id ? indexAlbum(album.api_id): null
+            return album.api_id ? indexAlbum(album.api_id, true): null
         }));
 
         return {status: "OK"};
