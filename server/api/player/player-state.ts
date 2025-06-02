@@ -1,10 +1,22 @@
-export default defineEventHandler(async event => {
+export default defineEventHandler(async (event) => {
     const user = await getUserSession(event)
-    const userId = user.user?.id;
-    const storage = useStorage('data/states');
+    const key = user.user.id ?? null;
 
-    if (await storage.hasItem(userId))
-        return JSON.parse(await storage.getItem(userId))
+    if (!key)
+        throw new Error("Could not resolve key");
 
-    return {}
+    const storage = useStorage('data/player-state');
+
+    if (! await storage.hasItem(key))
+        return null;
+
+    try 
+    {
+        return await storage.getItem(key);
+    }
+    catch (err)
+    {
+        console.error(err)
+        return createError({statusCode: 500, statusMessage: 'Could not save playlist'});
+    }
 })

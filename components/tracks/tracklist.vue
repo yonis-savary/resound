@@ -12,7 +12,7 @@
         </div>
     </div>
 
-    <div class="max-h-100 overflow-auto">
+    <div class="overflow-auto">
         <table style="width: 100%">
             <thead>
                 <tr>

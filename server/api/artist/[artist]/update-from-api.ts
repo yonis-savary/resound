@@ -1,5 +1,7 @@
+import { Op } from "sequelize";
 import models from "~/server/db/models";
 import { discoverArtist } from "~/server/integrations/spotify/utils/discoverArtist";
+import { indexAlbum } from "~/server/integrations/spotify/utils/indexAlbum";
 import { indexArtist } from "~/server/integrations/spotify/utils/indexArtist";
 import { indexDiscography } from "~/server/integrations/spotify/utils/indexDiscography";
 
@@ -23,16 +25,36 @@ export default defineEventHandler(async event => {
     if (!artistAPIId)
         return createError({statusCode: 400, statusMessage: 'Artist api_id not found'});
 
-    try 
+    try
     {
         await Promise.all([
             indexArtist(artistAPIId, true),
             indexDiscography(artistAPIId, true),
-        ])
+        ]);
+
+        const albumsToUpdate = await models.Album.findAll({
+            include: [{
+                model: models.AlbumArtist,
+                where: {artist: artist.id},
+                as: 'album_artists'
+            }],
+            where: {
+                type: { [Op.ne]: 'single' }
+            },
+            limit: 5,
+            order: [['release_date', 'DESC']]
+        })
+
+        await Promise.all(albumsToUpdate.map(album => {
+            console.log('Indexing album : ' + album.api_id)
+            return album.api_id ? indexAlbum(album.api_id): null
+        }));
+
         return {status: "OK"};
     }
     catch (err)
     {
+        console.error(err);
         return {status: 'Error', message: err}
     }
 })

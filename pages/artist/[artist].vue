@@ -82,16 +82,15 @@ onMounted(loadArtist)
 
 
 const apiUpdateIsLoading = ref(false);
-const startToUpdateFromApi = ()=>{
+const startToUpdateFromApi = async ()=>{
     apiUpdateIsLoading.value = true;
     try 
     {
-        $fetch(`/api/artist/${route.params.artist}/update-from-api`)
+        await $fetch(`/api/artist/${route.params.artist}/update-from-api`)
         toast.add({
             title: 'Success !',
             color: "success"
         });
-        loadArtist()
     }
     catch (err)
     {

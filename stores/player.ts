@@ -157,7 +157,7 @@ export const usePlayerStore = defineStore('player', () => {
     }
 
     const goToTime = async (seconds: number, useDebounce: boolean = true) => {
-        if (!player || !player.src)
+        if (!(player?.src ?? false))
             return;
 
         seconds = Math.floor(seconds);
@@ -177,7 +177,11 @@ export const usePlayerStore = defineStore('player', () => {
     $fetch('/api/player/player-state').then(async state => {
         const lastPlayslist = await $fetch('/api/player/playlist')
         changeTracklist(lastPlayslist, state?.index ?? 0, false);
-        goToTime(state.currentTime ?? 0);
+
+        player.oncanplay = ()=> {
+            goToTime(state.currentTime ?? 0);
+            player.oncanplay = null;
+        }
     })
 
     const prettyDuration = (timeInSeconds: number, hoursToo: boolean = false) => {
@@ -195,23 +199,22 @@ export const usePlayerStore = defineStore('player', () => {
         currentTime.value = player.currentTime
     })
 
-    callOnce(() => {
-        if (!import.meta.client)
-            return;
-        
+    if (import.meta.client)
+    {
         setInterval(() => {
             if (!isPlaying.value)
                 return;
 
             refreshMediaSessionPositionState();
         }, 5000);
-        // setInterval(()=>{
-        // if (!isPlaying.value)
-        // return;
-        //         
-        // $fetch('/api/player/player-state', {method:"POST", body: {index: currentIndex.value, currentTime: currentTime.value}});
-        // }, 3000);
-    })
+        setInterval(()=>{
+            if (!isPlaying.value)
+                return;
+
+            $fetch('/api/player/player-state', {method:"POST", body: {index: currentIndex.value, currentTime: currentTime.value}});
+        }, 3000);
+    }
+
 
     const fadeDownVolume = async (ms: number , resolveAfter : number|null = null) =>{
         resolveAfter ??= ms;
