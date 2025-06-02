@@ -22,10 +22,6 @@ async function exploreLibrary()
 
     console.info(`Exploring a library of ${files.length} files`);
 
-    const workers: string[][] = [];
-    let currentWorkerQueue: string[] = [];
-    let currentDirectory: string|null = null
-
     const supportedMimeTypes = getSupportedMimeTypes();
 
     files = files.filter(file => {
@@ -48,24 +44,7 @@ async function exploreLibrary()
         fileCount++
     }
 
-    /*
-    await Promise.all(
-        workers.map(async files => {
-            let album : Album|null = null;
-            let artist : Artist|null = null;
+    console.log('OK');
 
-            for (const file of files)
-            {
-                try
-                {
-                    ({album, artist} = await parseFileTags(path.join(libraryPath, file), album, artist));
-                }
-                catch (err)
-                {
-                    console.error(err);
-                }
-            }
-        })
-    )
-        */
+    return { status: 'OK' };
 }

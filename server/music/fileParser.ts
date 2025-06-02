@@ -1,5 +1,5 @@
 #!/usr/bin/env ndoe
-import { existsSync } from "fs";
+import { existsSync, statSync } from "fs";
 import { type IAudioMetadata, parseFile } from "music-metadata"
 import models from "../db/models";
 import mime from "mime-to-extensions"
@@ -122,6 +122,8 @@ export default async function parseFileTags(
 
     const artistName = metadata.common.albumartist ?? metadata.common.artist ?? null;
 
+    const stat = statSync(file);
+
     if (!artistName)
         throw new Error('Could not parse file albumartist missing');
     if (!metadata.common.album)
@@ -138,7 +140,7 @@ export default async function parseFileTags(
     const [track, ___] = await models.Track.upsert({
         slug: album.slug + artistSlug(metadata.common.title),
         album: album.id,
-        discovery_date: new Date,
+        discovery_date: stat.mtime,
         position: metadata.common.track.no ?? undefined,
         disc_number: metadata.common.disk.no ?? 1,
         duration_milliseconds: Math.floor((metadata.format.duration ?? 0) * 1000),
