@@ -1,80 +1,35 @@
-# Nuxt Minimal Starter
+<p align="center">
+    <img src="./public/assets/resound96.png" width="96" height="96" alt="Resound logo">
+</p>
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+# Resound
 
-## Setup
+Listen to your CD/MP3 library remotely !
 
-Make sure to install dependencies:
+## Features
+
+- Music Player
+- Library Tag Parsing
+- Spotify info fetching
+
+## Installation
 
 ```bash
-# npm
+# Setup
+git clone git@github.com:yonis-savary/resound-v2-nuxt.git
+cd resound-v2-nuxt
 npm install
 
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
+# Development Server
+docker compose up -d
 npm run dev
 
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
+# Production
 npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+pm2 start ecosystem.config.cjs
 ```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
 
 ## Credits
 
-Sound Effect by <a href="https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=35955">freesound_community</a> from <a href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=35955">Pixabay</a>
+Radar sound : Sound Effect by <a href="https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=35955">freesound_community</a> from <a href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=35955">Pixabay</a>
