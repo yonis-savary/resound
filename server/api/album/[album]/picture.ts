@@ -20,9 +20,6 @@ export default defineEventHandler(async event => {
         const path = "public/assets/default-artist-picture.png";
         const fileStream = createReadStream(path);
 
-        event.node.res.setHeader('Content-Type', 'image/png');
-        event.node.res.setHeader('Cache-Control', 'max-age=' + 3600 )
-
         return fileStream.pipe(event.node.res);
     }
 

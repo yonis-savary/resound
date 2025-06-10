@@ -2,6 +2,7 @@ import { z } from "zod"
 import bcrypt from "bcrypt"
 import {v4 as uuidV4 } from 'uuid'
 import models from "../db/models"
+import { setCache } from "../utils/cache"
 
 const bodySchema = z.object({
     username: z.string(),
@@ -23,10 +24,8 @@ export default defineEventHandler(async (event) => {
     let token: string|null = null;
     if (rememberMe)
     {
-        const cache = useStorage('cache');
-
         token = uuidV4()
-        cache.setItem(token, user.id, { ttl: 3600*24*31 });
+        setCache(token, user.id, 1000*3600*24*31);
 
         // CACHE SET TOKEN;
         setCookie(event, 'remember_token', token, {maxAge: 3600 * 24 * 31, httpOnly: true, path: '/'});

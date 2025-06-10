@@ -1,3 +1,4 @@
+import { getCache, setCache } from "~/server/utils/cache"
 import type { GetAlbumResponse } from "./responses/GetAlbumResponse"
 import type { GetArtistAlbumsResponse } from "./responses/GetArtistAlbumsResponse"
 import type { GetArtistResponse } from "./responses/GetArtistResponse"
@@ -21,8 +22,7 @@ class SpotifyAPI {
     }
 
     private async getAccessToken(): Promise<string> {
-        const storage = useStorage('memory')
-        const cachedToken = await storage.getItem('spotify-access-token')
+        const cachedToken = await getCache('spotify-access-token')
 
         if (cachedToken) {
             return cachedToken as string
@@ -52,9 +52,7 @@ class SpotifyAPI {
         const accessToken = data.access_token
         const expiresIn = data.expires_in
 
-        await storage.setItem('spotify-access-token', accessToken, {
-            ttl: expiresIn
-        })
+        await setCache('spotify-access-token', accessToken, 1000*expiresIn)
 
         console.info(`Retrieved new access token for ${expiresIn} seconds`)
         return accessToken

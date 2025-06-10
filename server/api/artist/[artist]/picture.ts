@@ -21,13 +21,16 @@ export default defineEventHandler(async event => {
         const path = "public/assets/default-artist-picture.png";
         const fileStream = createReadStream(path);
 
-        event.node.res.setHeader('Content-Type', 'image/png');
-        event.node.res.setHeader('Cache-Control', 'max-age=' + 3600 )
+        if (cacheDuration)
+        {
+            event.node.res.setHeader('Content-Type', 'image/png');
+            event.node.res.setHeader('Cache-Control', 'max-age=' + 3600 )
+        }
 
         return fileStream.pipe(event.node.res);
     }
 
-    let cacheDuration = 3600*24*7;
+    let cacheDuration: number|null = 3600*24*7;
     let storageKey : string|null = null;
 
     if (!(artist.picture_path && await storage.hasItem(artist.picture_path))){
@@ -36,6 +39,7 @@ export default defineEventHandler(async event => {
             where: {artist: artist.id},
             include: { model: models.Album, as: 'album_album' }
         });
+        cacheDuration = null;
         if (anyAlbum && anyAlbum.album_album.picture_path)
         {
             cacheDuration = 3600;
@@ -44,7 +48,7 @@ export default defineEventHandler(async event => {
 
         return returnDefaultPicture();
     }
-    else 
+    else
     {
         storageKey = artist.picture_path
     }
