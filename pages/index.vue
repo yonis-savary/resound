@@ -2,7 +2,7 @@
     <div class="container flex flex-col gap-8">
         <h1 class="text-5xl">Home</h1>
 
-        <div class="flex w-full gap-6">
+        <div class="flex max-sm:flex-col min-sm:flex-row gap-6">
             <div class="flex flex-col gap-3 flex-1">
                 <h1 class="text-2xl">Most listened genres</h1>
                 <div class="grid grid-cols-2 gap-3">
@@ -28,7 +28,7 @@
         </div>
 
         <h2 class="text-3xl">Last Additions</h2>
-        <div v-if="lastAdditions" class="flex flex-row flex-wrap gap-3">
+        <div v-if="lastAdditions" class="flex flex-row flex-wrap justify-center gap-3">
             <AlbumCoverLink v-for="album in lastAdditions" :key="album.id" :album="album"/>
         </div>
 

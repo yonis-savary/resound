@@ -135,6 +135,7 @@ export const usePlayerStore = defineStore('player', () => {
 
         player.src = `/api/track/${trackId}/play`;
         player.load();
+        player.play();
     }
 
     const changeTracklist = (newTracklist: Track[], startIndex: number = 0, autoplay: boolean = true) => {
@@ -175,13 +176,17 @@ export const usePlayerStore = defineStore('player', () => {
     }
 
     $fetch('/api/player/player-state').then(async state => {
-        const lastPlayslist = await $fetch('/api/player/playlist')
-        changeTracklist(lastPlayslist, state?.index ?? 0, false);
+        if (!state)
+            return null;
 
-        player.oncanplay = ()=> {
-            goToTime(state.currentTime ?? 0);
-            player.oncanplay = null;
-        }
+        const lastPlayslist = await $fetch('/api/player/playlist')
+        changeTracklist(lastPlayslist, state.index ?? 0, false);
+
+        if (player)
+            player.oncanplay = ()=> {
+                goToTime(state.currentTime ?? 0);
+                player.oncanplay = null;
+            }
     })
 
     const prettyDuration = (timeInSeconds: number, hoursToo: boolean = false) => {

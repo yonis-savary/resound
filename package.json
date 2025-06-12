@@ -16,6 +16,7 @@
     "@nuxt/icon": "^1.13.0",
     "@nuxt/image": "^1.10.0",
     "@nuxt/ui": "^3.1.2",
+    "@nuxtjs/tailwindcss": "^7.0.0-beta.0",
     "@pinia/nuxt": "^0.11.0",
     "@vueuse/core": "^13.2.0",
     "bcrypt": "^6.0.0",
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "@iconify-json/ic": "^1.2.2",
+    "@tailwindcss/postcss": "^4.1.10",
     "@types/bcrypt": "^5.0.2",
     "@types/socket.io": "^3.0.2",
     "dotenv": "^16.5.0",

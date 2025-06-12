@@ -15,6 +15,14 @@
     </button>
 </template>
 
+<style scoped>
+    .iconify {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+
 <script setup lang="ts">
 import type { PropType } from 'vue';
 import type { Track } from '~/models/Track';

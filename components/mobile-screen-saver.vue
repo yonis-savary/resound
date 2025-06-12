@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { usePlayerStore } from '../stores/player';
 import AlbumCoverLink from './albums/album-cover-link.vue';
 import Like from './tracks/like.vue';
@@ -56,7 +56,7 @@ const playerStore = usePlayerStore();
 const { currentTrack, currentTime, currentColor }= storeToRefs(playerStore);
 const screenSaver = ref<HTMLElement>();
 
-const screenSaverDisplayDelaySeconds = 10;
+const screenSaverDisplayDelaySeconds = 15;
 
 const isEnabled = true;// || navigator.userAgent.toLowerCase().includes('mobile');
 let displayTimeout : null|NodeJS.Timeout = null;
@@ -82,14 +82,6 @@ const handleScrollEvent = ()=>{
     startTimeout()
 }
 
-onMounted(()=>{
-    document.addEventListener('scroll', handleScrollEvent);
-})
-
-onUnmounted(()=>{
-    document.removeEventListener('scroll', handleScrollEvent);
-})
-
 const displayScreenSaver = ()=>{
     if (!screenSaver.value) return;
     screenSaver.value.style.display = 'flex';
@@ -102,6 +94,25 @@ const unlockScreenSaver = ()=>{
         startTimeout();
 }
 
+onMounted(() => {
+  if (import.meta.client) {
+    window.addEventListener('mousemove', handleScrollEvent)
+    window.addEventListener('click', handleScrollEvent)
+    window.addEventListener('scroll', handleScrollEvent)
+    window.addEventListener('keydown', handleScrollEvent)
+    window.addEventListener("touchstart", handleScrollEvent);
+  }
+})
+
+onBeforeUnmount(() => {
+  if (import.meta.client) {
+    window.removeEventListener('mousemove', handleScrollEvent)
+    window.removeEventListener('click', handleScrollEvent)
+    window.removeEventListener('scroll', handleScrollEvent)
+    window.removeEventListener('keydown', handleScrollEvent)
+    window.removeEventListener("touchstart", handleScrollEvent);
+  }
+})
 
 </script>
 

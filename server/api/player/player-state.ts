@@ -1,7 +1,10 @@
 export default defineEventHandler(async (event) => {
     const user = await getUserSession(event)
-    const key = user.user.id ?? null;
 
+    if (!user.user)
+        return null;
+
+    const key = user.user.id ?? null;
     if (!key.user)
         return null;
 

@@ -33,11 +33,12 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/icon',
     '@nuxt/image',
+    '@nuxtjs/tailwindcss',
     '@nuxt/ui',
     'nuxt-auth-utils',
     'nuxt-socket-io',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
   ],
 
-  css: ['public/assets/style.css'],
+  css: ['public/assets/style.css']
 })
