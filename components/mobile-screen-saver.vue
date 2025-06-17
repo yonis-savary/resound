@@ -67,15 +67,13 @@ if (isEnabled)
 const startTimeout = () => displayTimeout = setTimeout(displayScreenSaver, screenSaverDisplayDelaySeconds * 1000);
 
 const clearDisplayTimeout = ()=> {
-    if (!displayTimeout)
-        return ;
+    if (displayTimeout)
+        clearTimeout(displayTimeout);
 
-    clearTimeout(displayTimeout);
     displayTimeout = null;
 }
 
 const handleScrollEvent = ()=>{
-    console.log("SCROLL!");
     clearDisplayTimeout()
     if (!playerStore.isPlaying)
         return;

@@ -1,8 +1,6 @@
 import { globSync } from "glob";
 import parseFileTags from "~/server/music/fileParser";
-import path, { dirname } from 'path'
-import type { Album } from "~/models/Album";
-import type { Artist } from "~/models/Artist";
+import path from 'path'
 import { getSupportedMimeTypes } from "music-metadata";
 import mime from "mime-to-extensions"
 
@@ -43,8 +41,6 @@ async function exploreLibrary()
         }
         fileCount++
     }
-
-    console.log('OK');
 
     return { status: 'OK' };
 }

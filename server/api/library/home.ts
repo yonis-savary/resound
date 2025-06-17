@@ -64,7 +64,7 @@ export default defineEventHandler(async event => {
                 JOIN album ON track.album = album.id 
                 JOIN album_genre ON album_genre.album = album.id 
                 JOIN genre ON album_genre.genre = genre.id AND genre.id = ${id}
-                WHERE track.id NOT IN (SELECT track FROM user_like WHERE user_like.user = ${user.user.id})
+                WHERE track.id IN (SELECT track FROM user_like WHERE user_like.user = ${user.user.id})
                 ORDER BY RANDOM()
                 LIMIT 100
             `) as trackQueryResponse;
