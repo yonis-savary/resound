@@ -47,7 +47,7 @@ export const usePlayerStore = defineStore('player', () => {
     const nuxtApp = useNuxtApp();
 
     const player = nuxtApp.$audioElement as HTMLAudioElement;
-    const effects = nuxtApp.$effects as Record<string,HTMLAudioElement>;
+    const effects = nuxtApp.$effects as Record<string, HTMLAudioElement>;
 
     const currentTracklist = ref<Track[]>([]);
     const currentIndex = ref(0);
@@ -62,10 +62,8 @@ export const usePlayerStore = defineStore('player', () => {
     const currentTime = ref(0.0);
 
     watch(currentTrack, () => {
-        if (!currentTrack.value)
-        {
-            if (player)
-            {
+        if (!currentTrack.value) {
+            if (player) {
                 player.src = '';
                 player.load();
             }
@@ -87,8 +85,7 @@ export const usePlayerStore = defineStore('player', () => {
     const refreshMediaSessionPositionStateDebounce = useDebounceFn(refreshMediaSessionPositionState, 1000);
 
 
-    if (player)
-    {
+    if (player) {
         player.volume = volume.value
     }
     watch(volume, (v) => {
@@ -99,14 +96,13 @@ export const usePlayerStore = defineStore('player', () => {
     const pause = () => { player?.pause() };
     const play = () => { player?.play() };
 
-    if (player)
-    {
-        player.onplay = ()=> { 
-            isPlaying.value = true; 
+    if (player) {
+        player.onplay = () => {
+            isPlaying.value = true;
             wakeLockRequest('screen')
         }
-        player.onpause = ()=> { 
-            isPlaying.value = false; 
+        player.onpause = () => {
+            isPlaying.value = false;
             wakeLockRelease()
         }
 
@@ -171,8 +167,7 @@ export const usePlayerStore = defineStore('player', () => {
                 else
                     refreshMediaSessionPositionState();
             }
-        }, 200)
-
+        }, 200);
     }
 
     $fetch('/api/player/player-state').then(async state => {
@@ -183,7 +178,7 @@ export const usePlayerStore = defineStore('player', () => {
         changeTracklist(lastPlayslist, state.index ?? 0, false);
 
         if (player)
-            player.oncanplay = ()=> {
+            player.oncanplay = () => {
                 goToTime(state.currentTime ?? 0);
                 player.oncanplay = null;
             }
@@ -204,47 +199,43 @@ export const usePlayerStore = defineStore('player', () => {
         currentTime.value = player.currentTime
     })
 
-    if (import.meta.client)
-    {
+    if (import.meta.client) {
         setInterval(() => {
             if (!isPlaying.value)
                 return;
 
             refreshMediaSessionPositionState();
         }, 5000);
-        setInterval(()=>{
+        setInterval(() => {
             if (!isPlaying.value)
                 return;
 
-            $fetch('/api/player/player-state', {method:"POST", body: {index: currentIndex.value, currentTime: currentTime.value}});
+            $fetch('/api/player/player-state', { method: "POST", body: { index: currentIndex.value, currentTime: currentTime.value } });
         }, 3000);
     }
 
 
-    const fadeDownVolume = async (ms: number , resolveAfter : number|null = null) =>{
+    const fadeDownVolume = async (ms: number, resolveAfter: number | null = null) => {
         resolveAfter ??= ms;
         const volume = player.volume;
-        const timeStep = ms/10;
+        const timeStep = ms / 10;
 
         let c = 0;
-        for (let i=1; i>=0; i-=0.1)
-        {
-            setTimeout(()=> player.volume = volume * i , timeStep*c)
+        for (let i = 1; i >= 0; i -= 0.1) {
+            setTimeout(() => player.volume = volume * i, timeStep * c)
             c++
         }
 
         return new Promise((resolve) => setTimeout(resolve, resolveAfter))
     }
 
-    const fadeUpVolume = async (volume: number, ms: number, resolveAfter : number|null = null)=>
-    {
+    const fadeUpVolume = async (volume: number, ms: number, resolveAfter: number | null = null) => {
         resolveAfter ??= ms;
-        const timeStep = ms/10;
+        const timeStep = ms / 10;
 
         let c = 0;
-        for (let i=0; i<=1; i+=0.1)
-        {
-            setTimeout(()=> player.volume = volume * i , timeStep*c)
+        for (let i = 0; i <= 1; i += 0.1) {
+            setTimeout(() => player.volume = volume * i, timeStep * c)
             c++
         }
 
@@ -260,15 +251,15 @@ export const usePlayerStore = defineStore('player', () => {
         const durationMs = effect.duration * 1000;
         const currentVolume = player.volume;
 
-        await fadeDownVolume(100, 100*0.75)
+        await fadeDownVolume(100, 100 * 0.75)
 
         effect.currentTime = 0
         effect.play();
 
-        setTimeout(()=>{
-            player.currentTime = currentTime-2;
+        setTimeout(() => {
+            player.currentTime = currentTime - 2;
             fadeUpVolume(currentVolume, 100);
-        }, durationMs*0.6);
+        }, durationMs * 0.6);
 
     };
 

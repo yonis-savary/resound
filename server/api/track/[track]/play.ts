@@ -1,4 +1,5 @@
-import { createReadStream, existsSync } from 'fs';
+import { createReadStream, existsSync, fstat, fstatSync, readFile, readFileSync, statSync } from 'fs';
+import { resolve } from 'path';
 import models from "~/server/db/models";
 
 export default defineEventHandler(async event => {
@@ -31,5 +32,9 @@ export default defineEventHandler(async event => {
             playlist: (getQuery(event).playlist ?? null) as number|undefined
         })
 
+    const fileSize = statSync(path).size;
+    setHeader(event, 'Accept-Ranges', 'bytes');
+    setHeader(event, 'Content-Length', fileSize);
+    setHeader(event, 'Content-Range', `bytes 0-${fileSize}`)
     return sendStream(event, createReadStream(path));
 })
