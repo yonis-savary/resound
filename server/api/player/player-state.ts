@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
         return null;
 
     const key = user.user.id ?? null;
-    if (!key.user)
+    if (!key)
         return null;
 
     const storage = useStorage('data/player-state');
