@@ -71,6 +71,7 @@ export const usePlayerStore = defineStore('player', () => {
         }
 
         changeURL(currentTrack.value.id)
+        player.addEventListener('canplay', ()=> {resetTime()}, {once: true});
     })
 
     const refreshMediaSessionPositionState = () => {
@@ -147,7 +148,6 @@ export const usePlayerStore = defineStore('player', () => {
     const gotoIndex = (index: number, autoplay: boolean = true) => {
         index = Math.max(index, 0);
         currentIndex.value = index
-        resetTime();
         if (autoplay && player) {
             player.onloadeddata = play;
         }

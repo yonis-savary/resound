@@ -1,5 +1,5 @@
 import { Op, Sequelize } from "sequelize";
-import { albumBaseIncludes } from "~/helpers/includes"
+import { albumBaseIncludes, trackBaseIncludes } from "~/helpers/includes"
 import type { Album } from "~/models/Album";
 import type { Track } from "~/models/Track";
 import models from "~/server/db/models"
@@ -92,7 +92,7 @@ export default defineEventHandler(async event => {
                     model: models.Album,
                     as: 'album_album',
                     include: albumBaseIncludes
-                }]
+                }, ...trackBaseIncludes]
             })
 
             instantPlaylists[genre] = playlist

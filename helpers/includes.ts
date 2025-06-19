@@ -11,19 +11,24 @@ const albumBaseIncludes = [
     }
 ];
 
+
+const trackBaseIncludes = [
+    {
+        model: models.TrackArtist,
+        as: 'track_artists',
+        include: [{
+            model: models.Artist,
+            as: 'artist_artist'
+        }]
+    }
+];
+
 const albumTracksIncludes = [
     ...albumBaseIncludes,
     {
         model: models.Track,
         as: 'tracks',
-        include: [{
-            model: models.TrackArtist,
-            as: 'track_artists',
-            include: [{
-                model: models.Artist,
-                as: 'artist_artist'
-            }]
-        }]
+        include: trackBaseIncludes
     },
     {
         model: models.AlbumGenre,
@@ -35,4 +40,4 @@ const albumTracksIncludes = [
     }
 ]
 
-export { albumBaseIncludes, albumTracksIncludes };
+export { albumBaseIncludes, albumTracksIncludes, trackBaseIncludes };

@@ -1,5 +1,5 @@
 import { Op } from "sequelize"
-import { albumBaseIncludes } from "~/helpers/includes"
+import { albumBaseIncludes, trackBaseIncludes } from "~/helpers/includes"
 import models from "~/server/db/models"
 
 export default defineEventHandler(async (event) => {
@@ -18,11 +18,11 @@ export default defineEventHandler(async (event) => {
     const tracksIdList = await storage.getItem(key)
 
     const tracks = await models.Track.findAll({
-        include: {
+        include: [{
             model: models.Album,
             as: 'album_album',
             include: albumBaseIncludes
-        },
+        },...trackBaseIncludes],
         where: {
             id: {
                 [Op.in]: tracksIdList
