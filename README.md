@@ -14,19 +14,13 @@ Listen to your CD/MP3 library remotely !
 
 ## Installation
 
+Requirements: docker
+
 ```bash
 # Setup
 git clone git@github.com:yonis-savary/resound-v2-nuxt.git
 cd resound-v2-nuxt
-npm install
-
-# Development Server
 docker compose up -d
-npm run dev
-
-# Production
-npm run build
-pm2 start ecosystem.config.cjs
 ```
 
 

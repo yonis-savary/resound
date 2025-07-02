@@ -10,7 +10,7 @@ const sequelize = new Sequelize(
   process.env.DATABASE_PASSWORD as string,
   {
     host: (process.env.DATABASE_HOST || 'localhost'),
-    port: (process.env.DATABASE_PORT || 44005) as number,
+    port: (process.env.DATABASE_PORT || 5432) as number,
     dialect: (process.env.DATABASE_DRIVER || 'postgres') as Dialect,
     logging: false,
     minifyAliases: true
