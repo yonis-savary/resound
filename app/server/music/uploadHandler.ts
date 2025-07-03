@@ -24,7 +24,7 @@ export default async function handleUpload(filename: string, blob: Blob) {
     const artist = metadata.common.albumartist
     const album = metadata.common.album
 
-    const libraryPath = process.env.LIBRARY_PATH;
+    const libraryPath = '/library';
     if (!libraryPath)
         throw new Error('Cannot resolve library path from .env');
 

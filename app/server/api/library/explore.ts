@@ -12,7 +12,7 @@ export default defineEventHandler(async () => {
 
 async function exploreLibrary()
 {
-    const libraryPath = process.env.LIBRARY_PATH;
+    const libraryPath = '/library';
     if (!libraryPath)
         throw new Error('Cannot resolve library path from .env');
 

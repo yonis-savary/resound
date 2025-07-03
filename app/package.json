@@ -8,7 +8,10 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "models": "server/tasks/generate.js"
+    "models": "server/tasks/generate.js",
+    "lint": "eslint --ext .js,.ts,.vue .",
+    "lint:fix": "eslint --ext .js,.ts,.vue . --fix",
+    "test": "vitest run"
   },
   "dependencies": {
     "@intlify/unplugin-vue-i18n": "^6.0.8",
@@ -20,7 +23,6 @@
     "@pinia/nuxt": "^0.11.0",
     "@vueuse/core": "^13.2.0",
     "bcrypt": "^6.0.0",
-    "eslint": "^9.27.0",
     "glob": "^11.0.2",
     "mime-to-extensions": "^1.0.2",
     "music-metadata": "^11.2.3",
@@ -39,12 +41,18 @@
   },
   "devDependencies": {
     "@iconify-json/ic": "^1.2.2",
+    "@nuxt/test-utils": "^3.19.2",
     "@tailwindcss/postcss": "^4.1.10",
     "@types/bcrypt": "^5.0.2",
     "@types/socket.io": "^3.0.2",
+    "@vue/test-utils": "^2.4.6",
     "dotenv": "^16.5.0",
+    "happy-dom": "^18.0.1",
+    "playwright-core": "^1.53.2",
     "sequelize-auto": "^0.8.8",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.35.1",
+    "vitest": "^3.2.4"
   }
 }

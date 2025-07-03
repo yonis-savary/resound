@@ -12,9 +12,9 @@ services:
       - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
       - postgres_data:/postgres_data
   nuxt:
-    build:
-      context: ./app
+    build: ./app
     restart: always
+    user: "node"
     depends_on:
       - postgres
     ports:
@@ -24,7 +24,7 @@ services:
     networks:
       - resound_network
     volumes:
-      - ./app:/app
+      - ${LIBRARY_PATH}:/library
 
 volumes:
   postgres_data:

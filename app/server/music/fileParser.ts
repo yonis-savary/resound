@@ -1,5 +1,5 @@
 #!/usr/bin/env ndoe
-import { existsSync, Stats, statSync } from "fs";
+import { existsSync, type Stats, statSync } from "fs";
 import { type IAudioMetadata, parseFile } from "music-metadata"
 import models from "../db/models";
 import mime from "mime-to-extensions"

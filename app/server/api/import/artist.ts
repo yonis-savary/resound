@@ -14,7 +14,7 @@ export default defineEventHandler(async event => {
     {
         await indexDiscography(artistApiId);
     }
-    catch(_) {}
+    catch(error) { console.error('Could not index discography of ' + artistApiId, error) }
 
     if (!artist)
         return createError({statusMessage: 'Could not index artist', statusCode: 500});

@@ -10,7 +10,7 @@
                     </NuxtLink>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <AlbumCoverLink v-for="album in genre.album_genres" :key="album.id" :album="album.album_album" :showTitle="false" :size="'small'" />
+                    <AlbumCoverLink v-for="album in genre.album_genres" :key="album.id" :album="album.album_album" :show-title="false" :size="'small'" />
                 </div>
             </div>
         </div>

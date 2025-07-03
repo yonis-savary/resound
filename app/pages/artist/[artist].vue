@@ -96,7 +96,7 @@ const startToUpdateFromApi = async ()=>{
     {
         toast.add({
             title: 'Error !',
-            description: 'Error while fetching from Spotify',
+            description: 'Error while fetching from Spotify ' + String(err),
             color: "error"
         });
     }

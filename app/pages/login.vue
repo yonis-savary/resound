@@ -30,7 +30,7 @@ useHead({ title: 'Resound Login' })
 const loginUser = async () => {
     loadingIsPending.value = true;
 
-    const { token, redirect } = await $fetch<{ redirect?: string, token: string | null }>("/api/login", {
+    const { redirect } = await $fetch<{ redirect?: string, token: string | null }>("/api/login", {
         method: "POST",
         body: {
             username: username.value,
