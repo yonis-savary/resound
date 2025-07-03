@@ -15,11 +15,8 @@ jobs:
         with:
           node-version: '22'
       - name: "Installing dependencies"
-        working-directory: ./app
         run: npm install
       - name: "Running ESLINT"
-        working-directory: ./app
         run: npm run lint
       - name: "Running tests"
-        working-directory: ./app
         run: npm test
