@@ -1,5 +1,6 @@
 import type Sequelize from 'sequelize';
-import { DataTypes, Model, type Optional } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
+import type { Optional } from 'sequelize';
 import type { Album, AlbumId } from './Album';
 import type { PlaylistTrack, PlaylistTrackId } from './PlaylistTrack';
 import type { TrackArtist, TrackArtistId } from './TrackArtist';
@@ -110,8 +111,7 @@ export class Track extends Model<TrackAttributes, TrackCreationAttributes> imple
       references: {
         model: 'album',
         key: 'id'
-      },
-      unique: "track_album_name_key"
+      }
     },
     discovery_date: {
       type: DataTypes.DATE,
@@ -127,8 +127,7 @@ export class Track extends Model<TrackAttributes, TrackCreationAttributes> imple
     },
     name: {
       type: DataTypes.STRING(255),
-      allowNull: false,
-      unique: "track_album_name_key"
+      allowNull: false
     },
     slug: {
       type: DataTypes.STRING(255),
@@ -154,14 +153,6 @@ export class Track extends Model<TrackAttributes, TrackCreationAttributes> imple
     schema: 'public',
     timestamps: false,
     indexes: [
-      {
-        name: "track_album_name_key",
-        unique: true,
-        fields: [
-          { name: "album" },
-          { name: "name" },
-        ]
-      },
       {
         name: "track_pkey",
         unique: true,

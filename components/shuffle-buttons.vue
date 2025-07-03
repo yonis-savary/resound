@@ -15,7 +15,8 @@
 
 
 <script setup lang="ts">
-import { computed, type PropType } from 'vue';
+import { computed } from 'vue';
+import type { PropType } from 'vue';
 import { usePlayerStore } from '../stores/player';
 import type { Track } from '~/models/Track';
 import { useSuffleStore } from '~/stores/shuffle';

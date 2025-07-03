@@ -1,6 +1,8 @@
 #!/usr/bin/env ndoe
-import { existsSync, type Stats, statSync } from "fs";
-import { type IAudioMetadata, parseFile } from "music-metadata"
+import { existsSync, statSync } from "fs";
+import type { Stats } from "fs";
+import { parseFile } from "music-metadata"
+import type { IAudioMetadata } from "music-metadata"
 import models from "../db/models";
 import mime from "mime-to-extensions"
 import { Vibrant } from 'node-vibrant/node'

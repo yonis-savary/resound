@@ -1,5 +1,6 @@
 // server/db/index.js
-import { type Dialect, Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize';
+import type { Dialect } from 'sequelize';
 import dotenv from 'dotenv';
 import pg from "pg";
 

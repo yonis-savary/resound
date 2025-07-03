@@ -4,13 +4,15 @@ services:
     restart: always
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
+    expose:
+      - ${POSTGRES_PORT:-5432}
     env_file:
       - ./.env
     networks:
       - resound_network
     volumes:
       - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
-      - postgres_data:/postgres_data
+      - ./.postgres_data:/var/lib/postgresql/data
   nuxt:
     build: .
     restart: always
@@ -25,9 +27,6 @@ services:
       - resound_network
     volumes:
       - ${LIBRARY_PATH}:/library
-
-volumes:
-  postgres_data:
 
 networks:
   resound_network:

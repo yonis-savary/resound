@@ -78,7 +78,8 @@
 
 
 <script setup lang="ts">
-import { computed, type PropType } from 'vue';
+import { computed } from 'vue';
+import type { PropType } from 'vue';
 import { usePlayerStore } from '../../stores/player';
 import { useStorage } from '@vueuse/core';
 import type { Track } from '~/models/Track';

@@ -1,5 +1,6 @@
 import type Sequelize from 'sequelize';
-import { DataTypes, Model, type Optional } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
+import type { Optional } from 'sequelize';
 import type { PlaylistTrack, PlaylistTrackId } from './PlaylistTrack';
 import type { User, UserId } from './User';
 import type { UserListening, UserListeningId } from './UserListening';

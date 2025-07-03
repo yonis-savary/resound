@@ -1,5 +1,4 @@
-import { createReadStream, existsSync, fstat, fstatSync, readFile, readFileSync, statSync } from 'fs';
-import { resolve } from 'path';
+import { createReadStream, existsSync, statSync } from 'fs';
 import models from "~/server/db/models";
 
 export default defineEventHandler(async event => {

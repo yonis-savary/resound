@@ -37,6 +37,8 @@ const auto = new SequelizeAuto(
 auto.run().then(() => {
     console.log('✔️ Modèles générés !');
     readdirSync('./models').forEach(async basename => {
+        console.log("Fixing file " + basename + "...");
+
         let file = path.join('./models', basename);
         let content = readFileSync(file).toString();
 
@@ -46,16 +48,21 @@ auto.run().then(() => {
         let postClass = content.substring(classStart);
 
 
-        if (!preClass.indexOf('Sequelize.Sequelize'))
+        if (content.indexOf('Sequelize.Sequelize.') == -1) {
+            console.log("INDEX OF " + content.indexOf('Sequelize.Sequelize.'));
             preClass = preClass.replace("import * as Sequelize", "import type Sequelize")
+        }
+        preClass = preClass.replace(
+            `import { DataTypes, Model, Optional } from 'sequelize';`,
 
-        preClass = preClass.replace('DataTypes, Model, Optional', 'DataTypes, Model, type Optional');
+            `import { DataTypes, Model } from 'sequelize';\n` +
+            `import type { Optional } from 'sequelize';`
+        );
 
 
         postClass = postClass
             .replace(/\w+[!]:/gm, m => `declare ${m.substring(0, m.length - 2)} :`)
             .replace(/\w+[?]:/gm, m => `declare ${m.substring(0, m.length - 2)} : undefined |`)
-        console.log("Fixing file " + basename + "...");
 
         writeFileSync(file, preClass + postClass)
     })

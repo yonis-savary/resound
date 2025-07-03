@@ -4,6 +4,7 @@
 .nuxt
 .nitro
 .cache
+.postgres_data
 dist
 
 # Node dependencies
