@@ -1,14 +1,3 @@
-const sortBy = <T>(key: keyof T) => {
-    return function (a: T,b: T) {
-        return a[key] < b[key] ? 1:-1;
-    }
-}
-
-
-
-
-
-
 const stringToColorFriendly = (str: string) => {
   let hash = 0;
 
@@ -56,4 +45,4 @@ const getContrastText = (hex:string) => {
 }
 
 
-export {sortBy, stringToColorFriendly, getContrastText}
+export {stringToColorFriendly, getContrastText}
