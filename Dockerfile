@@ -4,9 +4,14 @@ WORKDIR /build
 
 RUN corepack enable
 
+COPY package.json package-lock.json* ./
+RUN npm install
 COPY . ./
 
-RUN npm install && npm run build
+ARG ENVIRONMENT=dev
+ENV ENVIRONMENT=${ENVIRONMENT}
+RUN if [ "$ENVIRONMENT" = "prod" ]; then npm run build ; fi
+RUN if [ ! "$ENVIRONMENT" = "prod" ]; then mkdir -p /build/.output/server; touch /build/.output/server/index.mjs; fi
 
 # Stage 2: Run
 FROM node:22
@@ -17,6 +22,8 @@ COPY --from=build /build/.output/ /build
 #RUN chown -R node:node /app
 #USER "node"
 
+ARG ENVIRONMENT=dev
+ENV ENVIRONMENT=${ENVIRONMENT}
 ENV PORT=80
 ENV HOST=0.0.0.0
 
