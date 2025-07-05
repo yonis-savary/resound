@@ -7,7 +7,9 @@
 </template>
 
 <script lang="ts" setup>
-  await $fetch('/api/logout');
+  $fetch('/api/logout').then(()=>{
+    window.location.href = '/login';
+  });
 </script>
 
 <style>
