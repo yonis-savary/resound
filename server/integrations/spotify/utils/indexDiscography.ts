@@ -1,5 +1,5 @@
 import models from '~/server/db/models'
-import { createAlbum } from '~/helpers/factory'
+import { createAlbum } from '~/server/helpers/factory'
 import { spotifyApi } from '../api'
 
 export async function indexDiscography(

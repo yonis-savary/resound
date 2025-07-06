@@ -2,9 +2,9 @@ import models from "~/server/db/models"
 import type { Image, Item } from "../responses/GetAlbumResponse";
 import { Vibrant } from 'node-vibrant/node'
 import { spotifyApi } from "../api";
-import { albumSlug } from '~/helpers/slug'
-import { createAlbum, createArtist } from "~/helpers/factory";
-import type { Album, AlbumAttributes } from "~/models/Album";
+import { albumSlug } from '~/server/helpers/slug'
+import { createAlbum, createArtist } from "~/server/helpers/factory";
+import type { Album, AlbumAttributes } from "~/server/models/Album";
 
 async function syncAlbumGenres(albumId: number, genres: string[]) {
   if (!genres.length)

@@ -1,9 +1,9 @@
 import { spotifyApi } from '../api'
 import models from '~/server/db/models'
 import type { Image } from '../responses/GetArtistResponse'
-import { createArtist } from '~/helpers/factory'
-import { artistSlug } from '~/helpers/slug'
-import type { Artist } from '~/models/Artist'
+import { createArtist } from '~/server/helpers/factory'
+import { artistSlug } from '~/server/helpers/slug'
+import type { Artist } from '~/server/models/Artist'
 
 async function downloadBestImage(artistAPIId: string, images: Image[]): Promise<string | undefined> {
   if (!images.length) return undefined

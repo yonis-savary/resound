@@ -1,5 +1,5 @@
 import { Op } from "sequelize"
-import { albumBaseIncludes, trackBaseIncludes } from "~/helpers/includes"
+import { albumBaseIncludes, trackBaseIncludes } from "~/server/helpers/includes"
 import models from "~/server/db/models"
 
 export default defineEventHandler(async (event) => {

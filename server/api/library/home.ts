@@ -1,7 +1,7 @@
 import { Op, Sequelize } from "sequelize";
-import { albumBaseIncludes, trackBaseIncludes } from "~/helpers/includes"
-import type { Album } from "~/models/Album";
-import type { Track } from "~/models/Track";
+import { albumBaseIncludes, trackBaseIncludes } from "~/server/helpers/includes"
+import type { Album } from "~/server/models/Album";
+import type { Track } from "~/server/models/Track";
 import models from "~/server/db/models"
 import sequelize from "~/server/db/sequelize";
 import { discoverArtist } from "~/server/integrations/spotify/utils/discoverArtist";

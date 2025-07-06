@@ -1,7 +1,19 @@
+import { fileURLToPath } from 'url';
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   //devtools: { enabled: true },
+
+  future: {
+    compatibilityVersion: 4
+  },
+
+  srcDir: "app",
+  alias: {
+    '~': fileURLToPath(new URL('.', import.meta.url)),
+    '@': fileURLToPath(new URL('.', import.meta.url)),
+  },
 
   app: {
     head: {

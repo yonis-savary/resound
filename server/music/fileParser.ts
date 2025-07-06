@@ -6,11 +6,11 @@ import type { IAudioMetadata } from "music-metadata"
 import models from "../db/models";
 import mime from "mime-to-extensions"
 import { Vibrant } from 'node-vibrant/node'
-import { createAlbum, createArtist } from "~/helpers/factory";
-import { artistSlug } from "~/helpers/slug";
-import type { Album } from "~/models/Album";
-import type { Artist } from "~/models/Artist";
-import type { Track } from "~/models/Track";
+import { createAlbum, createArtist } from "~/server/helpers/factory";
+import { artistSlug } from "~/server/helpers/slug";
+import type { Album } from "~/server/models/Album";
+import type { Artist } from "~/server/models/Artist";
+import type { Track } from "~/server/models/Track";
 import sharp from "sharp"
 
 let lastAlbumName: string | undefined = undefined;

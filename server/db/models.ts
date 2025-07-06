@@ -1,4 +1,4 @@
-import { initModels } from '~/models/init-models';
+import { initModels } from '~/server/models/init-models';
 import sequelize from './sequelize';
 
 export const initDB = async () => {

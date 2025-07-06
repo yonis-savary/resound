@@ -1,7 +1,7 @@
 import { spotifyApi } from '../api'
 import models from '~/server/db/models'
 import { Op } from 'sequelize'
-import { artistSlug } from '~/helpers/slug'
+import { artistSlug } from '~/server/helpers/slug'
 
 export async function discoverArtist(artistName: string): Promise<string | null> {
   console.log(`Discovering artist with name ${artistName}`)

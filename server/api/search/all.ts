@@ -1,6 +1,6 @@
 import models from "~/server/db/models";
 import { Op } from "sequelize";
-import { albumBaseIncludes } from "~/helpers/includes";
+import { albumBaseIncludes } from "~/server/helpers/includes";
 
 export default defineEventHandler(async event => {
     const object = getQuery(event).q ?? null;

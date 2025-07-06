@@ -1,4 +1,4 @@
-import { albumBaseIncludes } from "~/helpers/includes";
+import { albumBaseIncludes } from "~/server/helpers/includes";
 import models from "~/server/db/models"
 
 export default defineEventHandler(async ()=>{

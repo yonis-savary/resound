@@ -1,4 +1,4 @@
-import { albumTracksIncludes } from "~/helpers/includes";
+import { albumTracksIncludes } from "~/server/helpers/includes";
 import models from "~/server/db/models";
 
 export default defineEventHandler(async event => {
