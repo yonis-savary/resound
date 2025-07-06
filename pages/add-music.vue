@@ -19,6 +19,7 @@ import type { UploadFileState } from '~/types/UploadFileState';
 const filesToUpload: Ref<UploadFileState[]> = ref([]);
 const locked = ref(false);
 const chunkSize = 2 * 1024 * 1024 // 2MB
+const toast = useToast();
 
 useHead({ title: 'Add music' })
 
@@ -32,7 +33,8 @@ const handleFileUpload = async (files: File[]) =>{
         file,
         sentChunk: 0,
         totalChunkCount: Math.ceil(file.size / chunkSize),
-        status: 'pending'
+        status: 'pending',
+        error: null
     }) as UploadFileState ));
 }
 
@@ -73,13 +75,30 @@ async function uploadFileInChunks(fileData: UploadFileState) {
         formData.append('token', token)
 
         workerPool.addJob(async ()=>{
-            await $fetch("/api/library/upload/chunk", {method: 'POST', body: formData});
-            fileData.sentChunk++;
+            if (fileData.error)
+                return;
 
-            if (fileData.sentChunk === fileData.totalChunkCount) {
-                fileData.status = 'uploaded';
-                await $fetch("/api/library/upload/finalize", { query: {token} });
-                deleteFile(fileData.file);
+            try
+            {
+                await $fetch("/api/library/upload/chunk", {method: 'POST', body: formData});
+                fileData.sentChunk++;
+    
+                if (fileData.sentChunk === fileData.totalChunkCount) {
+                    fileData.status = 'uploaded';
+                    await $fetch("/api/library/upload/finalize", { query: {token} });
+                    deleteFile(fileData.file);
+
+                    toast.add({
+                        title: `${fileData.file.name} updated successfully`,
+                        color: "success"
+                    });
+                }
+            }
+            catch(caught) {
+                if (caught instanceof Error) {
+                    fileData.status = "error"
+                    fileData.error = caught;
+                }
             }
         })
     }

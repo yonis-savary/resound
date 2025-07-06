@@ -3,4 +3,5 @@ export type UploadFileState = {
     status: 'pending' | 'uploading' | 'uploaded' | 'error',
     totalChunkCount: number,
     sentChunk: number
+    error: Error|null
 }
