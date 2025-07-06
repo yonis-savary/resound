@@ -1,4 +1,4 @@
-import { useDebounceFn, useStorageAsync, useWakeLock } from "@vueuse/core";
+import { useDebounceFn, useLocalStorage, useWakeLock } from "@vueuse/core";
 import { defineStore } from "pinia";
 import type { Track } from "~/server/models/Track";
 
@@ -54,12 +54,24 @@ export const usePlayerStore = defineStore('player', () => {
     const currentTrack = computed<Track | null>(() => currentTracklist.value[currentIndex.value] ?? null);
     const currentColor = computed<string>(() => lightenHex(currentTrack.value?.album_album.color ?? "#FFFFFF"));
     const currentDuration = computed(() => player.duration);
-    const volume = useStorageAsync<number>('player-volume', 0.5);
+    const volume = ref(0);
 
     const { request: wakeLockRequest, release: wakeLockRelease } = useWakeLock();
 
     const isPlaying = ref(false);
     const currentTime = ref(0.0);
+
+    onMounted(()=>{
+        if (!import.meta.client)
+            return;
+
+        const storageVolume = useLocalStorage('player-volume', 0.5);
+        volume.value = storageVolume.value
+
+        watch(volume, newVolume => {
+            storageVolume.value = newVolume
+        });
+    })
 
     watch(currentTrack, () => {
         if (!currentTrack.value) {

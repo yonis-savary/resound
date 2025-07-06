@@ -58,18 +58,17 @@
 
         <div class="w-30">
             <USlider
-                v-model="volumeKnob"
+                v-model="volume"
                 :min="0"
-                :step="1"
-                :max="100"
+                :step="0.01"
+                :max="1"
             />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { usePlayerStore } from '../../stores/player';
+import { usePlayerStore } from '~/app/stores/player';
 import { storeToRefs } from 'pinia';
 import Like from './like.vue';
 import AlbumCoverLink from '../albums/album-cover-link.vue';
@@ -86,11 +85,7 @@ const {
     currentDuration
 } = storeToRefs(playerStore);
 
-const volumeKnob = ref(volume.value*100);
-
-watch(volumeKnob, ()=>{
-    volume.value = volumeKnob.value / 100;
-})
+console.log("Initial volume " + volume.value);
 
 const handlePopoverPlayEvent = (index: number) => {
     playerStore.gotoIndex(index);

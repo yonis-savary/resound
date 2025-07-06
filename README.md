@@ -2,15 +2,21 @@
     <img src="./public/assets/resound96.png" width="96" height="96" alt="Resound logo">
 </p>
 
-# Resound
-
-Listen to your music library remotely !
+# Resound - Listen to your music library remotely !
 
 ## Features
 
-- Music Player
-- Library Tag Parsing
-- Spotify meta data fetching
+- MP3 Tag Parsing
+- Web Music Player (+PWA)
+- Explore your library by album/artist/genre
+- Search for artist / album / songs
+- Import music data from Spotify (Need Api Key) + Whishlist feature
+- Files addition through the app (Support for large files)
+
+Todo :
+[ ] - Playlist system
+[ ] - Web radio / Youtube Embedded implementation
+[ ] - Import playlist from youtube / text ?
 
 <p align="center">
     <img src="./art/preview.jpeg" height="300">
@@ -27,12 +33,15 @@ cd resound-v2
 docker compose up -d
 ```
 
-
 For production:
 ```bash
-
 docker compose build --build-arg ENVIRONMENT=prod
 ```
+
+
+> [!WARNING]
+> A default "root:root" user is created for the application, it is advised that your delete it if you don't want it
+
 
 ## Credits
 
