@@ -7,7 +7,7 @@ import models from "../db/models";
 import mime from "mime-to-extensions"
 import { Vibrant } from 'node-vibrant/node'
 import { createAlbum, createArtist } from "~/server/helpers/factory";
-import { artistSlug } from "~/server/helpers/slug";
+import { trackSlug } from "~/server/helpers/slug";
 import type { Album } from "~/server/models/Album";
 import type { Artist } from "~/server/models/Artist";
 import type { Track } from "~/server/models/Track";
@@ -140,7 +140,7 @@ export default async function parseFileTags(
         album = await getAlbum(stat, artist, metadata)
 
     const [track, ___] = await models.Track.upsert({
-        slug: album.slug + artistSlug(metadata.common.title),
+        slug: album.slug + trackSlug(metadata.common.title),
         album: album.id,
         discovery_date: stat.mtime,
         position: metadata.common.track.no ?? undefined,
