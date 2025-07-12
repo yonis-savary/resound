@@ -8,10 +8,7 @@ COPY package.json package-lock.json* ./
 RUN npm install
 COPY . ./
 
-ARG ENVIRONMENT=dev
-ENV ENVIRONMENT=${ENVIRONMENT}
-RUN if [ "$ENVIRONMENT" = "prod" ]; then npm run build ; fi
-RUN if [ ! "$ENVIRONMENT" = "prod" ]; then mkdir -p /build/.output/server; touch /build/.output/server/index.mjs; fi
+RUN npm run build
 
 # Stage 2: Run
 FROM node:22
@@ -22,8 +19,6 @@ COPY --from=build /build/.output/ /build
 #RUN chown -R node:node /app
 #USER "node"
 
-ARG ENVIRONMENT=dev
-ENV ENVIRONMENT=${ENVIRONMENT}
 ENV PORT=80
 ENV HOST=0.0.0.0
 
@@ -31,7 +26,7 @@ EXPOSE 80
 
 RUN test -f /build/server/index.mjs || (echo "❌ Fichier index.mjs manquant !" && exit 1)
 
-CMD ["./entrypoint.sh"]
+CMD ["node", "/build/server/index.mjs"]
 
 # DEBUG 
 #CMD ["tail", "-f", "/dev/null"]

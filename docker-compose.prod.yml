@@ -16,7 +16,7 @@ services:
   nuxt:
     build: 
       context: .
-      dockerfile: docker/Dockerfile.dev
+      dockerfile: docker/Dockerfile.prod
     restart: always
     user: "node"
     depends_on:
@@ -29,7 +29,6 @@ services:
       - resound_network
     volumes:
       - ${LIBRARY_PATH}:/library
-      - .:/app
 
 networks:
   resound_network:
