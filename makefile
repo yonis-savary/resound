@@ -1,11 +1,11 @@
 deploy:
 	git pull
-	docker compose -f docker-compose.prod.yml build
-	docker compose -f docker-compose.prod.yml up -d
+	docker compose --no-ansi --progress=plain -f docker-compose.prod.yml build
+	docker compose --no-ansi --progress=plain -f docker-compose.prod.yml up -d
 
 prod:
-	docker compose -f docker-compose.prod.yml build
-	docker compose -f docker-compose.prod.yml up -d
+	docker compose --no-ansi --progress=plain -f docker-compose.prod.yml build
+	docker compose --no-ansi --progress=plain -f docker-compose.prod.yml up -d
 
 up:
-	docker compose -f docker-compose.yml up -d
+	docker compose --no-ansi --progress=plain -f docker-compose.yml up -d
