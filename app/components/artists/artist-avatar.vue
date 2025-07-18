@@ -1,6 +1,6 @@
 <template>
     <img
-        :src="`/api/artist/${artist.id}/picture`"
+        :src="`/api/artist/${artist.id}/picture?hash=${artist.picture_path_hash}`"
         alt="Avatar"
         :class="size"
         class="rounded-full object-cover"

@@ -2,7 +2,7 @@
     <img
         :class="[size, { 'inexistent': (supportInexistent && !album.exists_locally)}]"
         class="album-cover-link"
-        :src="`/api/album/${album.id}/picture`"
+        :src="`/api/album/${album.id}/picture?hash=${album.picture_path_hash}`"
         @click="handleClick"
     >
 </template>

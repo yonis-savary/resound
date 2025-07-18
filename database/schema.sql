@@ -133,3 +133,11 @@ CREATE TABLE user_listening (
     FOREIGN KEY (track) REFERENCES track(id) ON DELETE CASCADE,
     FOREIGN KEY (playlist) REFERENCES playlist(id) ON DELETE SET NULL
 );
+
+
+
+
+--- migration 1 : add picture_path_hash to artist / album
+
+ALTER TABLE "artist" ADD COLUMN "picture_path_hash" VARCHAR(50) NULL;
+ALTER TABLE "album" ADD COLUMN "picture_path_hash" VARCHAR(50) NULL;

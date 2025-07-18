@@ -21,7 +21,7 @@
                 <h1 class="text-2xl">Most listened Albums</h1>
                 <div class="grid grid-cols-2 gap-3 place-items-center">
                     <NuxtLink v-for="album in mostListenedAlbums" :key="album.id" :to="'/album/' + album.id" class="w-full">
-                        <img class="album-cover-home-link rounded-md" :src="`/api/album/${album.id}/picture`">
+                        <img class="album-cover-home-link rounded-md" :src="`/api/album/${album.id}/picture?hash=${album.picture_path_hash}`">
                     </NuxtLink>
                 </div>
             </div>

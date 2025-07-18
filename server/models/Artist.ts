@@ -15,11 +15,12 @@ export interface ArtistAttributes {
   exists_locally?: boolean;
   description?: string;
   url?: string;
+  picture_path_hash?: string;
 }
 
 export type ArtistPk = "id";
 export type ArtistId = Artist[ArtistPk];
-export type ArtistOptionalAttributes = "id" | "last_update" | "last_discography_update" | "api_id" | "picture_path" | "exists_locally" | "description" | "url";
+export type ArtistOptionalAttributes = "id" | "last_update" | "last_discography_update" | "api_id" | "picture_path" | "exists_locally" | "description" | "url" | "picture_path_hash";
 export type ArtistCreationAttributes = Optional<ArtistAttributes, ArtistOptionalAttributes>;
 
 export class Artist extends Model<ArtistAttributes, ArtistCreationAttributes> implements ArtistAttributes {
@@ -33,6 +34,7 @@ export class Artist extends Model<ArtistAttributes, ArtistCreationAttributes> im
   declare exists_locally : undefined | boolean;
   declare description : undefined | string;
   declare url : undefined | string;
+  declare picture_path_hash : undefined | string;
 
   // Artist hasMany AlbumArtist via artist
   declare album_artists : AlbumArtist[];
@@ -105,6 +107,10 @@ export class Artist extends Model<ArtistAttributes, ArtistCreationAttributes> im
     },
     url: {
       type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    picture_path_hash: {
+      type: DataTypes.STRING(50),
       allowNull: true
     }
   }, {

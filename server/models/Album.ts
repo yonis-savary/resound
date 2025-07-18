@@ -21,11 +21,12 @@ export interface AlbumAttributes {
   exists_locally?: boolean;
   addition_date?: Date;
   color?: string;
+  picture_path_hash?: string;
 }
 
 export type AlbumPk = "id";
 export type AlbumId = Album[AlbumPk];
-export type AlbumOptionalAttributes = "id" | "last_update" | "api_id" | "url" | "release_date" | "picture_path" | "total_duration_milliseconds_cache" | "track_count_cache" | "exists_locally" | "addition_date" | "color";
+export type AlbumOptionalAttributes = "id" | "last_update" | "api_id" | "url" | "release_date" | "picture_path" | "total_duration_milliseconds_cache" | "track_count_cache" | "exists_locally" | "addition_date" | "color" | "picture_path_hash";
 export type AlbumCreationAttributes = Optional<AlbumAttributes, AlbumOptionalAttributes>;
 
 export class Album extends Model<AlbumAttributes, AlbumCreationAttributes> implements AlbumAttributes {
@@ -43,6 +44,7 @@ export class Album extends Model<AlbumAttributes, AlbumCreationAttributes> imple
   declare exists_locally : undefined | boolean;
   declare addition_date : undefined | Date;
   declare color : undefined | string;
+  declare picture_path_hash : undefined | string;
 
   // Album hasMany AlbumArtist via album
   declare album_artists : AlbumArtist[];
@@ -154,6 +156,10 @@ export class Album extends Model<AlbumAttributes, AlbumCreationAttributes> imple
     },
     color: {
       type: DataTypes.STRING(7),
+      allowNull: true
+    },
+    picture_path_hash: {
+      type: DataTypes.STRING(50),
       allowNull: true
     }
   }, {

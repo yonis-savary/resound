@@ -12,6 +12,7 @@ import type { Album } from "~/server/models/Album";
 import type { Artist } from "~/server/models/Artist";
 import type { Track } from "~/server/models/Track";
 import sharp from "sharp"
+import sha1 from "sha1"
 
 let lastAlbumName: string | undefined = undefined;
 let lastAlbumObject: Album | undefined = undefined;
@@ -72,6 +73,7 @@ const getPicturePath = async (album: Album, metadata: IAudioMetadata) => {
     album.update({
         color: albumColor,
         picture_path: pictureName,
+        picture_path_hash: pictureName ? sha1(pictureName): undefined
     });
 }
 

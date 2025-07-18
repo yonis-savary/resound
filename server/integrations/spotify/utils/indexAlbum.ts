@@ -5,6 +5,7 @@ import { spotifyApi } from "../api";
 import { albumSlug } from '~/server/helpers/slug'
 import { createAlbum, createArtist } from "~/server/helpers/factory";
 import type { Album, AlbumAttributes } from "~/server/models/Album";
+import sha1 from "sha1";
 
 async function syncAlbumGenres(albumId: number, genres: string[]) {
   if (!genres.length)
@@ -112,7 +113,8 @@ export async function indexAlbum(albumId: string, forceUpdate = false): Promise<
   }
   const imageResult = await downloadBestImage(albumId, spotifyAlbum.images)
   if (imageResult) {
-    data.picture_path = imageResult.path
+    data.picture_path = imageResult.path;
+    data.picture_path_hash = sha1(imageResult.path);
     data.color = imageResult.color
   }
 

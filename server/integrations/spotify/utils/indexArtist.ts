@@ -4,6 +4,7 @@ import type { Image } from '../responses/GetArtistResponse'
 import { createArtist } from '~/server/helpers/factory'
 import { artistSlug } from '~/server/helpers/slug'
 import type { Artist } from '~/server/models/Artist'
+import sha1 from "sha1"
 
 async function downloadBestImage(artistAPIId: string, images: Image[]): Promise<string | undefined> {
   if (!images.length) return undefined
@@ -72,6 +73,7 @@ export async function indexArtist(
       name: spotifyArtist.name,
       url: spotifyArtist.external_urls?.spotify,
       picture_path: newPicturePath,
+      picture_path_hash: newPicturePath ? sha1(newPicturePath) : undefined,
       last_update: new Date()
     })
 
