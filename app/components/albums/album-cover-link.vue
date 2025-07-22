@@ -71,10 +71,22 @@ const { album, showTitle, size } = defineProps({
   min-width: min-content;
 }
 
-.small  { width: 3em !important }
-.medium { width: 8em !important }
-.medium-big { width: 10em !important }
-.big    { width: 14em !important }
+.small  { 
+    width: 3em !important ;
+    min-width: 3em !important ;
+}
+.medium { 
+    width: 8em !important ;
+    min-width: 8em !important ;
+}
+.medium-big { 
+    width: 10em !important ;
+    min-width: 10em !important ;
+}
+.big    { 
+    width: 14em !important ;
+    min-width: 14em !important ;
+}
 
 @media only screen and (max-width: 500px) {
     .small {

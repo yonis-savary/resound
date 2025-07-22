@@ -45,8 +45,10 @@ export default defineEventHandler(async event => {
             cacheDuration = 3600;
             storageKey = anyAlbum.album_album.picture_path
         }
-
-        return returnDefaultPicture();
+        else
+        {
+            return returnDefaultPicture();
+        }
     }
     else
     {

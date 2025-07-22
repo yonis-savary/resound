@@ -4,7 +4,7 @@
         :to="'/artist/' + artist.id"
     >
         <ArtistAvatar :artist="artist" :size="size"/>
-        <span v-if="showTitle" class="font-medium artist-name">{{ artist.name }}</span>
+        <span v-if="showTitle" class="font-medium artist-name" :class="size">{{ artist.name }}</span>
     </NuxtLink>
 </template>
 
@@ -59,8 +59,20 @@ const { artist, showTitle, size } = defineProps({
   line-clamp: 2;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: min-content;
+  text-align: center;
 }
+
+
+.artist-name.small {
+    max-width: 3ch;
+}
+.artist-name.medium {
+    max-width: 8em;
+}
+.artist-name.big {
+    max-width: 10em;
+}
+
 
 .small  { width: 3em !important }
 .medium { width: 8em !important }

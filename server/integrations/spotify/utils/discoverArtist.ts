@@ -1,22 +1,32 @@
 import { spotifyApi } from '../api'
 import models from '~/server/db/models'
-import { Op } from 'sequelize'
 import { artistSlug } from '~/server/helpers/slug'
 
 export async function discoverArtist(artistName: string): Promise<string | null> {
-  console.log(`Discovering artist with name ${artistName}`)
 
   const slug = artistSlug(artistName)
 
   const existingArtist = await models.Artist.findOne({
-    where: { slug, api_id: { [Op.ne]: null } }
+    where: { slug }
   })
 
 
-  if (existingArtist) {
+  if ((!existingArtist) || existingArtist?.api_id) {
     return null
   }
 
+  if (existingArtist.last_update)
+  {
+    const lastUpdate = new Date(existingArtist.last_update)
+    const daysSinceUpdate = (Date.now() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24)
+  
+    if (daysSinceUpdate < 31) {
+      console.info('Artist updated too recently')
+      return null;
+    }
+  }
+
+  console.log(`Discovering artist with name ${artistName}`)
   console.info(`Indexing artist (name) ${artistName}`)
 
   try {
@@ -32,6 +42,8 @@ export async function discoverArtist(artistName: string): Promise<string | null>
     // Vérifie si le nom correspond bien
     if (artistSlug(bestMatch.name) !== artistSlug(artistName)) {
       console.info(`Best match for ${artistName} is ${bestMatch.name}, skipping`)
+
+      existingArtist.update({last_update: new Date});
       return null
     }
 

@@ -1,6 +1,5 @@
 <template>
     <div class="container flex flex-col gap-8">
-        <h1 class="text-5xl">Home</h1>
 
         <div class="flex max-sm:flex-col min-sm:flex-row gap-6">
             <div class="flex flex-col gap-3 flex-1">
@@ -27,11 +26,24 @@
             </div>
         </div>
 
-        <h2 class="text-3xl">Last Additions</h2>
-        <div v-if="lastAdditions" class="flex flex-row flex-wrap justify-center gap-3">
-            <AlbumCoverLink v-for="album in lastAdditions" :key="album.id" :album="album"/>
+
+        <h2 class="text-3xl">Most listened artists</h2>
+        <div v-if="mostListenedArtists" class="flex flex-row flex-wrap gap-3">
+            <ArtistsArtistAvatarLink
+                v-for="artist in mostListenedArtists"
+                :key="artist.id"
+                size="medium"
+                :artist="artist"
+            />
         </div>
 
+
+        <h2 class="text-3xl">Last Additions</h2>
+        <div v-if="lastAdditions" class="w-full overflow-x-auto justify-center gap-3">
+            <div class="space-x-4 min-w-max flex flex-row ">
+                <AlbumCoverLink v-for="album in lastAdditions" :key="album.id" :album="album"/>
+            </div>
+        </div>
 
         <h2 class="text-3xl">Artists of the Day</h2>
         <div v-if="artistsOfTheDay" class="flex flex-row flex-wrap gap-3">
@@ -67,19 +79,22 @@ const mostListenedAlbums = ref<Album[]>([]);
 const lastAdditions = ref<Album[]>([]);
 const instantPlaylists = ref<{ [key: string]: Track[] }>({});
 const artistsOfTheDay = ref<Artist[]>([]);
+const mostListenedArtists = ref<Artist[]>([]);
 
 onMounted(async ()=>{
     const response = (await $fetch<{
         lastAdditions: Album[],
         mostListened: Album[],
         instantPlaylists: Record<string,Track[]>,
-        artistsOfTheDay: Artist[]
+        artistsOfTheDay: Artist[],
+        mostListenedArtists: Artist[]
     }>('/api/library/home'));
 
     lastAdditions.value = response.lastAdditions
     mostListenedAlbums.value = response.mostListened;
     instantPlaylists.value = response.instantPlaylists;
     artistsOfTheDay.value = response.artistsOfTheDay
+    mostListenedArtists.value = response.mostListenedArtists;
 });
 
 const getGenreComputedStyle = (genre: string) => {

@@ -6,6 +6,7 @@ import models from "~/server/db/models"
 import sequelize from "~/server/db/sequelize";
 import { discoverArtist } from "~/server/integrations/spotify/utils/discoverArtist";
 import { indexArtist } from "~/server/integrations/spotify/utils/indexArtist";
+import type { Artist } from "~/server/models/Artist";
 
 export default defineEventHandler(async event => {
 
@@ -18,6 +19,7 @@ export default defineEventHandler(async event => {
 
     const user = await getUserSession(event);
     let mostListened: Album[] = [];
+    let mostListenedArtists: Artist[] = [];
     const instantPlaylists: { [key: string]: Track[] } = {};
     if (user.user?.id) {
         const [mostListenedId, _] = await sequelize.query(
@@ -54,11 +56,29 @@ export default defineEventHandler(async event => {
         `) as [{ id: number, genre: string, counting: number }[], number]
 
 
+
+        const [mostListenedArtistsId, ___] = await sequelize.query(
+            `SELECT DISTINCT track_artist.artist, COUNT(user_listening.id) as listening_count
+            FROM track
+            JOIN user_listening ON track = track.id AND user_listening.user = ${user.user.id}
+            JOIN track_artist ON track.id = track_artist.track
+            WHERE user_listening.timestamp > (NOW() - INTERVAL '1 month')
+            GROUP BY track_artist.artist
+            ORDER BY listening_count DESC
+            LIMIT 7
+        `) as [{ artist: number, listening_count: number }[], number];
+
+        mostListenedArtists = await models.Artist.findAll({
+            where: {
+                id: { [Op.in]: mostListenedArtistsId.map(row => row.artist) }
+            }
+        })
+
         type trackQueryResponse = [{ track: number }[], number];
 
         await Promise.all(mostListenedGenre.map(async ({ id, genre }) => {
 
-            const [likedTracks, ___] = await sequelize.query(`
+            const [likedTracks, ____] = await sequelize.query(`
                 SELECT track.id as track
                 FROM track
                 JOIN album ON track.album = album.id 
@@ -72,7 +92,7 @@ export default defineEventHandler(async event => {
 
             const toFetch = likedTracks.length < 25 ? 100 : Math.ceil(likedTracks.length * 0.25);
 
-            const [notLikedTracks, ____] = await sequelize.query(`
+            const [notLikedTracks, _____] = await sequelize.query(`
                 SELECT track.id as track
                 FROM track
                 JOIN album ON track.album = album.id 
@@ -129,6 +149,7 @@ export default defineEventHandler(async event => {
     return {
         lastAdditions,
         mostListened,
+        mostListenedArtists,
         instantPlaylists,
         artistsOfTheDay
     }

@@ -18,7 +18,9 @@ useHead({ title: 'Artists' })
 const artists = ref<Artist[]>([])
 
 ;(async () => {
-    artists.value = await $fetch<Artist[]>('/api/artist', {params: {exists_locally: true}})
+    artists.value = 
+        (await $fetch<Artist[]>('/api/artist', {params: {exists_locally: true}}))
+        .sort((a,b) => a.name > b.name ? 1:-1)
 })();
 
 </script>
