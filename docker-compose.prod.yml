@@ -16,6 +16,9 @@ services:
   nuxt:
     build: 
       context: .
+      args:
+        UID: "${UID}"
+        GID: "${GID}"
       dockerfile: docker/Dockerfile.prod
     restart: always
     user: "node"
@@ -29,6 +32,7 @@ services:
       - resound_network
     volumes:
       - ${LIBRARY_PATH}:/library
+      - ./.data:/app/.data
 
 networks:
   resound_network:
