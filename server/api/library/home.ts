@@ -138,13 +138,17 @@ export default defineEventHandler(async event => {
         }
     });
 
-    artistsOfTheDay.forEach(async artist => {
-        if (!artist.api_id)
-            await discoverArtist(artist.name)
 
-        if (artist.api_id)
-            await indexArtist(artist.api_id);
-    })
+    (async ()=>{
+        const artistsToFetch = [...artistsOfTheDay, ...mostListenedArtists];
+        for (const artist of artistsToFetch) {
+            if (!artist.api_id)
+                await discoverArtist(artist.name)
+    
+            if (artist.api_id)
+                await indexArtist(artist.api_id);
+        }
+    })();
 
     return {
         lastAdditions,
