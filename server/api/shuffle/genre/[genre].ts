@@ -3,7 +3,7 @@ import { albumBaseIncludes } from "~/server/helpers/includes";
 import models from "~/server/db/models";
 
 export default defineEventHandler(async event => {
-    const genre = parseInt(event.context.params?.genre ?? '0');
+    const genre = event.context.params?.genre ?? '0';
 
     const user = (await getUserSession(event)).user?.id ?? 0;
 
