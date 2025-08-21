@@ -55,6 +55,7 @@ import Like from './tracks/like.vue';
 const playerStore = usePlayerStore();
 const { currentTrack, currentTime, currentColor }= storeToRefs(playerStore);
 const screenSaver = ref<HTMLElement>();
+let screenSaverIsDisplayed = false;
 
 const screenSaverDisplayDelaySeconds = 15;
 
@@ -74,7 +75,10 @@ const clearDisplayTimeout = ()=> {
 }
 
 const handleScrollEvent = ()=>{
+    console.log("EVENT")
     clearDisplayTimeout()
+    if (screenSaverIsDisplayed)
+        return;
     if (!playerStore.isPlaying)
         return;
     startTimeout()
@@ -83,13 +87,13 @@ const handleScrollEvent = ()=>{
 const displayScreenSaver = ()=>{
     if (!screenSaver.value) return;
     screenSaver.value.style.display = 'flex';
+    screenSaverIsDisplayed = true;
 }
 
 const unlockScreenSaver = ()=>{
     if (!screenSaver.value) return;
     screenSaver.value.style.display = '';
-    if (playerStore.isPlaying)
-        startTimeout();
+    screenSaverIsDisplayed = false;
 }
 
 onMounted(() => {
@@ -99,6 +103,8 @@ onMounted(() => {
     window.addEventListener('scroll', handleScrollEvent)
     window.addEventListener('keydown', handleScrollEvent)
     window.addEventListener("touchstart", handleScrollEvent);
+    window.addEventListener('wheel', handleScrollEvent);
+    window.addEventListener('touchmove', handleScrollEvent);
   }
 })
 
@@ -109,6 +115,8 @@ onBeforeUnmount(() => {
     window.removeEventListener('scroll', handleScrollEvent)
     window.removeEventListener('keydown', handleScrollEvent)
     window.removeEventListener("touchstart", handleScrollEvent);
+    window.removeEventListener('wheel', handleScrollEvent);
+    window.removeEventListener('touchmove', handleScrollEvent);
   }
 })
 
