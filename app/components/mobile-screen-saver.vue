@@ -75,7 +75,6 @@ const clearDisplayTimeout = ()=> {
 }
 
 const handleScrollEvent = ()=>{
-    console.log("EVENT")
     clearDisplayTimeout()
     if (screenSaverIsDisplayed)
         return;
